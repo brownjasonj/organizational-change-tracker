@@ -1,13 +1,18 @@
 import cors from 'cors';
 import Express from 'express';
 import morgan from 'morgan';
+import neo4j from 'neo4j-driver';
+import { Driver } from 'neo4j-driver-core';
 import OpenAPIBackend, { Request } from 'openapi-backend';
 import * as swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import addEmployeeRecordHandler from './handlers/addEmployeeRecordHandler';
 import notFoundHandler from './handlers/notFoundHandler';
 import notImplementedHandler from './handlers/notImplementedHandler';
 import testHandler from './handlers/testHandler';
 import validationFailHandler from './handlers/validationFailHandler';
+
+
 
 
 const app = Express();
@@ -34,6 +39,7 @@ api.register('notImplemented', notImplementedHandler);
 
 // register openapi application handlers
 api.register('test', testHandler);
+api.register('addemployee', addEmployeeRecordHandler);
 
 // register mock handlers
 //api.mockResponseForOperation('test');

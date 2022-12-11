@@ -13,3 +13,10 @@ paths:
       responses:
         '200':
           description: OK
+  /addemployee:
+    get:
+      description: "Simple test end-point returning a Hello World!"
+      operationId: "addemployee"
+      responses:
+        '200':
+          description: OK
