@@ -1,17 +1,32 @@
 import { session } from "neo4j-driver";
 import { Driver } from "neo4j-driver-core";
+import { abort } from "process";
 import EmployeeRecord from "../models/EmployeeRecord";
 
 const addEmployeeRecordCypher: string = 
     'merge (e: Employee {id: $id}) \
-     on create set e.firstName = $firstName, \
-                e.secondName = $secondName,\
-                e.department = $department,\
-                e.jobTitle = $jobTitle,\
-                e.startDate = $startDate,\
+     merge (j: JobTitle {title: $jobTitle}) \
+     merge (d: Department {name: $department}) \
+     merge (e)-[works_in: works_in]->(d) \
+     merge (e)-[has_job_title: has_job_title]->(j) \
+     on create set e.name = $id, \
+                e.firstName = $firstName, \
+                e.secondName = $secondName, \
+                e.startDate = $startDate, \
                 e.endDate = $endDate, \
-                e.last_updated = timestamp() \
-     on match set e.last_updated = timestamp() \
+                e.last_updated = timestamp(),\
+                d.title = $department, \
+                d.name = $department, \
+                d.last_updated = timestamp(), \
+                d.startDate = $startDate, \
+                works_in.last_updated = timestamp(), \
+                works_in.startDate = $startDate, \
+                has_job_title.last_updated = timestamp(), \
+                has_job_title.startDate = $startDate \
+     on match set e.last_updated = timestamp(), \
+                d.last_updated = timestamp(), \
+                works_in.last_updated = timestamp(), \
+                has_job_title.last_updated = timestamp() \
      return e';
 
 async function neo4jAddEmployeeRecord(driver: Driver, employeeRecord: EmployeeRecord) : Promise<any> {
