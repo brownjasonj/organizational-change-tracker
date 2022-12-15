@@ -11,9 +11,11 @@
 :VIP a org:FormalOrganization;
     org:name "VIP". 
 
-[] a org:Membership;
+:a726521_VIP a org:Membership;
     org:member :a726521;
     org:organization :VIP;
 #    org:role eg:ctoRole;
-    org:memberDuring [a time:Interval; time:hasBeginning [
-                      time:inXSDDateTime "2009-11-01T09:00:00Z"^^xsd:dateTime]].
+    org:memberDuring [a time:Interval;
+                        time:hasBeginning [
+                            time:inXSDDateTime "2009-11-01T09:00:00Z"^^xsd:dateTime]
+                    ].

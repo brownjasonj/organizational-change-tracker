@@ -1,0 +1,22 @@
+@prefix : <http://example.org/id#> .  # The empty prefix means this document
+@prefix foaf: <http://xmlns.com/foaf/0.1#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix pid: <http://example.org/pid#> .
+
+:a726521 a foaf:Person ;
+    pid:pid "a726521";
+    foaf:name "James Wales".
+
+:VIP a org:FormalOrganization;
+    org:name "VIP". 
+
+:a726521_VIP a org:Membership;
+    org:member :a726521;
+    org:organization :VIP;
+#    org:role eg:ctoRole;
+    org:memberDuring :a726521_VIP_timeInterval.
+
+:a726521_VIP_timeInterval a time:Interval;
+    time:hasBeginning [
+                            time:inXSDDateTime "2009-11-01T09:00:00Z"^^xsd:dateTime].
