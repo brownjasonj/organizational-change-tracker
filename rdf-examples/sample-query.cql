@@ -1,3 +1,10 @@
+CALL n10s.nsprefixes.add(":", "http://example.org/id#");
+CALL n10s.nsprefixes.add("foaf:", "http://xmlns.com/foaf/0.1#");
+CALL n10s.nsprefixes.add("org:", "http://www.w3.org/ns/org#");
+CALL n10s.nsprefixes.add("time:", "http://www.w3.org/2006/time#");
+CALL n10s.nsprefixes.add("pid:", "http://example.org/pid#");
+
+
 match (p:`foaf:__Person`),
     (m:`org:__Membership`),
     (org:`org:__FormalOrganization`),
@@ -18,11 +25,31 @@ match (p:`foaf:__Person`),
     (interval:`time:__Interval`),
     (beginning:`time:__hasBeginning`),
     (ending:`time:__hasEnd`),
-    (m)-[]->(p),
+    (m)-[`org:member`]->(p),
     (m)-[]->(org),
     (m)-[]->(interval),
     (interval)-[]->(beginning),
     (interval)-[]->(ending)
+where (beginning.`time:__inXSDDateTime`)<= datetime("2009-11-02T09:00:00Z") and
+        (ending.`time:__inXSDDateTime`)>= datetime("2009-11-02T09:00:00Z")
+return p,m,org,beginning,ending;
+
+match (m:`org:__Membership`),
+    (m)-[]->(p:`foaf:__Person`),
+    (m)-[]->(org:`org:__FormalOrganization`),
+    (m)-[]->(interval:`time:__Interval`),
+    (interval)-[]->(beginning:`time:__hasBeginning`),
+    (interval)-[]->(ending:`time:__hasEnd`)
+where (beginning.`time:__inXSDDateTime`)<= datetime("2009-11-02T09:00:00Z") and
+        (ending.`time:__inXSDDateTime`)>= datetime("2009-11-02T09:00:00Z")
+return p,m,org,beginning,ending;
+
+match (m:`org:__Membership`),
+    (m)-[:`org:__member`]->(p:`foaf:__Person`),
+    (m)-[:`org:__organization`]->(org:`org:__FormalOrganization`),
+    (m)-[:`org:__memberDuring`]->(interval:`time:__Interval`),
+    (interval)-[]->(beginning:`time:__hasBeginning`),
+    (interval)-[]->(ending:`time:__hasEnd`)
 where (beginning.`time:__inXSDDateTime`)<= datetime("2009-11-02T09:00:00Z") and
         (ending.`time:__inXSDDateTime`)>= datetime("2009-11-02T09:00:00Z")
 return p,m,org,beginning,ending;
