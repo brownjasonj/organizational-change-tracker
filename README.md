@@ -13,7 +13,7 @@ NEO4J Setup
     <code>
         call n10s.graphconfig.init();        
     </code>
-    
+
     <code>
         CREATE CONSTRAINT n10s_unique_uri ON (r:Resource)
         ASSERT r.uri IS UNIQUE;
@@ -45,6 +45,12 @@ You need to added the namespaces that you will be using otherwise neo4j will jus
     CALL n10s.nsprefixes.add("org:", "http://www.w3.org/ns/org#");
     CALL n10s.nsprefixes.add("time:", "http://www.w3.org/2006/time#");
     CALL n10s.nsprefixes.add("pid:", "http://example.org/pid#");
+</code>
+
+<code>
+    call n10s.graphconfig.set( {
+        handleRDFTypes: "LABELS_AND_NODES" 
+    });
 </code>
 
 and to list which namespaces neo4j has, run this:
