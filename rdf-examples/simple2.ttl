@@ -15,21 +15,21 @@
 :a726521-vip-membership a org:Membership;
     org:member :a726521;
     org:organization :vip-organization;
-    org:memberDuring :a726521-vip-membership-timeInterval.
+     org:memberDuring :a726521-vip-membership-timeInterval.
 
 :a726521-vip-membership-timeInterval a time:Interval;
     time:hasBeginning :a726521-vip-membership-startdate;
     time:hasEnd :a726521-vip-membership-lastseen.
 
 :a726521-vip-membership-startdate a time:hasBeginning;
-    time:inXSDDateTime "2009-11-01T09:00:00Z"^^xsd:dateTime.
+    time:inXSDDateTime "2009-11-02T09:00:00Z"^^xsd:dateTime.
 
 :a726521-vip-membership-lastseen a time:hasEnd;
-    time:inXSDDateTime "2022-12-17T09:00:00Z"^^xsd:dateTime.
+    time:inXSDDateTime "2022-05-01T09:00:00Z"^^xsd:dateTime.
 
 
 :wdh-organization a org:FormalOrganization;
-    org:name "WDH". 
+    org:name "WDH2". 
 
 :a726521-wdh-membership a org:Membership;
     org:member :a726521;
@@ -37,7 +37,11 @@
     org:memberDuring :a726521-wdh-membership-timeInterval.
 
 :a726521-wdh-membership-timeInterval a time:Interval;
-    time:hasBeginning :a726521-wdh-membership-startdate.
+    time:hasBeginning :a726521-wdh-membership-startdate;
+    time:hasEnd :a726521-wdh-membership-lastseen.
 
 :a726521-wdh-membership-startdate a time:hasBeginning;
     time:inXSDDateTime "2022-05-01T09:00:00Z"^^xsd:dateTime.
+
+:a726521-wdh-membership-lastseen a time:hasEnd;
+    time:inXSDDateTime "2022-12-17T09:00:00Z"^^xsd:dateTime.
