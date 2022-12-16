@@ -5,8 +5,6 @@
 @prefix pid: <http://example.org/pid#> .
 @prefix interval: <http://example.org/interval#> . 
 
-
-
 :a726521 a foaf:Person ;
     pid:pid "a726521";
     foaf:name "James Wales".
@@ -17,15 +15,29 @@
 :a726521-vip-membership a org:Membership;
     org:member :a726521;
     org:organization :vip-organization;
-#    org:role eg:ctoRole;
     org:memberDuring :a726521-vip-membership-timeInterval.
 
 :a726521-vip-membership-timeInterval a time:Interval;
     time:hasBeginning :a726521-vip-membership-startdate;
-    time:hasEnd :a7286521-vip-membership-lastseen.
+    time:hasEnd :a726521-vip-membership-lastseen.
 
 :a726521-vip-membership-startdate a time:hasBeginning;
     time:inXSDDateTime "2009-11-01T09:00:00Z"^^xsd:dateTime.
 
 :a726521-vip-membership-lastseen a time:hasEnd;
-    time:inXSDDateTime "2022-12-15T09:00:00Z"^^xsd:dateTime.
+    time:inXSDDateTime "2022-12-17T09:00:00Z"^^xsd:dateTime.
+
+
+:wdh-organization a org:FormalOrganization;
+    org:name "WDH". 
+
+:a726521-wdh-membership a org:Membership;
+    org:member :a726521;
+    org:organization :wdh-organization;
+    org:memberDuring :a726521-wdh-membership-timeInterval.
+
+:a726521-wdh-membership-timeInterval a time:Interval;
+    time:hasBeginning :a726521-wdh-membership-startdate.
+
+:a726521-wdh-membership-startdate a time:hasBeginning;
+    time:inXSDDateTime "2022-05-01T09:00:00Z"^^xsd:dateTime.
