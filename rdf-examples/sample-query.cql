@@ -53,3 +53,15 @@ match (m:`org:__Membership`),
 where (beginning.`time:__inXSDDateTime`)<= datetime("2009-11-02T09:00:00Z") and
         (ending.`time:__inXSDDateTime`)>= datetime("2009-11-02T09:00:00Z")
 return p,m,org,beginning,ending;
+
+
+// query with the full namespace
+match (m:`http://www.w3.org/ns/org#Membership`),
+    (m)-[:`http://www.w3.org/ns/org#member`]->(p:`http://xmlns.com/foaf/0.1#Person`),
+    (m)-[:`http://www.w3.org/ns/org#organization`]->(org:`http://www.w3.org/ns/org#FormalOrganization`),
+    (m)-[:`http://www.w3.org/ns/org#memberDuring`]->(interval:`http://www.w3.org/2006/time#Interval`),
+    (interval)-[]->(beginning:`http://www.w3.org/2006/time#hasBeginning`),
+    (interval)-[]->(ending:`http://www.w3.org/2006/time#hasEnd`)
+where (beginning.`http://www.w3.org/2006/time#inXSDDateTime`)<= datetime("2009-11-02T09:00:00Z") and
+        (ending.`http://www.w3.org/2006/time#inXSDDateTime`)>= datetime("2009-11-02T09:00:00Z")
+return p,m,org,beginning,ending;

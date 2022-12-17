@@ -50,7 +50,8 @@ You need to added the namespaces that you will be using otherwise neo4j will jus
 <code>
     call n10s.graphconfig.set( {
         handleRDFTypes: "LABELS_AND_NODES",
-        handleMultival: "OVERWRITE" 
+        handleMultival: "OVERWRITE",
+        handleVocabUris: "KEEP"
     });
 </code>
 
