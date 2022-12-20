@@ -1,4 +1,19 @@
-NEO4J Setup
+<h1>Overview</h1>
+<p>
+The objective of this project is to explore the use of knowledge graph for tracking the evolution (over time) of corporations internal organizational structure.  It leverages open standards such as RDF (turtle dialect) and SPARQL for the data representation and querying, existing ontologies for the semantic encoding and typescript/javascript popular libraries (e.g., n3) for manipulating the semantic triples.
+<p>
+
+<p>
+Trying to stick to standards as much as possible is a key tenat of the project.  As such we currently recommend using Blazegraph as it readily supports RDF Turtle and SPARQL.  Furthermore it is very easy to set up.
+
+We have experimented extensively with Neo4j which is popular, however have found that the neosemantic module isn't mature enough, particularly in the handling of namespaces.  Furthemore, there is no support for SPARQL as the company pushes their own Cypher language.  The project containts examples of Cypher, but it is more complex than usign SPARQL queries.
+</p>
+
+<h1>Blazegraph Setup</h1>
+
+
+
+<h1>NEO4J Setup</h1>
 
 1. Install Neo4j Desktop (https://neo4j.com/docs/desktop-manual/current/installation/)
 2. Start Neo4j
