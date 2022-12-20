@@ -29,7 +29,7 @@
 :employee123456-staff-role a org:Membership;
     org:member :employee123456;
     org:role :staff-role;
-    org:hasRoleDuring :employee123456-staff-role-timeInterval.
+    org:memberDuring :employee123456-staff-role-timeInterval.
 
 :employee123456-staff-role-timeInterval a time:Interval;
     time:hasBeginning :employee123456-staff-role-startdate;

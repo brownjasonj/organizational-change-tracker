@@ -1,3 +1,6 @@
+# This query returns all members of an organization who were members
+# of the organization at a given time. The time is specified by the
+# date1 variable. The query returns the member and the time interval
 prefix : <http://example.org/id#>
 prefix csorg: <http://example.org/org#>
 prefix foaf: <http://xmlns.com/foaf/0.1#>
@@ -9,6 +12,7 @@ prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 SELECT ?member ?date1 ?date2 WHERE {
     ?pid rdf:type foaf:Person.
+    ?member org:organization ?org.
     ?member org:member ?pid.
     ?member org:memberDuring ?interval.
     ?interval time:hasBeginning ?start.
@@ -16,4 +20,29 @@ SELECT ?member ?date1 ?date2 WHERE {
   	?start time:inXSDDateTime ?date1.
   	?end time:inXSDDateTime ?date2
   	filter(?date1 <= "2009-11-02T09:00:00Z"^^xsd:dateTime).
+}
+
+
+# This query returns all members of an organization with a given 
+# corporate title
+prefix : <http://example.org/id#>
+prefix csorg: <http://example.org/org#>
+prefix foaf: <http://xmlns.com/foaf/0.1#>
+prefix org: <http://www.w3.org/ns/org#>
+prefix time: <http://www.w3.org/2006/time#>
+prefix pid: <http://example.org/pid#>
+prefix interval: <http://example.org/interval#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?member ?date1 ?date2 WHERE {
+    ?pid rdf:type foaf:Person.
+    ?member org:role ?role.
+    ?member org:member ?pid.
+    ?member org:memberDuring ?interval.
+    ?interval time:hasBeginning ?start.
+    ?interval time:hasEnd ?end.
+  	?start time:inXSDDateTime ?date1.
+  	?end time:inXSDDateTime ?date2.
+    filter(?date1 <= "2022-12-17T08:00:00Z"^^xsd:dateTime).
+    filter(?date2 >= "2022-12-17T08:00:00Z"^^xsd:dateTime).
 }
