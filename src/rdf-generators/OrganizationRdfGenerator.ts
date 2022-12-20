@@ -17,6 +17,8 @@ const foafNS: rdfNameSpace = {prefix: "foaf:", path: "http://xmlns.com/foaf/0.1#
 const orgNS: rdfNameSpace = {prefix: "org:", path: "http://www.w3.org/ns/org#"};
 const timeNS: rdfNameSpace = {prefix: "time:", path: "http://www.w3.org/2006/time#"};
 const rdfNS: rdfNameSpace = {prefix: "rdf:", path: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"};
+const rdfsNS: rdfNameSpace = {prefix: "rdfs:", path: "http://www.w3.org/2001/XMLSchema#"};
+const xsdNS: rdfNameSpace = {prefix: "xsd:", path: "http://www.w3.org/2000/01/rdf-schema#"};
 
 
 
@@ -86,6 +88,53 @@ function organizationaRdfGenerator(employee:EmployeeRecord, loadDate: Date): voi
         triple(organizationMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasEnd')),
         triple(organizationMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(employeeEndDate))
     ]);
+
+    // Corporate Title Role Membership (e.g., Staff, Asoociate VP, VP, Director, Managing Director, etc.)
+    const corpTitleName: string = idNS.prefix + employee.jobTitle + "-corporatetitle";
+    const corpTitleNode = namedNode(corpTitleName.toLowerCase());
+    writer.addQuads([
+        triple(corpTitleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
+        triple(corpTitleNode, namedNode(rdfsNS.prefix + 'roleName'),literal(employee.jobTitle))
+    ]);
+
+
+    const corpTitleMembershipName: string = (idNS.prefix + employee.id + "-" + employee.jobTitle + "-membership").toLocaleLowerCase();
+    const coprTitleMembershipNode = namedNode(corpTitleMembershipName);
+    const corpTitleMembershipTimeIntervalName: string = (corpTitleMembershipName + "-timeinterval").toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalNode = namedNode(corpTitleMembershipTimeIntervalName);
+    const corpTitleMembershipTimeIntervalStartDateName: string = (corpTitleMembershipName + "-start").toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalStartDateNode = namedNode(corpTitleMembershipTimeIntervalStartDateName);
+    const corpTitleMembershipTimeIntervalEndDateName: string = (corpTitleMembershipName + "-end").toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalEndDateNode = namedNode(corpTitleMembershipTimeIntervalEndDateName);
+    
+    // corporate title membership
+    writer.addQuads([
+        triple(coprTitleMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Membership')),
+        triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'member'), personNode),
+        triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'organization'), organizationNode),
+        triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), corpTitleMembershipTimeIntervalNode),
+    ]);
+
+    // corporate title membership time interval
+    writer.addQuads([
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'Interval')),
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasBeginning'), organizationMembershipTimeIntervalStartDateNode),
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), organizationMembershipTimeIntervalEndDateNode)
+    ]);
+
+    const corpTitleStartDate: string = (new Date(employee.startDate)).toISOString() + "^^xsd:dateTime";
+    writer.addQuads([
+        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasBeginning')),
+        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(corpTitleStartDate))
+    ]);
+
+    const corpTitleEndDate: string = loadDate.toISOString() + "^^xsd:dateTime";
+    writer.addQuads([
+        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasEnd')),
+        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(corpTitleEndDate))
+    ]);
+
+
 
     writer.end((error, result) => console.log(result));
 }

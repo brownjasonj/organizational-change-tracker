@@ -4,42 +4,43 @@
 @prefix org: <http://www.w3.org/ns/org#> .
 @prefix time: <http://www.w3.org/2006/time#> .
 @prefix pid: <http://example.org/pid#> .
-@prefix interval: <http://example.org/interval#> . 
+@prefix interval: <http://example.org/interval#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
-
-:staff-orgtitle a csorg:Title;
-    csorg:title-name "Staff".
-:avp-orgtitle a csorg:Title;
-    csorg:title-name "AVP".
-:vp-orgtitle a csorg:Title;
-    csorg:title-name "VP".
-:dir-orgtitle a csorg:Title;
-    csorg:title-name "DIR".
-:mdr-orgtitle a csorg:Title;
-    csorg:title-name "MDR".
+:staff-role a org:Role;
+    rdfs:label "Staff".
+:avp-role a org:Role;
+    rdfs:label "AVP".
+:vp-role a org:Role;
+    rdfs:label "VP".
+:dir-role a org:Role;
+    rdfs:label "DIR".
+:mdr-role a org:Role;
+    rdfs:label "MDR".
 
 :abc-organization a org:FormalOrganization;
     org:name "abc". 
     
-:a123456 a foaf:Person ;
+:employee123456 a foaf:Person ;
     pid:pid "employee123456";
     foaf:name "James Wales".
 
-:employee123456-staff-title a csorg:hasTitle;
+:employee123456-staff-role a org:Membership;
     org:member :employee123456;
-    csorg:title :staff-orgtitle;
-    csorg:hasTitleDuring :employee123456-staff-title-timeInterval.
+    org:role :staff-role;
+    org:hasRoleDuring :employee123456-staff-role-timeInterval.
 
-:employee123456-staff-title-timeInterval a time:Interval;
-    time:hasBeginning :employee123456-staff-title-startdate;
-    time:hasEnd :employee123456-staff-title-lastseen.
+:employee123456-staff-role-timeInterval a time:Interval;
+    time:hasBeginning :employee123456-staff-role-startdate;
+    time:hasEnd :employee123456-staff-role-lastseen.
 
-:employee123456-staff-title-startdate a time:hasBeginning;
+:employee123456-staff-role-startdate a time:hasBeginning;
     time:inXSDDateTime "2009-11-02T09:00:00Z"^^xsd:dateTime.
 
-:employee123456-staff-title-lastseen a time:hasEnd;
-    time:inXSDDateTime "2022-05-01T09:00:00Z"^^xsd:dateTime.
-
+:employee123456-staff-role-lastseen a time:hasEnd;
+    time:inXSDDateTime "2022-12-17T09:00:00Z"^^xsd:dateTime.
+    
 :employee123456-abc-membership a org:Membership;
     org:member :employee123456;
     org:organization :abc-organization;
