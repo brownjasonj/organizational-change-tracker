@@ -6,16 +6,15 @@ The objective of this project is to explore the use of knowledge graph for track
 <p>
 Trying to stick to standards as much as possible is a key tenat of the project.  As such we currently recommend using Blazegraph as it readily supports RDF Turtle and SPARQL.  Furthermore it is very easy to set up.
 
-We have experimented extensively with Neo4j which is popular, however have found that the neosemantic module isn't mature enough, particularly in the handling of namespaces.  Furthemore, there is no support for SPARQL as the company pushes their own Cypher language.  The project containts examples of Cypher, but it is more complex than usign SPARQL queries.
+We have experimented extensively with Neo4j which is popular, however have found that the neosemantic module isn't mature enough, particularly in the handling of namespaces.  Furthetmore, there is no current support for SPARQL as the company has it's own query language (Cypher).  However, this project does containt examples of Cypher, but it is more complex than using SPARQL queries (compare the <a href="https://github.com/brownjasonj/organizational-change-tracker/blob/main/rdf-examples/sample-cypher.cql">sample-cypher.cql</a> and <a href="https://github.com/brownjasonj/organizational-change-tracker/blob/main/rdf-examples/sample-sparql.rq">sample sample-sparql.rq</a> files to see what we mean).
 </p>
 
 <h1>Blazegraph Setup</h1>
-
-
+For set up got to <a href="https://github.com/blazegraph/database/wiki/Main_Page">Blazegraph Quickstart</a>.
 
 <h1>NEO4J Setup</h1>
 
-1. Install Neo4j Desktop (https://neo4j.com/docs/desktop-manual/current/installation/)
+1. Install Neo4j Desktop (<a href="https://neo4j.com/docs/desktop-manual/current/installation/">Neo4j Installation</a>)
 2. Start Neo4j
 3. Install the Neosemantics (n10s) plug-in.
     a. from the Neo4j application click on 'Open' next to you database.  this will open a browser.
