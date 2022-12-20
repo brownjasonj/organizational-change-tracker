@@ -56,10 +56,25 @@ return p,m,org,beginning,ending;
 
 
 // query with the full namespace
+// Query to find all members of an organization at a given time
 match (m:`http://www.w3.org/ns/org#Membership`),
     (m)-[:`http://www.w3.org/ns/org#member`]->(p:`http://xmlns.com/foaf/0.1#Person`),
     (m)-[:`http://www.w3.org/ns/org#organization`]->(org:`http://www.w3.org/ns/org#FormalOrganization`),
     (m)-[:`http://www.w3.org/ns/org#memberDuring`]->(interval:`http://www.w3.org/2006/time#Interval`),
+    (interval)-[]->(beginning:`http://www.w3.org/2006/time#hasBeginning`),
+    (interval)-[]->(ending:`http://www.w3.org/2006/time#hasEnd`)
+where (beginning.`http://www.w3.org/2006/time#inXSDDateTime`)<= datetime("2009-11-02T09:00:00Z") and
+        (ending.`http://www.w3.org/2006/time#inXSDDateTime`)>= datetime("2009-11-02T09:00:00Z")
+return p,m,org,beginning,ending;
+
+
+
+// query with the full namespace
+// Query to find all members by title at a given time
+match (m:`http://example.org/org#hasTitle`),
+    (m)-[:`http://www.w3.org/ns/org#member`]->(p:`http://xmlns.com/foaf/0.1#Person`),
+    (m)-[:`http://example.org/org#title`]->(org:`http://example.org/org#Title`),
+    (m)-[:`http://example.org/org#titleDuring`]->(interval:`http://www.w3.org/2006/time#Interval`),
     (interval)-[]->(beginning:`http://www.w3.org/2006/time#hasBeginning`),
     (interval)-[]->(ending:`http://www.w3.org/2006/time#hasEnd`)
 where (beginning.`http://www.w3.org/2006/time#inXSDDateTime`)<= datetime("2009-11-02T09:00:00Z") and
