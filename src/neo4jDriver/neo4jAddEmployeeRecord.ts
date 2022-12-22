@@ -33,13 +33,13 @@ async function neo4jAddEmployeeRecord(driver: Driver, employeeRecord: EmployeeRe
     const session = driver.session();
     try {
         const result = await session.run(addEmployeeRecordCypher, {
-            id: employeeRecord.id,
+            id: employeeRecord.employee_id,
             firstName: employeeRecord.firstName,
             secondName: employeeRecord.secondName,
             department: employeeRecord.department,
             jobTitle: employeeRecord.jobTitle,
-            startDate: employeeRecord.startDate.toISOString(),
-            endDate: employeeRecord.endDate.toISOString()
+            startDate: employeeRecord.departmentStartDate.toISOString(),
+            endDate: employeeRecord.departmentEndDate.toISOString()
         });
         console.log(result.records[0].get(0));
         return result.records;

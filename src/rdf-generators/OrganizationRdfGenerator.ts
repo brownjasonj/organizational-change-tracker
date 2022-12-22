@@ -1,5 +1,5 @@
 import { write } from "fs";
-import { Writer, DataFactory } from "n3";
+import { Writer, DataFactory, NamedNode } from "n3";
 import { DateTime } from "neo4j-driver-core";
 
 const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
@@ -22,7 +22,7 @@ const xsdNS: rdfNameSpace = {prefix: "xsd:", path: "http://www.w3.org/2000/01/rd
 
 
 
-function organizationaRdfGenerator(employee:EmployeeRecord, loadDate: Date): void {
+function organizationaRdfGenerator(employee:EmployeeRecord): void {
 /*
     const writer = new Writer({ prefixes: { '': 'http://example.org/id#',
                                             pid: 'http://example.org/pid#',
@@ -36,15 +36,38 @@ function organizationaRdfGenerator(employee:EmployeeRecord, loadDate: Date): voi
                                             foaf: 'http://xmlns.com/foaf/0.1#',
                                             org: 'http://www.w3.org/ns/org#',
                                             time: 'http://www.w3.org/2006/time#',
-                                            rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'} });
+                                            rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                                            rdfs: 'http://www.w3.org/2001/XMLSchema#',
+                                            xsd: 'http://www.w3.org/2000/01/rdf-schema#'} });
 
-    const personNodeName: string = idNS.prefix + employee.id;
+
+
+    const staffRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'staff-role');
+    const avpRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'avp-role');
+    const vpRoleNode: NamedNode<string> = namedNode(orgNS.prefix + 'vp-role');
+    const dirRoleNode: NamedNode<string> = namedNode(orgNS.prefix + 'dir-role');
+    const mdrRoleNode: NamedNode<string> = namedNode(orgNS.prefix + 'mdr-role');
+
+    writer.addQuads([
+        triple(staffRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
+        triple(staffRoleNode, namedNode(rdfsNS.path + 'label'), literal('Staff')),
+        triple(avpRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
+        triple(avpRoleNode, namedNode(rdfsNS.path + 'label'), literal('AVP')),
+        triple(vpRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
+        triple(vpRoleNode, namedNode(rdfsNS.path + 'label'), literal('VP')),
+        triple(dirRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
+        triple(dirRoleNode, namedNode(rdfsNS.path + 'label'), literal('DIR')),
+        triple(mdrRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
+        triple(mdrRoleNode, namedNode(rdfsNS.path + 'label'), literal('MDR')),
+    ])
+
+    const personNodeName: string = idNS.prefix + employee.employee_id;
     const personNode = namedNode(personNodeName.toLowerCase());
     writer.addQuads([
         triple(personNode, namedNode(rdfNS.path + 'type'), namedNode(foafNS.prefix + 'Person')),
-        triple(personNode, namedNode(pidNS.prefix + 'pid'),literal(employee.id)),
-        triple(personNode, namedNode(foafNS.prefix + 'giveName'), literal(employee.firstName)),
-        triple(personNode, namedNode(foafNS.prefix + 'surName'), literal(employee.secondName))
+        triple(personNode, namedNode(pidNS.prefix + 'pid'),literal(employee.employee_id)),
+        triple(personNode, namedNode(foafNS.prefix + 'firstName'), literal(employee.firstName)),
+        triple(personNode, namedNode(foafNS.prefix + 'surname'), literal(employee.secondName))
     ]);
     
     const organizationNodeName: string = idNS.prefix + employee.department + "-organization";
@@ -55,7 +78,7 @@ function organizationaRdfGenerator(employee:EmployeeRecord, loadDate: Date): voi
     ]);
 
     // set up the membership and time interval
-    const organizationMembershipNodeName: string = (idNS.prefix + employee.id + "-" + employee.department + "-membership").toLocaleLowerCase();
+    const organizationMembershipNodeName: string = (idNS.prefix + employee.employee_id + "-" + employee.department + "-membership").toLocaleLowerCase();
     const organizationMembershipNode = namedNode(organizationMembershipNodeName);
     const organizationMembershipTimeIntervalNodeName: string = (organizationMembershipNodeName + "-timeinterval").toLocaleLowerCase();
     const organizationMembershipTimeIntervalNode = namedNode(organizationMembershipTimeIntervalNodeName);
@@ -77,28 +100,21 @@ function organizationaRdfGenerator(employee:EmployeeRecord, loadDate: Date): voi
         triple(organizationMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), organizationMembershipTimeIntervalEndDateNode)
     ]);
 
-    const employeeStartDate: string = (new Date(employee.startDate)).toISOString() + "^^xsd:dateTime";
+    const employeeStartDate: string = (new Date(employee.departmentStartDate)).toISOString() + "^^xsd:dateTime";
     writer.addQuads([
         triple(organizationMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasBeginning')),
         triple(organizationMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(employeeStartDate))
     ]);
 
-    const employeeEndDate: string = loadDate.toISOString() + "^^xsd:dateTime";
+    const employeeEndDate: string = (new Date(employee.departmentEndDate)).toISOString() + "^^xsd:dateTime";
     writer.addQuads([
         triple(organizationMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasEnd')),
         triple(organizationMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(employeeEndDate))
     ]);
 
     // Corporate Title Role Membership (e.g., Staff, Asoociate VP, VP, Director, Managing Director, etc.)
-    const corpTitleName: string = idNS.prefix + employee.jobTitle + "-corporatetitle";
-    const corpTitleNode = namedNode(corpTitleName.toLowerCase());
-    writer.addQuads([
-        triple(corpTitleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
-        triple(corpTitleNode, namedNode(rdfsNS.prefix + 'roleName'),literal(employee.jobTitle))
-    ]);
 
-
-    const corpTitleMembershipName: string = (idNS.prefix + employee.id + "-" + employee.jobTitle + "-membership").toLocaleLowerCase();
+    const corpTitleMembershipName: string = (idNS.prefix + employee.employee_id + "-" + employee.jobTitle + "-membership").toLocaleLowerCase();
     const coprTitleMembershipNode = namedNode(corpTitleMembershipName);
     const corpTitleMembershipTimeIntervalName: string = (corpTitleMembershipName + "-timeinterval").toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalNode = namedNode(corpTitleMembershipTimeIntervalName);
@@ -111,24 +127,24 @@ function organizationaRdfGenerator(employee:EmployeeRecord, loadDate: Date): voi
     writer.addQuads([
         triple(coprTitleMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Membership')),
         triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'member'), personNode),
-        triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'organization'), organizationNode),
+        triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'role'), staffRoleNode),
         triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), corpTitleMembershipTimeIntervalNode),
     ]);
 
     // corporate title membership time interval
     writer.addQuads([
         triple(corpTitleMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'Interval')),
-        triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasBeginning'), organizationMembershipTimeIntervalStartDateNode),
-        triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), organizationMembershipTimeIntervalEndDateNode)
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasBeginning'), corpTitleMembershipTimeIntervalStartDateNode),
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), corpTitleMembershipTimeIntervalEndDateNode)
     ]);
 
-    const corpTitleStartDate: string = (new Date(employee.startDate)).toISOString() + "^^xsd:dateTime";
+    const corpTitleStartDate: string = (new Date(employee.departmentStartDate)).toISOString() + "^^xsd:dateTime";
     writer.addQuads([
         triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasBeginning')),
         triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(corpTitleStartDate))
     ]);
 
-    const corpTitleEndDate: string = loadDate.toISOString() + "^^xsd:dateTime";
+    const corpTitleEndDate: string = (new Date(employee.departmentEndDate)).toISOString() + "^^xsd:dateTime";
     writer.addQuads([
         triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasEnd')),
         triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(corpTitleEndDate))
