@@ -21,14 +21,14 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
                                                             new Date("2009-11-02"),
                                                             new Date("9999-12-31"));
     const employeeRecord3 : EmployeeRecord = new EmployeeRecord("03", "03", "John", "Hawkins", "ABC", "AVP",
-                                                            new Date("2013-01-01T00:00:00Z"),
-                                                            new Date("2013-12-31T00:00:00Z"),
-                                                            new Date("2009-11-02T09:00:00Z"),
+                                                            new Date("2013-01-01"),
+                                                            new Date("2013-12-31"),
+                                                            new Date("2009-11-02"),
                                                             new Date("9999-12-31"));
     const employeeRecord4 : EmployeeRecord = new EmployeeRecord("04", "04", "John", "Hawkins", "ABCD", "AVP",
-                                                            new Date("2013-01-01T00:00:00Z"),
-                                                            new Date("2013-12-31T00:00:00Z"),
-                                                            new Date("2009-11-02T09:00:00Z"),
+                                                            new Date("2013-01-01"),
+                                                            new Date("2013-12-31"),
+                                                            new Date("2009-11-02"),
                                                             new Date("9999-12-31"));
 
     /*
