@@ -16,22 +16,20 @@ paths:
   /addemployee:
     get:
       description: "Simple test end-point returning a Hello World!"
-      operationId: "addemployee"
+      operationId: "addemployeeGet"
       responses:
         '200':
           description: OK
     post:
       description: "Simple test end-point returning a Hello World!"
-      operationId: "addemployee"
-      requestBody:
+      operationId: "addemployeePost"
+      requestBody: 
+        description: Optional description in *Markdown*
+        required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/employee-data"
-          text/plain:
-            schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/employees"
       responses:
         "200":
           description: OK
@@ -42,8 +40,35 @@ paths:
 
 components:
   schemas:
-    employee-data:
+    employee:
       type: object
       properties:
-        context:
+        employee_id:
           type: string
+        system_id:
+          type: string
+        firstName:
+          type: string
+        secondName:
+          type: string
+        jobTitle:
+          type: string
+        department:
+          type: string
+        departmentStartDate:
+          type: string
+          format: date
+        departmentEndDate:
+          type: string
+          format: date
+        employmentStartDate:
+          type: string
+          format: date
+        employementEndDate:
+          type: string
+          format: date
+
+    employees:
+      type: array
+      items:
+        $ref: "#/components/schemas/employee"

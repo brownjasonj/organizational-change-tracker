@@ -1,0 +1,86 @@
+[
+    {
+        "employee_id": "01",
+        "system_id": "a01",
+        "firstName": "John",
+        "secondName": "Hawkins",
+        "jobTitle": "Staff",
+        "department": "A",
+        "departmentStartDate": "2018-01-01",
+        "departmentEndDate": "2018-12-31",
+        "employmentStartDate": "2009-01-01",
+        "employmentEndDate": "9999-12-31"
+    },
+    {
+        "employee_id": "02",
+        "system_id": "a02",
+        "firstName": "John",
+        "secondName": "Hawkins",
+        "jobTitle": "Staff",
+        "department": "AA",
+        "departmentStartDate": "2018-01-01",
+        "departmentEndDate": "2018-12-31",
+        "employmentStartDate": "2009-01-01",
+        "employmentEndDate": "9999-12-31"
+    },
+    {
+        "employee_id": "03",
+        "system_id": "a03",
+        "firstName": "John",
+        "secondName": "Hawkins",
+        "jobTitle": "Staff",
+        "department": "AAA",
+        "departmentStartDate": "2018-01-01",
+        "departmentEndDate": "2018-12-31",
+        "employmentStartDate": "2009-01-01",
+        "employmentEndDate": "9999-12-31"
+    },
+    {
+        "employee_id": "04",
+        "system_id": "a04",
+        "firstName": "John",
+        "secondName": "Hawkins",
+        "jobTitle": "Staff",
+        "department": "AAB",
+        "departmentStartDate": "2018-01-01",
+        "departmentEndDate": "2018-12-31",
+        "employmentStartDate": "2009-01-01",
+        "employmentEndDate": "9999-12-31"
+    },
+    {
+        "employee_id": "05",
+        "system_id": "a05",
+        "firstName": "John",
+        "secondName": "Hawkins",
+        "jobTitle": "Staff",
+        "department": "AB",
+        "departmentStartDate": "2018-01-01",
+        "departmentEndDate": "2018-12-31",
+        "employmentStartDate": "2009-01-01",
+        "employmentEndDate": "9999-12-31"
+    },
+    {
+        "employee_id": "06",
+        "system_id": "a06",
+        "firstName": "John",
+        "secondName": "Hawkins",
+        "jobTitle": "Staff",
+        "department": "ABA",
+        "departmentStartDate": "2018-01-01",
+        "departmentEndDate": "2018-12-31",
+        "employmentStartDate": "2009-01-01",
+        "employmentEndDate": "9999-12-31"
+    },
+    {
+        "employee_id": "07",
+        "system_id": "a07",
+        "firstName": "John",
+        "secondName": "Hawkins",
+        "jobTitle": "Staff",
+        "department": "ABAA",
+        "departmentStartDate": "2018-01-01",
+        "departmentEndDate": "2018-12-31",
+        "employmentStartDate": "2009-01-01",
+        "employmentEndDate": "9999-12-31"
+    }
+]

@@ -6,14 +6,11 @@ import { Driver } from 'neo4j-driver-core';
 import OpenAPIBackend, { Request } from 'openapi-backend';
 import * as swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import addEmployeeRecordHandler from './handlers/addEmployeeRecordHandler';
+import {addEmployeeRecordHandler, addEmployeesHandler} from './handlers/addEmployeeRecordHandler';
 import notFoundHandler from './handlers/notFoundHandler';
 import notImplementedHandler from './handlers/notImplementedHandler';
 import testHandler from './handlers/testHandler';
 import validationFailHandler from './handlers/validationFailHandler';
-
-
-
 
 const app = Express();
 app.use(Express.json());
@@ -39,7 +36,8 @@ api.register('notImplemented', notImplementedHandler);
 
 // register openapi application handlers
 api.register('test', testHandler);
-api.register('addemployee', addEmployeeRecordHandler);
+api.register('addemployeeGet', addEmployeeRecordHandler);
+api.register('addemployeePost', addEmployeesHandler);
 
 // register mock handlers
 //api.mockResponseForOperation('test');
