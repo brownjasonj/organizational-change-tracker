@@ -11,6 +11,7 @@ import notFoundHandler from './handlers/notFoundHandler';
 import notImplementedHandler from './handlers/notImplementedHandler';
 import testHandler from './handlers/testHandler';
 import validationFailHandler from './handlers/validationFailHandler';
+import { employeeCountByDepartmentCodeHandler } from './handlers/employeeCountByDepartmentCodeHandler';
 
 const app = Express();
 app.use(Express.json());
@@ -38,6 +39,7 @@ api.register('notImplemented', notImplementedHandler);
 api.register('test', testHandler);
 api.register('addemployeeGet', addEmployeeRecordHandler);
 api.register('addemployeePost', addEmployeesHandler);
+api.register('employee-count-by-department-code', employeeCountByDepartmentCodeHandler);
 
 // register mock handlers
 //api.mockResponseForOperation('test');

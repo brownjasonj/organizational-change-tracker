@@ -35,7 +35,30 @@ paths:
           description: OK
         "400":
           description: "Invalid status value"
-
+  /employee-count-by-department-code:
+    get:
+      description: "Simple test end-point returning a Hello World!"
+      operationId: "employee-count-by-department-code"
+      parameters:
+        - in: query
+          name: department-code
+          schema:
+            type: string
+          required: true
+          description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
+        - in: query
+          name: as-of
+          schema:
+            type: string
+          required: true
+          description: The date on which to count employees in the organization
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/employee"
 
 
 components:
