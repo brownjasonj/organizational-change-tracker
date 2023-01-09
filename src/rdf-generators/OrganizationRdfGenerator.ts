@@ -70,12 +70,16 @@ function organizationaRdfGenerator(employee:EmployeeRecord): void {
         triple(personNode, namedNode(foafNS.prefix + 'surname'), literal(employee.secondName))
     ]);
     
+    /*
     const organizationNodeName: string = idNS.prefix + employee.department + "-organization";
     const organizationNode = namedNode(organizationNodeName.toLowerCase());
     writer.addQuads([
         triple(organizationNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'FormalOrganization')),
         triple(organizationNode, namedNode(orgNS.prefix + 'name'),literal(employee.department))
     ]);
+    */
+   
+    const organizationNode = createSubOrganizations(employee.department, writer);
 
     // set up the membership and time interval
     const organizationMembershipNodeName: string = (idNS.prefix + employee.employee_id + "-" + employee.department + "-membership").toLocaleLowerCase();
@@ -150,9 +154,42 @@ function organizationaRdfGenerator(employee:EmployeeRecord): void {
         triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(corpTitleEndDate))
     ]);
 
-
-
     writer.end((error, result) => console.log(result));
+}
+
+function createSubOrganizations(organization: string, writer: Writer): NamedNode<string> {
+    const departmentHierarchy: string[] = getDepartmentCodeHierarchy(organization).reverse();
+    var departmentNodeNames: NamedNode<string>[] = [];
+    var lastDepartmentNode: NamedNode<string> | null = null;
+
+    departmentHierarchy.forEach((department: string) => {
+        const organizationNodeName: string = idNS.prefix + department + "-organization";
+        const organizationNode = namedNode(organizationNodeName.toLowerCase());
+        writer.addQuads([
+            triple(organizationNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'FormalOrganization')),
+            triple(organizationNode, namedNode(orgNS.prefix + 'name'),literal(department))
+        ]);
+        if (lastDepartmentNode) {
+            writer.addQuads([
+                triple(organizationNode, namedNode(orgNS.prefix + 'subOrganizationOf'), lastDepartmentNode)
+            ]);
+        }
+        lastDepartmentNode = organizationNode;
+    });
+
+    return lastDepartmentNode!;
+}
+
+/*
+*/
+function getDepartmentCodeHierarchy(str: string): string[] {
+    const length: number = str.length;
+    const result: string[] = [];
+
+    for (let i = length; i != 0; i--) {
+        result.push(str.slice(0, i));
+    }
+    return result;
 }
 
 export default organizationaRdfGenerator;

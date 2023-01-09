@@ -20,3 +20,30 @@ paths:
       responses:
         '200':
           description: OK
+    post:
+      description: "Simple test end-point returning a Hello World!"
+      operationId: "addemployee"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/employee-data"
+          text/plain:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: "Invalid status value"
+
+
+
+components:
+  schemas:
+    employee-data:
+      type: object
+      properties:
+        context:
+          type: string
