@@ -1,6 +1,6 @@
 [
  {
-   "employee_id": 1,
+   "employee_id": "01",
    "system_id": "a01",
    "firstName": "John",
    "secondName": "Hawkins",
@@ -12,7 +12,7 @@
    "employmentEndDate": "9999-12-31"
  },
  {
-   "employee_id": 2,
+   "employee_id": "02",
    "system_id": "a02",
    "firstName": "John",
    "secondName": "Hawkins",
@@ -24,7 +24,7 @@
    "employmentEndDate": "9999-12-31"
  },
  {
-   "employee_id": 3,
+   "employee_id": "03",
    "system_id": "a03",
    "firstName": "John",
    "secondName": "Hawkins",
@@ -36,7 +36,7 @@
    "employmentEndDate": "9999-12-31"
  },
  {
-   "employee_id": 4,
+   "employee_id": "04",
    "system_id": "a04",
    "firstName": "John",
    "secondName": "Hawkins",
@@ -48,7 +48,7 @@
    "employmentEndDate": "9999-12-31"
  },
  {
-   "employee_id": 5,
+   "employee_id": "05",
    "system_id": "a05",
    "firstName": "John",
    "secondName": "Hawkins",
@@ -60,7 +60,7 @@
    "employmentEndDate": "9999-12-31"
  },
  {
-   "employee_id": 6,
+   "employee_id": "06",
    "system_id": "a06",
    "firstName": "John",
    "secondName": "Hawkins",
@@ -72,7 +72,7 @@
    "employmentEndDate": "9999-12-31"
  },
  {
-   "employee_id": 7,
+   "employee_id": "07",
    "system_id": "a07",
    "firstName": "John",
    "secondName": "Hawkins",

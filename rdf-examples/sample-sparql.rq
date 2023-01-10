@@ -92,3 +92,38 @@ SELECT ?member ?parentorg ?org WHERE {
   	filter(?date1 <= "2012-12-17T08:00:00Z").   # check that the time the person was a member satisfies the time criteria
     filter(?date2 >= "2012-12-17T08:00:00Z").
 }
+
+
+# list of departments in an organization
+prefix org: <http://www.w3.org/ns/org#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+select ?org where {
+  ?org rdf:type org:FormalOrganization.
+  filter not exists {
+    ?org org:subOrganizationOf{2,} ?parentorg
+  }
+}
+
+# count the number of people in a specific organization at a given time
+prefix : <http://example.org/id#>
+prefix csorg: <http://example.org/org#>
+prefix foaf: <http://xmlns.com/foaf/0.1#>
+prefix org: <http://www.w3.org/ns/org#>
+prefix time: <http://www.w3.org/2006/time#>
+prefix pid: <http://example.org/pid#>
+prefix interval: <http://example.org/interval#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
+
+select distinct ?org where {
+  	?org rdf:type org:FormalOrganization.
+    ?member org:organization ?org.              # find all members of the organization
+    ?member org:memberDuring ?interval.         # determine when the member was a member of the organization
+    ?interval time:hasBeginning ?start.
+    ?interval time:hasEnd ?end.
+  	?start time:inXSDDateTime ?date1.
+  	?end time:inXSDDateTime ?date2.
+  	filter(?date1 <= "2012-12-17T08:00:00Z").   # check that the time the person was a member satisfies the time criteria
+    filter(?date2 >= "2012-12-17T08:00:00Z").
+}

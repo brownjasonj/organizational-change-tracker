@@ -17,8 +17,11 @@ const getSparqlQuery = (departmentCode: string, asOf: string) => {
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
     
-    SELECT (count(?member) as ?count) WHERE {
+    SELECT  ?name
+            (count(?member) as ?count)
+    WHERE {
         ?parentorg org:name "${departmentCode}".                   #find parent organization with given name for which you want to count employees
+        ?parentorg org:name ?name.
         ?member org:organization ?org.              # find all members of the organization
         ?org org:subOrganizationOf* ?parentorg.     # where the organization is a suborganization of the parent organization
         ?member org:memberDuring ?interval.         # determine when the member was a member of the organization
@@ -26,9 +29,12 @@ const getSparqlQuery = (departmentCode: string, asOf: string) => {
         ?interval time:hasEnd ?end.
         ?start time:inXSDDateTime ?date1.
         ?end time:inXSDDateTime ?date2.
-        filter(?date1 <= "${asOf}").   # check that the time the person was a member satisfies the time criteria
-        filter(?date2 >= "${asOf}").
-    }`;
+        filter (
+            ?date1 <= "${asOf}"
+            && ?date2 >= "${asOf}").
+    }
+    GROUP BY ?name
+    `;
 }
 
 const employeeCountByDepartmentCodeHandler = async (context: Context, request: Request, response: Response) => {
@@ -38,9 +44,9 @@ const employeeCountByDepartmentCodeHandler = async (context: Context, request: R
             console.log(queryParams['department-code']);
             console.log(queryParams['as-of']);
             console.log(getSparqlQuery(queryParams['department-code'] as string, queryParams['as-of'] as string));
-            blazegraph.sparqlQuery(getSparqlQuery(queryParams['department-code'] as string, queryParams['as-of'] as string), SparqlQueryResultType.CSV)
+            blazegraph.sparqlQuery(getSparqlQuery(queryParams['department-code'] as string, queryParams['as-of'] as string), SparqlQueryResultType.JSON)
             .then((data) => {
-                console.log(data);
+                console.log(JSON.stringify(data));
             });
         }
     }

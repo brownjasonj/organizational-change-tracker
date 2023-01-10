@@ -55,8 +55,8 @@ const addEmployeesHandler = async (context: Context, request: Request, response:
                  console.log(result);
                 });
         });
-        response.json({ message: "done" });
     });
+    response.json({ message: "done" });
 };
 
 export { addEmployeeRecordHandler, addEmployeesHandler };

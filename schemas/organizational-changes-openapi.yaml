@@ -59,6 +59,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/employee"
+  /department-codes:
+    get:
+      description: get a list of department codes as of a given date
+      operationId: "department-codes"
+      parameters:
+        - in: query
+          name: as-of
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
 
 
 components:

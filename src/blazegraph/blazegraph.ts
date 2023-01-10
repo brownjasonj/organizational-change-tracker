@@ -55,7 +55,7 @@ class BlazeGraph {
     }
 
     async turtleUpdate(turtle: string): Promise<any> {
-        const request: any = {
+        var request: any = {
             method: 'post',
             url: `${this.url}`,
             headers: {
