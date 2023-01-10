@@ -2,12 +2,16 @@ import { Response } from "express";
 import neo4j, { Driver } from "neo4j-driver";
 import { Context, Handler, Request } from "openapi-backend";
 import { ReadableStreamBYOBRequest } from "stream/web";
+import { BlazeGraph, BlazeGraphOptions } from "../blazegraph/blazegraph";
 import EmployeeRecord from "../models/EmployeeRecord";
 import neo4jAddEmployeeRecord from "../neo4jDriver/neo4jAddEmployeeRecord";
 import organizationaRdfGenerator from "../rdf-generators/OrganizationRdfGenerator";
 
-const uri = 'neo4j://localhost:7687';
-const driver: Driver = neo4j.driver(uri, neo4j.auth.basic('neo4j', 'admin'));
+// const uri = 'neo4j://localhost:7687';
+// const driver: Driver = neo4j.driver(uri, neo4j.auth.basic('neo4j', 'admin'));
+
+const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
+const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
 
 const addEmployeeRecordHandler = async (context: Context, request: Request, response: Response) => {
 
@@ -32,10 +36,10 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
                                                             new Date("2009-11-02"),
                                                             new Date("9999-12-31"));
 
-    organizationaRdfGenerator(employeeRecord1);
-    organizationaRdfGenerator(employeeRecord2);
-    organizationaRdfGenerator(employeeRecord3);
-    organizationaRdfGenerator(employeeRecord4);
+    organizationaRdfGenerator(employeeRecord1, (error, result) => console.log(result));
+    organizationaRdfGenerator(employeeRecord2, (error, result) => console.log(result));
+    organizationaRdfGenerator(employeeRecord3, (error, result) => console.log(result));
+    organizationaRdfGenerator(employeeRecord4, (error, result) => console.log(result));
 
     response.json({ message: "done" });
 
@@ -44,9 +48,15 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
 const addEmployeesHandler = async (context: Context, request: Request, response: Response) => {
     request.body.forEach((employeeRecord: EmployeeRecord) => {
         console.log(employeeRecord);
-        organizationaRdfGenerator(employeeRecord);
+        organizationaRdfGenerator(employeeRecord, (error, result) => {
+             console.log(result);
+             blazegraph.turtleUpdate(result)
+             .then((result) => {
+                 console.log(result);
+                });
+        });
+        response.json({ message: "done" });
     });
-    response.json({ message: "done" });
 };
 
 export { addEmployeeRecordHandler, addEmployeesHandler };

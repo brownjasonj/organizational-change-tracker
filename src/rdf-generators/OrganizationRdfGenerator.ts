@@ -22,7 +22,7 @@ const xsdNS: rdfNameSpace = {prefix: "xsd:", path: "http://www.w3.org/2000/01/rd
 
 
 
-function organizationaRdfGenerator(employee:EmployeeRecord): void {
+function organizationaRdfGenerator(employee:EmployeeRecord, callback: (err: any, result: string) => void): void {
 /*
     const writer = new Writer({ prefixes: { '': 'http://example.org/id#',
                                             pid: 'http://example.org/pid#',
@@ -78,7 +78,7 @@ function organizationaRdfGenerator(employee:EmployeeRecord): void {
         triple(organizationNode, namedNode(orgNS.prefix + 'name'),literal(employee.department))
     ]);
     */
-   
+
     const organizationNode = createSubOrganizations(employee.department, writer);
 
     // set up the membership and time interval
@@ -154,7 +154,8 @@ function organizationaRdfGenerator(employee:EmployeeRecord): void {
         triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(corpTitleEndDate))
     ]);
 
-    writer.end((error, result) => console.log(result));
+    // writer.end((error, result) => console.log(result));
+    writer.end(callback);
 }
 
 function createSubOrganizations(organization: string, writer: Writer): NamedNode<string> {

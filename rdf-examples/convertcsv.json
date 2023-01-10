@@ -1,0 +1,86 @@
+[
+ {
+   "employee_id": 1,
+   "system_id": "a01",
+   "firstName": "John",
+   "secondName": "Hawkins",
+   "department": "A",
+   "jobTitle": "Staff",
+   "departmentStartDate": "2012-01-01",
+   "departmentEndDate": "2012-12-31",
+   "employmentStartDate": "2009-11-02",
+   "employmentEndDate": "9999-12-31"
+ },
+ {
+   "employee_id": 2,
+   "system_id": "a02",
+   "firstName": "John",
+   "secondName": "Hawkins",
+   "department": "AA",
+   "jobTitle": "Staff",
+   "departmentStartDate": "2012-01-01",
+   "departmentEndDate": "2012-12-31",
+   "employmentStartDate": "2009-11-02",
+   "employmentEndDate": "9999-12-31"
+ },
+ {
+   "employee_id": 3,
+   "system_id": "a03",
+   "firstName": "John",
+   "secondName": "Hawkins",
+   "department": "AAA",
+   "jobTitle": "Staff",
+   "departmentStartDate": "2012-01-01",
+   "departmentEndDate": "2012-12-31",
+   "employmentStartDate": "2009-11-02",
+   "employmentEndDate": "9999-12-31"
+ },
+ {
+   "employee_id": 4,
+   "system_id": "a04",
+   "firstName": "John",
+   "secondName": "Hawkins",
+   "department": "AAB",
+   "jobTitle": "Staff",
+   "departmentStartDate": "2012-01-01",
+   "departmentEndDate": "2012-12-31",
+   "employmentStartDate": "2009-11-02",
+   "employmentEndDate": "9999-12-31"
+ },
+ {
+   "employee_id": 5,
+   "system_id": "a05",
+   "firstName": "John",
+   "secondName": "Hawkins",
+   "department": "AB",
+   "jobTitle": "Staff",
+   "departmentStartDate": "2012-01-01",
+   "departmentEndDate": "2012-12-31",
+   "employmentStartDate": "2009-11-02",
+   "employmentEndDate": "9999-12-31"
+ },
+ {
+   "employee_id": 6,
+   "system_id": "a06",
+   "firstName": "John",
+   "secondName": "Hawkins",
+   "department": "ABA",
+   "jobTitle": "Staff",
+   "departmentStartDate": "2012-01-01",
+   "departmentEndDate": "2012-12-31",
+   "employmentStartDate": "2009-11-02",
+   "employmentEndDate": "9999-12-31"
+ },
+ {
+   "employee_id": 7,
+   "system_id": "a07",
+   "firstName": "John",
+   "secondName": "Hawkins",
+   "department": "ABAA",
+   "jobTitle": "Staff",
+   "departmentStartDate": "2012-01-01",
+   "departmentEndDate": "2012-12-31",
+   "employmentStartDate": "2009-11-02",
+   "employmentEndDate": "9999-12-31"
+ }
+]
