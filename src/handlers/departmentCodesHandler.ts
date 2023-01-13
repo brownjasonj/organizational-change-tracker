@@ -32,15 +32,14 @@ const departmentCodesHandler = async (context: Context, request: Request, respon
     if (request.query) {
         if (typeof(request.query === 'object')) {
             const queryParams: {[key: string]: string | string[]} = Object.assign({}, (Object)(request.query));
-            console.log(queryParams['as-of']);
-            console.log(getSparqlQuery(queryParams['as-of'] as string));
-            blazegraph.sparqlQuery(getSparqlQuery(queryParams['as-of'] as string), SparqlQueryResultType.CSV)
+            const sparqlQuery = getSparqlQuery(queryParams['as-of'] as string);
+            console.log(sparqlQuery);
+            blazegraph.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((data) => {
-                console.log(data);
+                response.json(data)
             });
         }
     }
-    response.json({ message: "done" });
 }
 
 export { departmentCodesHandler} 

@@ -41,16 +41,14 @@ const employeeCountByDepartmentCodeHandler = async (context: Context, request: R
     if (request.query) {
         if (typeof(request.query === 'object')) {
             const queryParams: {[key: string]: string | string[]} = Object.assign({}, (Object)(request.query));
-            console.log(queryParams['department-code']);
-            console.log(queryParams['as-of']);
-            console.log(getSparqlQuery(queryParams['department-code'] as string, queryParams['as-of'] as string));
-            blazegraph.sparqlQuery(getSparqlQuery(queryParams['department-code'] as string, queryParams['as-of'] as string), SparqlQueryResultType.JSON)
+            const sparqlQuery = getSparqlQuery(queryParams['department-code'] as string, queryParams['as-of'] as string);
+            console.log(sparqlQuery);
+            blazegraph.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((data) => {
-                console.log(JSON.stringify(data));
+                response.json(data);
             });
         }
     }
-    response.json({ message: "done" });
 }
 
 export { employeeCountByDepartmentCodeHandler };

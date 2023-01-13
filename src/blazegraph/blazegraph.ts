@@ -40,7 +40,6 @@ class BlazeGraph {
 
     async sparqlQuery(query: string, resultType: SparqlQueryResultType): Promise<any> {
         const url = `${this.url}?query=${encodeURIComponent(query)}`;
-
         return axios({
             method: 'get',
             url: url,
@@ -55,23 +54,19 @@ class BlazeGraph {
     }
 
     async turtleUpdate(turtle: string): Promise<any> {
-        var request: any = {
+        return axios({
             method: 'post',
             url: `${this.url}`,
             headers: {
                 'Content-Type': 'application/x-turtle',
-                'Accept': 'application/json'
+                'Accept': 'application/sparql-results+json'
             },
             data: turtle
-        };
-        console.log(`Request: ${JSON.stringify(request)}`);
-        return axios(request)
-            .then((response) => {
-                return new Promise((resolve, reject) => {resolve(response.data)});
-            })
-            .catch((error) => {
-                return new Promise((resolve, reject) => {reject(error)});
-            });
+        }).then((response) => {
+            return new Promise((resolve, reject) => {resolve(response.data)});
+        }).catch((error) => {
+            return new Promise((resolve, reject) => {reject(error)});
+        });
     }
 }
 

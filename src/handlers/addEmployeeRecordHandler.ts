@@ -2,6 +2,7 @@ import { Response } from "express";
 import neo4j, { Driver } from "neo4j-driver";
 import { Context, Handler, Request } from "openapi-backend";
 import { ReadableStreamBYOBRequest } from "stream/web";
+import { xml2json } from "xml-js";
 import { BlazeGraph, BlazeGraphOptions } from "../blazegraph/blazegraph";
 import EmployeeRecord from "../models/EmployeeRecord";
 import neo4jAddEmployeeRecord from "../neo4jDriver/neo4jAddEmployeeRecord";
@@ -45,14 +46,12 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
 
     };
 
-const addEmployeesHandler = async (context: Context, request: Request, response: Response) => {
+const addEmployeesHandler =  async (context: Context, request: Request, response: Response) => {
     request.body.forEach((employeeRecord: EmployeeRecord) => {
-        console.log(employeeRecord);
         organizationaRdfGenerator(employeeRecord, (error, result) => {
-             console.log(result);
              blazegraph.turtleUpdate(result)
-             .then((result) => {
-                 console.log(result);
+             .then((res) => {
+                console.log(xml2json(res))
                 });
         });
     });
