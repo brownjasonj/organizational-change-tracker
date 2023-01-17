@@ -47,7 +47,8 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
     };
 
 const addEmployeesHandler =  async (context: Context, request: Request, response: Response) => {
-    request.body.forEach((employeeRecord: EmployeeRecord) => {
+    var employeeRecords: EmployeeRecord[] = [];
+    await request.body.forEach((employeeRecord: EmployeeRecord) => {
         employeeRecord.departmentStartDate = new Date(employeeRecord.departmentStartDate);
         employeeRecord.departmentStartDate.setHours(0);
         employeeRecord.departmentStartDate.setMinutes(0);
@@ -70,11 +71,12 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
         organizationaRdfGenerator(employeeRecord, (error, result) => {
              blazegraph.turtleUpdate(result)
              .then((res) => {
+                employeeRecords.push(employeeRecord);
                 console.log(xml2json(res))
                 });
         });
     });
-    response.json({ message: "done" });
+    response.json(employeeRecords);
 };
 
 export { addEmployeeRecordHandler, addEmployeesHandler };

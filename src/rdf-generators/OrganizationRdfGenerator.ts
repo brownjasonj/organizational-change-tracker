@@ -21,6 +21,15 @@ const rdfsNS: rdfNameSpace = {prefix: "rdfs:", path: "http://www.w3.org/2001/XML
 const xsdNS: rdfNameSpace = {prefix: "xsd:", path: "http://www.w3.org/2000/01/rdf-schema#"};
 
 
+enum CorporateRole {
+    None = "",
+    Staff = "Staff",
+    AVP = "Assistant Vice President",
+    VP = "Vice President",
+    DIR = "Director",
+    MDR = "Managing Director"
+}
+
 
 function organizationaRdfGenerator(employee:EmployeeRecord, callback: (err: any, result: string) => void): void {
 /*
@@ -44,9 +53,9 @@ function organizationaRdfGenerator(employee:EmployeeRecord, callback: (err: any,
 
     const staffRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'staff-role');
     const avpRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'avp-role');
-    const vpRoleNode: NamedNode<string> = namedNode(orgNS.prefix + 'vp-role');
-    const dirRoleNode: NamedNode<string> = namedNode(orgNS.prefix + 'dir-role');
-    const mdrRoleNode: NamedNode<string> = namedNode(orgNS.prefix + 'mdr-role');
+    const vpRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'vp-role');
+    const dirRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'dir-role');
+    const mdrRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'mdr-role');
 
     writer.addQuads([
         triple(staffRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
@@ -118,7 +127,36 @@ function organizationaRdfGenerator(employee:EmployeeRecord, callback: (err: any,
 
     // Corporate Title Role Membership (e.g., Staff, Asoociate VP, VP, Director, Managing Director, etc.)
 
-    const corpTitleMembershipName: string = (idNS.prefix + employee.employee_id + "-" + employee.jobTitle + "-membership").toLocaleLowerCase();
+    var corporateTitleNode: NamedNode;
+    var jobTitleName: string;
+    switch (employee.jobTitle) {
+        case CorporateRole.Staff:
+            corporateTitleNode = staffRoleNode;
+            jobTitleName = "Staff";
+            break;
+        case CorporateRole.AVP:
+            corporateTitleNode = avpRoleNode;
+            jobTitleName = "AVP";
+            break;
+        case CorporateRole.VP:
+            corporateTitleNode = vpRoleNode;
+            jobTitleName = "VP";
+            break;
+        case CorporateRole.DIR:
+            corporateTitleNode = dirRoleNode;
+            jobTitleName = "DIR";
+            break;
+        case CorporateRole.MDR:
+            corporateTitleNode = mdrRoleNode;
+            jobTitleName = "MDR";
+            break;
+        default:
+            corporateTitleNode = staffRoleNode;
+            jobTitleName = "Staff";
+            break;
+    }
+
+    const corpTitleMembershipName: string = (idNS.prefix + employee.employee_id + "-" + jobTitleName + "-membership").toLocaleLowerCase();
     const coprTitleMembershipNode = namedNode(corpTitleMembershipName);
     const corpTitleMembershipTimeIntervalName: string = (corpTitleMembershipName + "-timeinterval").toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalNode = namedNode(corpTitleMembershipTimeIntervalName);
@@ -131,7 +169,7 @@ function organizationaRdfGenerator(employee:EmployeeRecord, callback: (err: any,
     writer.addQuads([
         triple(coprTitleMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Membership')),
         triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'member'), personNode),
-        triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'role'), staffRoleNode),
+        triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'role'), corporateTitleNode),
         triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), corpTitleMembershipTimeIntervalNode),
     ]);
 

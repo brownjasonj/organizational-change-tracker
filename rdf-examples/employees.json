@@ -1,6 +1,6 @@
 [
     {
-      "employee_id": 1,
+      "employee_id": "e01",
       "system_id": "a01",
       "firstName": "Person",
       "secondName": "p01",
@@ -12,7 +12,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 2,
+      "employee_id": "e02",
       "system_id": "a02",
       "firstName": "Person",
       "secondName": "p02",
@@ -24,7 +24,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 3,
+      "employee_id": "e03",
       "system_id": "a03",
       "firstName": "Person",
       "secondName": "p03",
@@ -36,7 +36,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 4,
+      "employee_id": "e04",
       "system_id": "a04",
       "firstName": "Person",
       "secondName": "p04",
@@ -48,7 +48,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 8,
+      "employee_id": "e08",
       "system_id": "a08",
       "firstName": "Person",
       "secondName": "p08",
@@ -60,7 +60,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 9,
+      "employee_id": "e09",
       "system_id": "a09",
       "firstName": "Person",
       "secondName": "p09",
@@ -72,7 +72,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 10,
+      "employee_id": "e10",
       "system_id": "a10",
       "firstName": "Person",
       "secondName": "p10",
@@ -84,7 +84,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 1,
+      "employee_id": "e01",
       "system_id": "a01",
       "firstName": "Person",
       "secondName": "p01",
@@ -96,7 +96,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 2,
+      "employee_id": "e02",
       "system_id": "a02",
       "firstName": "Person",
       "secondName": "p02",
@@ -108,7 +108,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 3,
+      "employee_id": "e03",
       "system_id": "a03",
       "firstName": "Person",
       "secondName": "p03",
@@ -120,7 +120,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 4,
+      "employee_id": "e04",
       "system_id": "a04",
       "firstName": "Person",
       "secondName": "p04",
@@ -132,7 +132,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 8,
+      "employee_id": "e08",
       "system_id": "a08",
       "firstName": "Person",
       "secondName": "p08",
@@ -144,7 +144,7 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 9,
+      "employee_id": "e09",
       "system_id": "a09",
       "firstName": "Person",
       "secondName": "p09",
@@ -156,12 +156,12 @@
       "employmentEndDate": "9999-12-31"
     },
     {
-      "employee_id": 10,
+      "employee_id": "e10",
       "system_id": "a10",
       "firstName": "Person",
       "secondName": "p10",
       "department": "AA",
-      "jobTitle": "Staff",
+      "jobTitle": "Vice President",
       "departmentStartDate": "2012-01-02",
       "departmentEndDate": "2012-01-02",
       "employmentStartDate": "2009-11-02",
