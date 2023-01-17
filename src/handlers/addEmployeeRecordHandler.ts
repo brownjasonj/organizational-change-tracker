@@ -48,6 +48,25 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
 
 const addEmployeesHandler =  async (context: Context, request: Request, response: Response) => {
     request.body.forEach((employeeRecord: EmployeeRecord) => {
+        employeeRecord.departmentStartDate = new Date(employeeRecord.departmentStartDate);
+        employeeRecord.departmentStartDate.setHours(0);
+        employeeRecord.departmentStartDate.setMinutes(0);
+        employeeRecord.departmentStartDate.setSeconds(0);
+        employeeRecord.departmentEndDate = new Date(employeeRecord.departmentEndDate);
+        employeeRecord.departmentEndDate.setHours(23);
+        employeeRecord.departmentEndDate.setMinutes(59);
+        employeeRecord.departmentEndDate.setSeconds(59);
+
+        employeeRecord.employmentStartDate = new Date(employeeRecord.employmentStartDate);
+        employeeRecord.employmentStartDate.setHours(0);
+        employeeRecord.employmentStartDate.setMinutes(0);
+        employeeRecord.employmentStartDate.setSeconds(0);
+
+        employeeRecord.employmentEndDate = new Date(employeeRecord.employmentEndDate);
+        employeeRecord.employmentEndDate.setHours(23);
+        employeeRecord.employmentEndDate.setMinutes(59);
+        employeeRecord.employmentEndDate.setSeconds(59);
+
         organizationaRdfGenerator(employeeRecord, (error, result) => {
              blazegraph.turtleUpdate(result)
              .then((res) => {

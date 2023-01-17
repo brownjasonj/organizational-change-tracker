@@ -59,6 +59,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/employee"
+  /employee-department-history:
+    get:
+      description: get the history evolution of a department showing change is size over time and movement of people in and out
+      operationId: "departmentHistory"
+      parameters:
+        - in: query
+          name: departmentCode
+          schema:
+            type: string
+          required: true
+          description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
+        - in: query
+          name: startDate
+          schema:
+            type: string
+          required: true
+          description: The starting point for the history
+        - in: query
+          name: endDate
+          schema:
+            type: string
+          required: false
+          description: The ending point for the history, if not provided it is assume to be the date of the call ("today")
+        - in: query
+          name: dateStep
+          schema:
+            type: string
+          required: false
+          description: this is the date granularity step between sample points of the history
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/departmentHistory"
   /department-codes:
     get:
       description: get a list of department codes as of a given date
@@ -78,7 +114,22 @@ paths:
                 type: array
                 items:
                   type: string
-
+  /upload:
+    post:
+      description: upload a binary file
+      operationId: "upload"
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            # any media type is accepted, functionally equivalent to `*/*`
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: OK
 
 components:
   schemas:
@@ -114,3 +165,52 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/employee"
+
+    dateStep:
+      type: string
+      enum:
+            - day
+            - week
+            - month
+            - year
+
+    departmentHistory:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        dateStep:
+          $ref: "#/components/schemas/dateStep"
+        history:
+          type: array
+          items:
+            $ref: "#/components/schemas/historicPoint"
+
+    historicPoint:
+      type: object
+      properties:
+        department:
+          type: string
+          example: "ABCD1"
+        date:
+          type: string
+          format: date
+        size:
+          type: integer
+          example: 23
+        joiners:
+          type: array
+          items:
+            $ref: "#/components/schemas/employee"
+        leavers:
+          type: array
+          items:
+            $ref: "#/components/schemas/employee"
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/employee"

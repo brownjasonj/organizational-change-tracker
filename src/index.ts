@@ -13,6 +13,8 @@ import testHandler from './handlers/testHandler';
 import validationFailHandler from './handlers/validationFailHandler';
 import { employeeCountByDepartmentCodeHandler } from './handlers/employeeCountByDepartmentCodeHandler';
 import { departmentCodesHandler } from './handlers/departmentCodesHandler';
+import { departmentHistoryHandler } from './handlers/departmentHistoryHandler';
+import { uploadHandler } from './handlers/uploadHandler';
 
 const app = Express();
 app.use(Express.json());
@@ -42,6 +44,8 @@ api.register('addemployeeGet', addEmployeeRecordHandler);
 api.register('addemployeePost', addEmployeesHandler);
 api.register('employee-count-by-department-code', employeeCountByDepartmentCodeHandler);
 api.register('department-codes', departmentCodesHandler);
+api.register('departmentHistory', departmentHistoryHandler);
+api.register('upload', uploadHandler);
 
 // register mock handlers
 //api.mockResponseForOperation('test');
@@ -59,3 +63,4 @@ app.use((req, res) => api.handleRequest(req as Request, req, res));
 
 // start server
 app.listen(9000, () => console.info('api listening at http://localhost:9000'));
+

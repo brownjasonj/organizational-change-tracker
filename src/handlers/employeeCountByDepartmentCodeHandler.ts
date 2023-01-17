@@ -18,7 +18,7 @@ const getSparqlQuery = (departmentCode: string, asOf: string) => {
     prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
     
     SELECT  ?name
-            (count(?member) as ?count)
+            (count(distinct ?member) as ?count)
     WHERE {
         ?parentorg org:name "${departmentCode}".                   #find parent organization with given name for which you want to count employees
         ?parentorg org:name ?name.
@@ -33,7 +33,7 @@ const getSparqlQuery = (departmentCode: string, asOf: string) => {
             ?date1 <= "${asOf}"
             && ?date2 >= "${asOf}").
     }
-    GROUP BY ?name
+    GROUP BY ?name ?count
     `;
 }
 
