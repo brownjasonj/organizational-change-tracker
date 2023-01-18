@@ -61,6 +61,28 @@ paths:
                 $ref: "#/components/schemas/employee"
   /employee-department-history:
     get:
+      description: get the history of which department an employee has gone through.
+      operationId: "employeeDepartmentHistory"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/employeeDepartmentEpocs"
+  /employee-role-history:
+    get:
+      description: get the history of which role an employee has gone through.
+      operationId: "employeeRoleHistory"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/employeeRoleEpocs"
+  /department-history:
+    get:
       description: get the history evolution of a department showing change is size over time and movement of people in and out
       operationId: "departmentHistory"
       parameters:
@@ -174,6 +196,54 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/employee"
+
+    employeeDepartmentEpoc:
+      type: object
+      properties:
+        employeeId:
+          type: string
+        department:
+          type: string
+          example: "ABCD1"
+        startdate:
+          type: string
+          format: date
+        enddate:
+          type: string
+          format: date
+
+    employeeDepartmentEpocs:
+      type: object
+      properties:
+        employeeId:
+          type: string
+        epoc:
+          type: array
+          items:
+            $ref: "#/components/schemas/employeeDepartmentEpoc"
+
+    employeesDepartmentEpocs:
+      type: array
+      items:
+        $ref: "#/components/schemas/employeeDepartmentEpocs"
+    
+    employeeRoleEpoc:
+      type: object
+      properties:
+        role:
+          type: string
+          example: "Vice President"
+        startdate:
+          type: string
+          format: date
+        enddate:
+          type: string
+          format: date
+
+    employeeRoleEpocs:
+      type: array
+      items:
+        $ref: "#/components/schemas/employeeRoleEpoc"
 
     dateStep:
       type: string

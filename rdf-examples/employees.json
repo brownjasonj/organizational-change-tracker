@@ -166,5 +166,29 @@
       "departmentEndDate": "02.01.2012",
       "employmentStartDate": "02.11.2009",
       "employmentEndDate": "31.12.9999"
+    },
+    {
+      "employee_id": "e10",
+      "system_id": "a10",
+      "firstName": "Person",
+      "secondName": "p10",
+      "department": "AA",
+      "jobTitle": "Vice President",
+      "departmentStartDate": "02.01.2012",
+      "departmentEndDate": "12.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
+    },
+    {
+      "employee_id": "e10",
+      "system_id": "a10",
+      "firstName": "Person",
+      "secondName": "p10",
+      "department": "AA",
+      "jobTitle": "Vice President",
+      "departmentStartDate": "10.01.2012",
+      "departmentEndDate": "30.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     }
    ]

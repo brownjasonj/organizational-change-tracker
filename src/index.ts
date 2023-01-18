@@ -1,8 +1,6 @@
 import cors from 'cors';
 import Express from 'express';
 import morgan from 'morgan';
-import neo4j from 'neo4j-driver';
-import { Driver } from 'neo4j-driver-core';
 import OpenAPIBackend, { Request } from 'openapi-backend';
 import * as swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
@@ -15,7 +13,8 @@ import { employeeCountByDepartmentCodeHandler } from './handlers/employeeCountBy
 import { departmentCodesHandler } from './handlers/departmentCodesHandler';
 import { departmentHistoryHandler } from './handlers/departmentHistoryHandler';
 import { uploadHandler } from './handlers/uploadHandler';
-import express from 'express';
+import { employeeRoleHistoryHandler } from './handlers/employeeRoleHistoryHandler';
+import { employeeDepartmentHistoryHandler } from './handlers/employeeDepartmentHistoryHandler';
 
 const app = Express();
 app.use(Express.json({ limit: '50mb' }));
@@ -43,6 +42,8 @@ api.register('notImplemented', notImplementedHandler);
 api.register('test', testHandler);
 api.register('addemployeeGet', addEmployeeRecordHandler);
 api.register('addemployeePost', addEmployeesHandler);
+api.register('employeeDepartmentHistory', employeeDepartmentHistoryHandler);
+api.register('employeeRoleHistory', employeeRoleHistoryHandler);
 api.register('employee-count-by-department-code', employeeCountByDepartmentCodeHandler);
 api.register('department-codes', departmentCodesHandler);
 api.register('departmentHistory', departmentHistoryHandler);

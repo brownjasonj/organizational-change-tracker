@@ -119,28 +119,35 @@ function organizationaRdfGenerator(employee:Employee, callback: (err: any, resul
     // Corporate Title Role Membership (e.g., Staff, Asoociate VP, VP, Director, Managing Director, etc.)
 
     var corporateTitleNode: NamedNode;
+    var jobTitleName;
     switch (employee.jobTitle) {
         case CorporateRole.Staff:
             corporateTitleNode = staffRoleNode;
+            jobTitleName = "Staff";
             break;
         case CorporateRole.AVP:
             corporateTitleNode = avpRoleNode;
+            jobTitleName = "AVP";
             break;
         case CorporateRole.VP:
+            jobTitleName = "VP";
             corporateTitleNode = vpRoleNode;
             break;
         case CorporateRole.DIR:
+            jobTitleName = "DIR";
             corporateTitleNode = dirRoleNode;
             break;
         case CorporateRole.MDR:
+            jobTitleName = "MDR";
             corporateTitleNode = mdrRoleNode;
             break;
         default:
             corporateTitleNode = staffRoleNode;
+            jobTitleName = "Staff";
             break;
     }
 
-    const corpTitleMembershipName: string = (idNS.prefix + employee.employee_id + "-" + employee.jobTitle + "-membership").toLocaleLowerCase();
+    const corpTitleMembershipName: string = (idNS.prefix + employee.employee_id + "-" + jobTitleName + "-membership").toLocaleLowerCase();
     const coprTitleMembershipNode = namedNode(corpTitleMembershipName);
     const corpTitleMembershipTimeIntervalName: string = (corpTitleMembershipName + "-timeinterval").toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalNode = namedNode(corpTitleMembershipTimeIntervalName);
