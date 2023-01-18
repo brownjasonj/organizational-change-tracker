@@ -15,6 +15,7 @@ import { employeeCountByDepartmentCodeHandler } from './handlers/employeeCountBy
 import { departmentCodesHandler } from './handlers/departmentCodesHandler';
 import { departmentHistoryHandler } from './handlers/departmentHistoryHandler';
 import { uploadHandler } from './handlers/uploadHandler';
+import express from 'express';
 
 const app = Express();
 app.use(Express.json());
@@ -60,6 +61,8 @@ app.use(morgan('combined'));
 
 // use as express middleware to pick-up requests and send to the openapi-backend handler.
 app.use((req, res) => api.handleRequest(req as Request, req, res));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // start server
 app.listen(9000, () => console.info('api listening at http://localhost:9000'));
