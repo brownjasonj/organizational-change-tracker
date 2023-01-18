@@ -33,6 +33,7 @@ const departmentCodesHandler = async (context: Context, request: Request, respon
         if (typeof(request.query === 'object')) {
             const queryParams: {[key: string]: string | string[]} = Object.assign({}, (Object)(request.query));
             const sparqlQuery = getSparqlQuery(queryParams['as-of'] as string);
+            console.log("Accept: " + request.headers['accept']);
             console.log(sparqlQuery);
             blazegraph.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((data) => {
@@ -40,6 +41,10 @@ const departmentCodesHandler = async (context: Context, request: Request, respon
             });
         }
     }
+}
+
+
+const getContentType = (request: Request) => {
 }
 
 export { departmentCodesHandler} 

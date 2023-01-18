@@ -85,7 +85,7 @@ paths:
         - in: query
           name: dateStep
           schema:
-            type: string
+            $ref: "#/components/schemas/dateStep"
           required: false
           description: this is the date granularity step between sample points of the history
       responses:
@@ -114,6 +114,15 @@ paths:
                 type: array
                 items:
                   type: string
+            application/sparql-results+xml:
+              schema:
+                type: string
+            application/sparql-results+json:
+              schema:
+                type: string
+            application/x-binary-rdf-results-table:
+              schema:
+                type: string
   /upload:
     post:
       description: upload a binary file

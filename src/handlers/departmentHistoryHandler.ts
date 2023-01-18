@@ -93,6 +93,21 @@ class DepartmentHistory {
     }
 }
 
+const getDateStep = (dateStep: string): number => {
+    switch (dateStep) {
+        case 'day':
+            return 1;
+        case 'week':
+            return 7;
+        case 'month':
+            return 30;
+        case 'year':
+            return 365;
+        default:
+            return 7;
+    }
+}
+
 const departmentHistoryHandler = async (context: Context, request: Request, response: Response) => {
     if (request.query) {
         if (typeof(request.query === 'object')) {
@@ -111,13 +126,8 @@ const departmentHistoryHandler = async (context: Context, request: Request, resp
             }
             // set the end date time to 23:59:59
             endDate.setHours(23,59,59,0);
-            if (queryParams.dateStep) {
-                dateStep = parseInt(queryParams.dateStep as string);
-            }
-            else {
-                dateStep = 7;
-            }
-            
+            dateStep = getDateStep(queryParams.dateStep as string);
+
             const timeseries: DepartmentHistory = new DepartmentHistory(departmentCode, startDate, endDate, dateStep);
 
             
