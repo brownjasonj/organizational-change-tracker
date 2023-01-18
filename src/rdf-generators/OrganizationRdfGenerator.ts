@@ -210,7 +210,7 @@ function getDepartmentCodeHierarchy(str: string): string[] {
     const result: string[] = [];
 
     for (let i = length; i != 0; i--) {
-        if ((str.charAt(i - 1) != " ") {
+        if (str.charAt(i - 1) != " ") {
             result.push(str.slice(0, i));
         }
     }
