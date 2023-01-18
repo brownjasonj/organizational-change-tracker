@@ -120,8 +120,8 @@ const departmentHistoryHandler = async (context: Context, request: Request, resp
             
             const timeseries: DepartmentHistory = new DepartmentHistory(departmentCode, startDate, endDate, dateStep);
 
-            const tomorrow: Date = new Date(startDate.getTime() + 1000*60*60*24);
-            for(var currentDate: Date = startDate; currentDate <= endDate; currentDate = new Date(currentDate.getTime() + 1000*60*60*24)) {
+            
+            for(var currentDate: Date = startDate; currentDate <= endDate; currentDate = new Date(currentDate.getTime() + 1000*60*60*24 * dateStep)) {
 //                console.log(`next ${currentDate}`);
                 await getSparqlQuery(departmentCode, currentDate)
                 .then((result) => {
