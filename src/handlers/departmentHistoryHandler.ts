@@ -57,17 +57,11 @@ class HistoricPoint {
   department: string;
   date: Date;
   size: number;
-  joiners: Employee[];
-  leavers: Employee[];
-  members: Employee[];
 
   constructor(departmentName: string, date: Date, size: number) {
     this.department = departmentName;
     this.date = date;
     this.size = size;
-    this.joiners = [];
-    this.leavers = [];
-    this.members = [];
   }
 }
 
