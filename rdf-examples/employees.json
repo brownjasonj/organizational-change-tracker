@@ -6,10 +6,10 @@
       "secondName": "p01",
       "department": "A",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-01",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "01.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e02",
@@ -18,10 +18,10 @@
       "secondName": "p02",
       "department": "AA",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-01",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "01.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e03",
@@ -30,10 +30,10 @@
       "secondName": "p03",
       "department": "AA",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-01",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "01.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e04",
@@ -42,10 +42,10 @@
       "secondName": "p04",
       "department": "AA",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-01",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "01.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e08",
@@ -54,10 +54,10 @@
       "secondName": "p08",
       "department": "B",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-01",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "01.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e09",
@@ -66,10 +66,10 @@
       "secondName": "p09",
       "department": "BA",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-01",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "01.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e10",
@@ -78,10 +78,10 @@
       "secondName": "p10",
       "department": "BA",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-01",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "01.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e01",
@@ -90,10 +90,10 @@
       "secondName": "p01",
       "department": "A",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-02",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "02.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e02",
@@ -102,10 +102,10 @@
       "secondName": "p02",
       "department": "AA",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-02",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "02.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e03",
@@ -114,10 +114,10 @@
       "secondName": "p03",
       "department": "AA",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-02",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "02.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e04",
@@ -126,10 +126,10 @@
       "secondName": "p04",
       "department": "AA",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-02",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "02.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e08",
@@ -138,10 +138,10 @@
       "secondName": "p08",
       "department": "B",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-02",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "02.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e09",
@@ -150,10 +150,10 @@
       "secondName": "p09",
       "department": "BA",
       "jobTitle": "Staff",
-      "departmentStartDate": "2012-01-01",
-      "departmentEndDate": "2012-01-02",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "01.01.2012",
+      "departmentEndDate": "02.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     },
     {
       "employee_id": "e10",
@@ -162,9 +162,9 @@
       "secondName": "p10",
       "department": "AA",
       "jobTitle": "Vice President",
-      "departmentStartDate": "2012-01-02",
-      "departmentEndDate": "2012-01-02",
-      "employmentStartDate": "2009-11-02",
-      "employmentEndDate": "9999-12-31"
+      "departmentStartDate": "02.01.2012",
+      "departmentEndDate": "02.01.2012",
+      "employmentStartDate": "02.11.2009",
+      "employmentEndDate": "31.12.9999"
     }
    ]

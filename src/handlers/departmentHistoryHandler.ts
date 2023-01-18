@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
 import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../blazegraph/blazegraph";
-import EmployeeRecord from "../models/EmployeeRecord";
+import { Employee } from "../models/eom/Employee";
 
 const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
 const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
@@ -57,9 +57,9 @@ class HistoricPoint {
   department: string;
   date: Date;
   size: number;
-  joiners: EmployeeRecord[];
-  leavers: EmployeeRecord[];
-  members: EmployeeRecord[];
+  joiners: Employee[];
+  leavers: Employee[];
+  members: Employee[];
 
   constructor(departmentName: string, date: Date, size: number) {
     this.department = departmentName;

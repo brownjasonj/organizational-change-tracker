@@ -4,7 +4,9 @@ import { Context, Handler, Request } from "openapi-backend";
 import { ReadableStreamBYOBRequest } from "stream/web";
 import { xml2json } from "xml-js";
 import { BlazeGraph, BlazeGraphOptions } from "../blazegraph/blazegraph";
-import EmployeeRecord from "../models/EmployeeRecord";
+import { EmployeeDto } from "../models/dto/EmployeeDto";
+import { Employee } from "../models/eom/Employee";
+import { employeeDtoToEmployee } from "../models/mappers/EmployeeMapper";
 import neo4jAddEmployeeRecord from "../neo4jDriver/neo4jAddEmployeeRecord";
 import organizationaRdfGenerator from "../rdf-generators/OrganizationRdfGenerator";
 
@@ -16,22 +18,22 @@ const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
 
 const addEmployeeRecordHandler = async (context: Context, request: Request, response: Response) => {
 
-    const employeeRecord1 : EmployeeRecord = new EmployeeRecord("01", "01", "John", "Hawkins", "A", "Staff",
+    const employeeRecord1 : Employee = new Employee("01", "01", "John", "Hawkins", "A", "Staff",
                                                             new Date("2012-01-01"),
                                                             new Date("2012-12-31"),
                                                             new Date("2009-11-02"),
                                                             new Date("9999-12-31"));
-    const employeeRecord2 : EmployeeRecord = new EmployeeRecord("02", "02", "John", "Hawkins", "AB", "Staff",
+    const employeeRecord2 : Employee = new Employee("02", "02", "John", "Hawkins", "AB", "Staff",
                                                             new Date("2012-01-01"),
                                                             new Date("2012-12-31"),
                                                             new Date("2009-11-02"),
                                                             new Date("9999-12-31"));
-    const employeeRecord3 : EmployeeRecord = new EmployeeRecord("03", "03", "John", "Hawkins", "ABC", "AVP",
+    const employeeRecord3 : Employee = new Employee("03", "03", "John", "Hawkins", "ABC", "AVP",
                                                             new Date("2012-01-01"),
                                                             new Date("2012-12-31"),
                                                             new Date("2009-11-02"),
                                                             new Date("9999-12-31"));
-    const employeeRecord4 : EmployeeRecord = new EmployeeRecord("04", "04", "John", "Hawkins", "ABCD", "AVP",
+    const employeeRecord4 : Employee = new Employee("04", "04", "John", "Hawkins", "ABCD", "AVP",
                                                             new Date("2012-01-01"),
                                                             new Date("2012-12-31"),
                                                             new Date("2009-11-02"),
@@ -47,27 +49,10 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
     };
 
 const addEmployeesHandler =  async (context: Context, request: Request, response: Response) => {
-    var employeeRecords: EmployeeRecord[] = [];
-    await request.body.forEach((employeeRecord: EmployeeRecord) => {
-        employeeRecord.departmentStartDate = new Date(employeeRecord.departmentStartDate);
-        employeeRecord.departmentStartDate.setHours(0);
-        employeeRecord.departmentStartDate.setMinutes(0);
-        employeeRecord.departmentStartDate.setSeconds(0);
-        employeeRecord.departmentEndDate = new Date(employeeRecord.departmentEndDate);
-        employeeRecord.departmentEndDate.setHours(23);
-        employeeRecord.departmentEndDate.setMinutes(59);
-        employeeRecord.departmentEndDate.setSeconds(59);
-
-        employeeRecord.employmentStartDate = new Date(employeeRecord.employmentStartDate);
-        employeeRecord.employmentStartDate.setHours(0);
-        employeeRecord.employmentStartDate.setMinutes(0);
-        employeeRecord.employmentStartDate.setSeconds(0);
-
-        employeeRecord.employmentEndDate = new Date(employeeRecord.employmentEndDate);
-        employeeRecord.employmentEndDate.setHours(23);
-        employeeRecord.employmentEndDate.setMinutes(59);
-        employeeRecord.employmentEndDate.setSeconds(59);
-
+    var employeeRecords: Employee[] = [];
+    await request.body.forEach((employeeDto: EmployeeDto) => {
+        const employeeRecord: Employee = employeeDtoToEmployee(employeeDto);
+        console.log(employeeRecord);
         organizationaRdfGenerator(employeeRecord, (error, result) => {
              blazegraph.turtleUpdate(result)
              .then((res) => {

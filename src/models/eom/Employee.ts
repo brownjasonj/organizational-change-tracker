@@ -1,4 +1,4 @@
-class EmployeeRecord {
+class Employee {
     private magicDate = new Date("9999-12-31T00:00:00Z");
     employee_id: string;
     system_id: string;
@@ -39,4 +39,4 @@ class EmployeeRecord {
     }
 }
 
-export default EmployeeRecord;
+export { Employee };

@@ -4,7 +4,7 @@ import { DateTime } from "neo4j-driver-core";
 
 const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
 
-import EmployeeRecord from "../models/EmployeeRecord";
+import { Employee } from "../models/eom/Employee";
 
 type rdfNameSpace = {
     prefix: string,
@@ -31,7 +31,7 @@ enum CorporateRole {
 }
 
 
-function organizationaRdfGenerator(employee:EmployeeRecord, callback: (err: any, result: string) => void): void {
+function organizationaRdfGenerator(employee:Employee, callback: (err: any, result: string) => void): void {
 /*
     const writer = new Writer({ prefixes: { '': 'http://example.org/id#',
                                             pid: 'http://example.org/pid#',
