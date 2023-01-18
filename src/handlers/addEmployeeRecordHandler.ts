@@ -58,7 +58,8 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
              .then((res) => {
                 employeeRecords.push(employeeRecord);
                 console.log(xml2json(res))
-                });
+                })
+            .catch((err) => console.log(err));
         });
     });
     response.json(employeeRecords);

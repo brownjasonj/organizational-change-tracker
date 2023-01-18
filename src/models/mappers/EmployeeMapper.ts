@@ -1,4 +1,5 @@
 import { EmployeeDto } from "../dto/EmployeeDto";
+import { CorporateRole } from "../eom/CorporateRole";
 import { Employee } from "../eom/Employee";
 
 const employeeDtoToEmployee = (employeeDto: EmployeeDto): Employee => {
@@ -19,13 +20,35 @@ const employeeDtoToEmployee = (employeeDto: EmployeeDto): Employee => {
     const employmentEndDate = new Date(`${employmentEndDateComponents[2]}-${employmentEndDateComponents[1]}-${employmentEndDateComponents[0]}`);
     employmentEndDate.setHours(23,59,59,0);
 
+    var jobTitleName = "";
+    switch (employeeDto.jobTitle) {
+        case CorporateRole.Staff:
+            jobTitleName = "Staff";
+            break;
+        case CorporateRole.AVP:
+            jobTitleName = "AVP";
+            break;
+        case CorporateRole.VP:
+            jobTitleName = "VP";
+            break;
+        case CorporateRole.DIR:
+            jobTitleName = "DIR";
+            break;
+        case CorporateRole.MDR:
+            jobTitleName = "MDR";
+            break;
+        default:
+            jobTitleName = "Staff";
+            break;
+    }
+
     return new Employee(
         employeeDto.employee_id,
         employeeDto.system_id,
         employeeDto.firstName,
         employeeDto.secondName,
-        employeeDto.department,
-        employeeDto.jobTitle,
+        employeeDto.department.replace(/\s/g, ""),
+        jobTitleName,
         departmentStartDate,
         departmentEndDate,
         employmentStartDate,

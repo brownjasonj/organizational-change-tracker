@@ -1,6 +1,7 @@
 import { write } from "fs";
 import { Writer, DataFactory, NamedNode } from "n3";
 import { DateTime } from "neo4j-driver-core";
+import { CorporateRole } from "../models/eom/CorporateRole";
 
 const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
 
@@ -19,16 +20,6 @@ const timeNS: rdfNameSpace = {prefix: "time:", path: "http://www.w3.org/2006/tim
 const rdfNS: rdfNameSpace = {prefix: "rdf:", path: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"};
 const rdfsNS: rdfNameSpace = {prefix: "rdfs:", path: "http://www.w3.org/2001/XMLSchema#"};
 const xsdNS: rdfNameSpace = {prefix: "xsd:", path: "http://www.w3.org/2000/01/rdf-schema#"};
-
-
-enum CorporateRole {
-    None = "",
-    Staff = "Staff",
-    AVP = "Assistant Vice President",
-    VP = "Vice President",
-    DIR = "Director",
-    MDR = "Managing Director"
-}
 
 
 function organizationaRdfGenerator(employee:Employee, callback: (err: any, result: string) => void): void {
@@ -128,35 +119,28 @@ function organizationaRdfGenerator(employee:Employee, callback: (err: any, resul
     // Corporate Title Role Membership (e.g., Staff, Asoociate VP, VP, Director, Managing Director, etc.)
 
     var corporateTitleNode: NamedNode;
-    var jobTitleName: string;
     switch (employee.jobTitle) {
         case CorporateRole.Staff:
             corporateTitleNode = staffRoleNode;
-            jobTitleName = "Staff";
             break;
         case CorporateRole.AVP:
             corporateTitleNode = avpRoleNode;
-            jobTitleName = "AVP";
             break;
         case CorporateRole.VP:
             corporateTitleNode = vpRoleNode;
-            jobTitleName = "VP";
             break;
         case CorporateRole.DIR:
             corporateTitleNode = dirRoleNode;
-            jobTitleName = "DIR";
             break;
         case CorporateRole.MDR:
             corporateTitleNode = mdrRoleNode;
-            jobTitleName = "MDR";
             break;
         default:
             corporateTitleNode = staffRoleNode;
-            jobTitleName = "Staff";
             break;
     }
 
-    const corpTitleMembershipName: string = (idNS.prefix + employee.employee_id + "-" + jobTitleName + "-membership").toLocaleLowerCase();
+    const corpTitleMembershipName: string = (idNS.prefix + employee.employee_id + "-" + employee.jobTitle + "-membership").toLocaleLowerCase();
     const coprTitleMembershipNode = namedNode(corpTitleMembershipName);
     const corpTitleMembershipTimeIntervalName: string = (corpTitleMembershipName + "-timeinterval").toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalNode = namedNode(corpTitleMembershipTimeIntervalName);
@@ -226,7 +210,9 @@ function getDepartmentCodeHierarchy(str: string): string[] {
     const result: string[] = [];
 
     for (let i = length; i != 0; i--) {
-        result.push(str.slice(0, i));
+        if ((str.charAt(i - 1) != " ") {
+            result.push(str.slice(0, i));
+        }
     }
     return result;
 }
