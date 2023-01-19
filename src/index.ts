@@ -15,9 +15,18 @@ import { departmentHistoryHandler } from './handlers/departmentHistoryHandler';
 import { uploadHandler } from './handlers/uploadHandler';
 import { employeeRoleHistoryHandler } from './handlers/employeeRoleHistoryHandler';
 import { employeeDepartmentHistoryHandler } from './handlers/employeeDepartmentHistoryHandler';
+import fileUpload from 'express-fileupload';
 
 const app = Express();
-app.use(Express.json({ limit: '50mb' }));
+// enable file uploads
+app.use(fileUpload({
+    createParentPath: true
+}));
+
+// extende the size of body requests
+app.use(Express.json({ limit: '200mb' }));
+
+// enable cors
 app.use(cors({
     origin: 'http://localhost:3000',
 }));

@@ -152,12 +152,14 @@ paths:
       requestBody:
         required: true
         content:
-          application/octet-stream:
-            # any media type is accepted, functionally equivalent to `*/*`
+          multipart/form-data:
             schema:
-              type: array
-              items:
-                type: string
+              type: object
+              properties:
+                # 'file' will be the field name in this multipart request
+                file:
+                  type: string
+                  format: base64
       responses:
         '200':
           description: OK
