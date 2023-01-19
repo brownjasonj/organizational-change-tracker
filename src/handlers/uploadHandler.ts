@@ -8,6 +8,7 @@ import { Employee } from '../models/eom/Employee';
 import organizationaRdfGenerator from '../rdf-generators/OrganizationRdfGenerator';
 import { BlazeGraph, BlazeGraphOptions } from '../blazegraph/blazegraph';
 import { xml2json } from 'xml-js';
+import { processFileStreamAsJson } from '../utils/processFileStreamAsJson';
 
 
 const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
@@ -31,7 +32,7 @@ const uploadHandler = async (context: Context, request: Request, response: Respo
             await file.mv(filePath, function(err) {
                 return response.json(err);
             });
-
+/*
             await fs.readFile(filePath, 'utf8', (err, data) => {
                 if (err) {
                   console.error(err);
@@ -50,11 +51,31 @@ const uploadHandler = async (context: Context, request: Request, response: Respo
                     });
                 });
               });
-
+*/
             console.log(uploadedFiles.name);
+            processFileStreamAsJson(filePath, (data: any) => {
+                const employeeDto: EmployeeDto = data as EmployeeDto;
+                const employeeRecord: Employee = employeeDtoToEmployee(employeeDto);
+                organizationaRdfGenerator(employeeRecord)
+                .then((result) => {
+                    blazegraph.turtleUpdate(result)
+                     .then((res) => {
+                        console.log(xml2json(res))
+                        })
+                    .catch((err) => console.log(err));
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            }).then(() => {
+                console.log("Done");
+            })
+            .catch((error) => {
+            });
         }
         response.json({ message: "done" });
     }
 }
+
 
 export { uploadHandler }

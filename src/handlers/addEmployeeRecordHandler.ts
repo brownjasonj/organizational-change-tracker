@@ -37,13 +37,13 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
                                                             new Date("2012-01-01"),
                                                             new Date("2012-12-31"),
                                                             new Date("2009-11-02"),
-                                                            new Date("9999-12-31"));
-
+                                                           new Date("9999-12-31"));
+/*
     organizationaRdfGenerator(employeeRecord1, (error, result) => console.log(result));
     organizationaRdfGenerator(employeeRecord2, (error, result) => console.log(result));
     organizationaRdfGenerator(employeeRecord3, (error, result) => console.log(result));
     organizationaRdfGenerator(employeeRecord4, (error, result) => console.log(result));
-
+*/
     response.json({ message: "done" });
 
     };
@@ -53,13 +53,17 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
     await request.body.forEach((employeeDto: EmployeeDto) => {
         const employeeRecord: Employee = employeeDtoToEmployee(employeeDto);
         console.log(employeeRecord);
-        organizationaRdfGenerator(employeeRecord, (error, result) => {
-             blazegraph.turtleUpdate(result)
+        organizationaRdfGenerator(employeeRecord)
+        .then((result) => {
+            blazegraph.turtleUpdate(result)
              .then((res) => {
                 employeeRecords.push(employeeRecord);
                 console.log(xml2json(res))
                 })
             .catch((err) => console.log(err));
+        })
+        .catch((error) => {
+            console.log(error);
         });
     });
     response.json(employeeRecords);

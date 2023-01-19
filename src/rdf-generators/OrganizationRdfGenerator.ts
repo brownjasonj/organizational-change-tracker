@@ -22,7 +22,7 @@ const rdfsNS: rdfNameSpace = {prefix: "rdfs:", path: "http://www.w3.org/2001/XML
 const xsdNS: rdfNameSpace = {prefix: "xsd:", path: "http://www.w3.org/2000/01/rdf-schema#"};
 
 
-function organizationaRdfGenerator(employee:Employee, callback: (err: any, result: string) => void): void {
+function organizationaRdfGenerator(employee:Employee): Promise<string> {
 /*
     const writer = new Writer({ prefixes: { '': 'http://example.org/id#',
                                             pid: 'http://example.org/pid#',
@@ -184,7 +184,16 @@ function organizationaRdfGenerator(employee:Employee, callback: (err: any, resul
     ]);
 
     // writer.end((error, result) => console.log(result));
-    writer.end(callback);
+
+    return new Promise((resolve, reject) => {
+        writer.end((error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
 }
 
 function createSubOrganizations(organization: string, writer: Writer): NamedNode<string> {
