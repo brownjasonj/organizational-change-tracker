@@ -1,4 +1,6 @@
 import axios from "axios";
+import http from "http";
+import https from "https";
 
 const defaultOptions = {
     host: 'localhost',
@@ -31,30 +33,45 @@ enum SparqlQueryResultType {
 class BlazeGraph {
     private options: BlazeGraphOptions;
     private url: string;
+    private axios: any;
 
       
     constructor(options: BlazeGraphOptions) {
         this.options = options;
         this.url = `http://${this.options.host}:${this.options.port}/${this.options.blazename}/${this.options.namespace}`;
+        this.axios = axios.create({
+            //60 sec timeout
+            timeout: 60000,
+          
+            //keepAlive pools and reuses TCP connections, so it's faster
+            httpAgent: new http.Agent({ keepAlive: true }),
+            httpsAgent: new https.Agent({ keepAlive: true }),
+            
+            //follow up to 10 HTTP 3xx redirects
+            maxRedirects: 10,
+            
+            //cap the maximum content length we'll accept to 50MBs, just in case
+            maxContentLength: 50 * 1000 * 1000
+          });
     }
 
     async sparqlQuery(query: string, resultType: SparqlQueryResultType): Promise<any> {
         const url = `${this.url}?query=${encodeURIComponent(query)}`;
-        return axios({
+        return this.axios({
             method: 'get',
             url: url,
             headers: {
                 'Accept': resultType
             }
-        }).then((response) => {
+        }).then((response: { data: unknown; }) => {
             return new Promise((resolve, reject) => {resolve(response.data)});
-        }).catch((error) => {
+        }).catch((error: any) => {
             return new Promise((resolve, reject) => {reject(error)});
         });
     }
 
     async turtleUpdate(turtle: string): Promise<any> {
-        return axios({
+        return this.axios({
             method: 'post',
             url: `${this.url}`,
             headers: {
@@ -62,9 +79,9 @@ class BlazeGraph {
                 'Accept': 'application/sparql-results+json'
             },
             data: turtle
-        }).then((response) => {
+        }).then((response: { data: unknown; }) => {
             return new Promise((resolve, reject) => {resolve(response.data)});
-        }).catch((error) => {
+        }).catch((error: any) => {
             return new Promise((resolve, reject) => {reject(error)});
         });
     }
