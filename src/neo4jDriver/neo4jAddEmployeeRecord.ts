@@ -1,7 +1,7 @@
 import { session } from "neo4j-driver";
 import { Driver } from "neo4j-driver-core";
 import { abort } from "process";
-import EmployeeEom from "../models/eom/Employee";
+import { Employee } from "../models/eom/Employee";
 
 const addEmployeeRecordCypher: string = 
     'merge (e: Employee {id: $id}) \
@@ -29,7 +29,7 @@ const addEmployeeRecordCypher: string =
                 has_job_title.last_updated = timestamp() \
      return e';
 
-async function neo4jAddEmployeeRecord(driver: Driver, employeeRecord: EmployeeEom) : Promise<any> {
+async function neo4jAddEmployeeRecord(driver: Driver, employeeRecord: Employee) : Promise<any> {
     const session = driver.session();
     try {
         const result = await session.run(addEmployeeRecordCypher, {
