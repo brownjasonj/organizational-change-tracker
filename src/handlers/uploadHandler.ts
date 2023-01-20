@@ -53,6 +53,7 @@ const uploadHandler = async (context: Context, request: Request, response: Respo
               });
 */
             console.log(uploadedFiles.name);
+            const retryList: Employee[] = [];
             processFileStreamAsJson(filePath, (data: any) => {
                 const employeeDto: EmployeeDto = data as EmployeeDto;
                 const employeeRecord: Employee = employeeDtoToEmployee(employeeDto);
@@ -62,11 +63,35 @@ const uploadHandler = async (context: Context, request: Request, response: Respo
                      .then((res) => {
                         console.log(xml2json(res))
                         })
-                    .catch((err) => console.log(err));
+                    .catch((err) => {
+                        console.log(err);
+                        retryList.push(employeeRecord);
+                    })
                 })
                 .catch((error) => {
                     console.log(error);
                 });
+
+                // try again
+                while (retryList.length > 0) {
+                    console.log('retrying...');
+                    const employeeRecord: Employee = retryList.pop()!;
+                    organizationaRdfGenerator(employeeRecord)
+                    .then((result) => {
+                        blazegraph.turtleUpdate(result)
+                         .then((res) => {
+                            console.log(xml2json(res))
+                            })
+                        .catch((err) => {
+                            console.log(err);
+                            retryList.push(employeeRecord);
+                        })
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+                }
+
             }).then(() => {
                 console.log("Done");
             })
