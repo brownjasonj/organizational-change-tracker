@@ -64,7 +64,7 @@ const uploadHandler = async (context: Context, request: Request, response: Respo
                         console.log(xml2json(res))
                         })
                     .catch((err) => {
-                        console.log(err);
+                        console.log(`Error: ${err.message}.  Pushing to retry list.`);
                         retryList.push(employeeRecord);
                     })
                 })

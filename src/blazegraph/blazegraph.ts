@@ -41,11 +41,11 @@ class BlazeGraph {
         this.url = `http://${this.options.host}:${this.options.port}/${this.options.blazename}/${this.options.namespace}`;
         this.axios = axios.create({
             //60 sec timeout
-            timeout: 60000,
+            timeout: 1000 * 60 * 10,
           
             //keepAlive pools and reuses TCP connections, so it's faster
-            httpAgent: new http.Agent({ keepAlive: true }),
-            httpsAgent: new https.Agent({ keepAlive: true }),
+            httpAgent: new http.Agent({ keepAlive: true, keepAliveMsecs: 1000 * 60 }),
+            httpsAgent: new https.Agent({ keepAlive: true, keepAliveMsecs: 1000 * 60 }),
             
             //follow up to 10 HTTP 3xx redirects
             maxRedirects: 10,
