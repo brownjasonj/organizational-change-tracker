@@ -11,11 +11,11 @@
     rdfs:label "Staff".
 :avp-role a org:Role;
     rdfs:label "AVP".
-org:vp-role a org:Role;
+:vp-role a org:Role;
     rdfs:label "VP".
-org:dir-role a org:Role;
+:dir-role a org:Role;
     rdfs:label "DIR".
-org:mdr-role a org:Role;
+:mdr-role a org:Role;
     rdfs:label "MDR".
 :04 a foaf:Person;
     pid:pid "04";

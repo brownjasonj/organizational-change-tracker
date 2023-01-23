@@ -1,0 +1,51 @@
+@prefix : <http://example.org/organization#>.
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix id: <http://example.org/id#>.
+@prefix pid: <http://example.org/pid#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1#>.
+@prefix org: <http://www.w3.org/ns/org#>.
+@prefix time: <http://www.w3.org/2006/time#>.
+
+
+:BankCorporateTitle rdfs:subClassOf org:Role;
+    rdfs:label "Corporate Title"@en;
+    rdfs:comment "A corporate title is a role that is held by an organization, rather than a person."@en;
+    sh:property [
+        sh:path org:holds;
+        sh:class org:Organization;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ].
+
+
+:BankEmployee rdfs:subClassOf foaf:Person;
+    rdfs:label "Bank Employee"@en;
+    rdfs:comment "A bank employee is a person who works for a bank."@en;
+    sh:property :pid,
+                :hasfirstName,
+                :hassurname,
+                :hasemail,
+                :hasCorporateTitle.
+
+:pid sh:path pid:pid;
+    sh:datatype xsd:string;
+    sh:minCount 1;
+    sh:maxCount 1.
+
+:hasfirstName sh:path foaf:firstName;
+    sh:datatype xsd:string;
+    sh:minCount 1;
+    sh:maxCount 1.
+
+:hassurname sh:path foaf:surname;
+    sh:datatype xsd:string;
+    sh:minCount 1;
+    sh:maxCount 1.
+
+:hasemail sh:path foaf:mbox;
+    sh:datatype xsd:string;
+    sh:minCount 1;
+    sh:maxCount 1.
