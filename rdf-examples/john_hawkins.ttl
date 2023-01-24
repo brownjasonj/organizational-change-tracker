@@ -17,10 +17,7 @@
     rdfs:label "DIR".
 :mdr-role a org:Role;
     rdfs:label "MDR".
-:04 a foaf:Person;
-    pid:pid "04";
-    foaf:firstName "John";
-    foaf:surname "Hawkins".
+
 :a-organization a org:FormalOrganization;
     org:name "A".
 :ab-organization a org:FormalOrganization;
@@ -32,6 +29,15 @@
 :abcd-organization a org:FormalOrganization;
     org:name "ABCD";
     org:subOrganizationOf :abc-organization.
+
+# Person of an organization
+:04 a foaf:Person;
+    pid:pid "04";
+    foaf:firstName "John";
+    foaf:surname "Hawkins".
+
+
+# An employee belongs to an organizational entity (OE).  This is encoded via an organization membership
 :04-abcd-membership a org:Membership;
     org:member :04;
     org:organization :abcd-organization;
@@ -43,6 +49,8 @@
     time:inXSDDateTime "2013-01-01T00:00:00.000Z^^xsd:dateTime".
 :04-abcd-membership-end a time:hasEnd;
     time:inXSDDateTime "2013-12-31T00:00:00.000Z^^xsd:dateTime".
+
+# An employee has a corporate title.  THis is encoded via role membership
 :04-avp-membership a org:Membership;
     org:member :04;
     org:role :staff-role;

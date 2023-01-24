@@ -10,42 +10,131 @@
 @prefix time: <http://www.w3.org/2006/time#>.
 
 
-:BankCorporateTitle rdfs:subClassOf org:Role;
+:BankCorporateTitle a rdfs:Class;
+    rdfs:subClassOf org:Role;
     rdfs:label "Corporate Title"@en;
-    rdfs:comment "A corporate title is a role that is held by an organization, rather than a person."@en;
-    sh:property [
-        sh:path org:holds;
-        sh:class org:Organization;
-        sh:minCount 1;
-        sh:maxCount 1;
-    ].
+    rdfs:comment """A corporate title is a role defined by a banking organization that reflects both seniority, but also implies a certain 
+                    salary band.  This is in contrast to other types of organization where corporate title and level (pay) are separate."""@en.
+
+:StaffTitle a :BankCorporateTitle;
+    rdfs:label "Staff"@en;
+    rdfs:comment "A staff title is a corporate title that is held by a bank employee."@en.
+:AVPTitle a :BankCorporateTitle;
+    rdfs:label "AVP"@en;
+    rdfs:comment "An AVP title is Assistant Vice President corporate title that is held by a bank employee."@en.
+:VPTitle a :BankCorporateTitle;
+    rdfs:label "VP"@en;
+    rdfs:comment "A VP title is a Vice President corporate title that is held by a bank employee."@en.
+:SVPTitle a :BankCorporateTitle;
+    rdfs:label "Senior VP"@en;
+    rdfs:comment "An VP title is a Senior Vice President corporate title that is held by a bank employee."@en.
+:DIRTitle a :BankCorporateTitle;
+    rdfs:label "Director"@en;
+    rdfs:comment "A director title is a corporate title that is held by a bank employee."@en.
+:SDIRTitle a :BankCorporateTitle;
+    rdfs:label "Senior Director"@en;
+    rdfs:comment "A SDIR title is a Senior Director corporate title that is held by a bank employee."@en.
+:MDRTitle a :BankCorporateTitle;
+    rdfs:label "Managing Director"@en;
+    rdfs:comment "A managing director title is a corporate title that is held by a bank employee."@en.
 
 
-:BankEmployee rdfs:subClassOf foaf:Person;
+:BankEmployee a rdfs:Class;
+    rdfs:subClassOf foaf:Person;
     rdfs:label "Bank Employee"@en;
-    rdfs:comment "A bank employee is a person who works for a bank."@en;
-    sh:property :pid,
+    rdfs:comment """A Bank Employee is a foaf:person who works for a bank, but will also have other properties
+                    relating to the Bank such as an employee identifier, a corporate title, and organization."""@en.
+
+:bankemployeesystem-id a rdf:Property;
+    rdfs:domain :BankEmployee;
+    rdfs:range id:id;
+    rdfs:label "Employee ID"@en;
+    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en.
+
+:bankemployeesystem-id a rdf:Property;
+    rdfs:domain :BankEmployee;
+    rdfs:range pid:pid;
+    rdfs:label "Employee ID"@en;
+    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en.
+
+:BankEmployeeShape a sh:NodeShape;
+    sh:targetClass :BankEmployee;
+    sh:property :hadEmployeeID,
+                :hasSystemID,
                 :hasfirstName,
-                :hassurname,
-                :hasemail,
-                :hasCorporateTitle.
+                :hassurname.
+
+:hasEmployeeID sh:path id:id;
+    sh:datatype xsd:string;
+    sh:minCount 1;
+    sh:maxCount 1;
+    sh:minLength 7;
+    sh:maxLength 7.
+
 
 :pid sh:path pid:pid;
     sh:datatype xsd:string;
     sh:minCount 1;
-    sh:maxCount 1.
+    sh:maxCount 1;
+    sh:minLength 7;
+    sh:maxLength 7.
 
 :hasfirstName sh:path foaf:firstName;
     sh:datatype xsd:string;
     sh:minCount 1;
-    sh:maxCount 1.
+    sh:maxCount 1;
+    sh:minLength 1.
 
 :hassurname sh:path foaf:surname;
     sh:datatype xsd:string;
     sh:minCount 1;
-    sh:maxCount 1.
+    sh:maxCount 1;
+    sh:minLength 1.
 
-:hasemail sh:path foaf:mbox;
+
+############################################################################################################
+#
+# Bank Employee's Corporate Title for defined period of time
+#
+############################################################################################################
+:BankEmployeeCorporateTitleDuration a rdfs:Class;
+    rdfs:subClassOf org:memberDuring;
+    rdfs:label "Corporate Title Duration"@en;
+    rdfs:comment """A corporate title duration is a period of time that a bank employee has held a corporate title."""@en.
+
+
+############################################################################################################
+#
+# Bank Employee's Corporate Title for defined period of time
+#
+############################################################################################################
+:BankEmployeesCorporateTitle a rdfs:Class;
+    rdfs:subClassOf org:Membership;
+    rdfs:label "Corporate Title"@en;
+    rdfs:comment """A corporate title is a role defined by a banking organization that reflects both seniority, but also implies a certain 
+                    salary band.  This is in contrast to other types of organization where corporate title and level (pay) are separate."""@en.
+
+
+:BankEmployeeCorporateTitleShape a sh:NodeShape;
+    sh:targetClass :BankEmployeeCorporateTitle;
+    sh:property :hasCorporateTitle,
+                :hasBankEmployee,
+                :hasBankEmployeeCorporateTitleDuration.
+
+:hasCorporateTitle sh:path :BankCorporateTitle;
     sh:datatype xsd:string;
     sh:minCount 1;
+    sh:maxCount 1;
+    sh:in (:StaffTitle :AVPTitle :VPTitle :SVPTitle :DIRTitle :SDIRTitle :MDRTitle).
+
+:hasBankEmployee sh:path :BankEmployee;
+    sh:datatype :BankEmployee;
+    sh:minCount 1;
     sh:maxCount 1.
+
+:hasTimeInterval sh:path org:memberDuring;
+    sh:datatype time:Interval;
+    sh:minCount 1;
+    sh:maxCount 1.
+
+
