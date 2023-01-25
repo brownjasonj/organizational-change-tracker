@@ -59,37 +59,38 @@
 
 :BankEmployeeShape a sh:NodeShape;
     sh:targetClass :BankEmployee;
-    sh:property :hasEmployeeID,
-                :hasSystemID,
-                :hasfirstName,
-                :hassurname.
+    sh:nodeKind sh:IRI;
+    sh:property [
+        sh:path id:id;
+        sh:datatype rdfs:string;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:minLength 7;
+        sh:maxLength 7;
+    ];
+    sh:property [
+        sh:path pid:pid;
+        sh:datatype rdfs:string;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:minLength 7;
+        sh:maxLength 7;
+    ];
+    sh:property [
+        sh:path foaf:firstName;
+        sh:datatype rdfs:string;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:minLength 1;
+    ];
+    sh:property [
+        sh:path foaf:surname;
+        sh:datatype rdfs:string;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:minLength 1;
+    ].
 
-:hasEmployeeID sh:path id:id;
-    sh:datatype rdfs:string;
-    sh:minCount 1;
-    sh:maxCount 1;
-    sh:minLength 7;
-    sh:maxLength 7.
-
-
-:hasSystemID sh:path pid:pid;
-    sh:datatype rdfs:string;
-    sh:minCount 1;
-    sh:maxCount 1;
-    sh:minLength 7;
-    sh:maxLength 7.
-
-:hasfirstName sh:path foaf:firstName;
-    sh:datatype rdfs:string;
-    sh:minCount 1;
-    sh:maxCount 1;
-    sh:minLength 1.
-
-:hassurname sh:path foaf:surname;
-    sh:datatype rdfs:string;
-    sh:minCount 1;
-    sh:maxCount 1;
-    sh:minLength 1.
 
 
 ############################################################################################################
@@ -97,52 +98,56 @@
 # Bank Employee's Corporate Title for defined period of time
 #
 ############################################################################################################
-:BankEmployeeCorporateTitleDuration a rdfs:Class;
-    rdfs:subClassOf org:memberDuring;
+:BankEmployeeCorporateTitleMembership a rdfs:Class, sh:NodeShape;
+    rdfs:subClassOf org:membership;
+    sh:targetClass :BankEmployeeCorporateTitleMembership;
+    sh:nodeKind sh:IRI;
+    sh:property [
+        sh:path org:member;
+        sh:class :BankEmployee;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ];
+    sh:property [
+        sh:path :BankCorporateTitle;
+        sh:node :BankCorporateTitle;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:in (:StaffTitle :AVPTitle :VPTitle :SVPTitle :DIRTitle :SDIRTitle :MDRTitle);
+    ];
+    sh:property [
+        sh:path org:memberDuring;
+        sh:class :BankEmployeeCorporateTitleMembershipDuration;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ].
+
+:BankEmployeeCorporateTitleMembershipDuration a rdfs:Class, sh:NodeShape;
+    rdfs:subClassOf time:Interval;
     rdfs:label "Corporate Title Duration"@en;
-    rdfs:comment """A corporate title duration is a period of time that a bank employee has held a corporate title."""@en.
+    rdfs:comment """A corporate title duration is a period of time that a bank employee has held a corporate title."""@en;
+    sh:targetClass :BankEmployeeCorporateTitleMembershipDuration;
+    sh:nodeKind sh:IRI;
+    sh:property [
+        sh:path time:hasBeginning;
+        sh:class :xsdDateTimeInstant;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ];
+    sh:property [
+        sh:path time:hasEnd;
+        sh:class :xsdDateTimeInstant;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ].
 
-:BankEmployeeCorporateTitleDuration a sh:NodeShape;
-    sh:targetClass :BankEmployeeCorporateTitleDuration;
-    sh:property :hasBeginningTime,
-                :hasEndTime.
-
-
-:hasTimeInterval sh:path org:memberDuring;
-    sh:datatype time:Interval;
-    sh:minCount 1;
-    sh:maxCount 1.
-
-############################################################################################################
-#
-# Bank Employee's Corporate Title for defined period of time
-#
-############################################################################################################
-:BankEmployeesCorporateTitle a rdfs:Class;
-    rdfs:subClassOf org:Membership;
-    rdfs:label "Corporate Title"@en;
-    rdfs:comment """A corporate title is a role defined by a banking organization that reflects both seniority, but also implies a certain 
-                    salary band.  This is in contrast to other types of organization where corporate title and level (pay) are separate."""@en.
-
-:BankEmployeeCorporateTitleShape a sh:NodeShape;
-    sh:targetClass :BankEmployeeCorporateTitle;
-    sh:property :hasCorporateTitle,
-                :hasBankEmployee,
-                :hasBankEmployeeCorporateTitleDuration.
-
-:hasCorporateTitle sh:path :BankCorporateTitle;
-    sh:datatype xsd:string;
-    sh:minCount 1;
-    sh:maxCount 1;
-    sh:in (:StaffTitle :AVPTitle :VPTitle :SVPTitle :DIRTitle :SDIRTitle :MDRTitle).
-
-:hasBankEmployee sh:path :BankEmployee;
-    sh:datatype :BankEmployee;
-    sh:minCount 1;
-    sh:maxCount 1.
-
-:hasCorporateTitleDuration sh:path :BankEmployeeCorporateTitleDuration;
-    sh:datatype :BankEmployeeCorporateTitleDuration;
-    sh:minCount 1;
-    sh:maxCount 1.
-
+:xsdDateTimeInstant a rdfs:Class, sh:NodeShape;
+    rdfs:subClassOf time:Instant;
+    sh:targetClass :xsdDateTimeInstant;
+    sh:nodeKind sh:IRI;
+    sh:property [
+        sh:path time:inXSDDateTime;
+        sh:datatype xsd:dateTime;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ].

@@ -13,12 +13,14 @@ const testHandler = async (context: Context, request: Request, response: Respons
         for (const result of report.results) {
             // See https://www.w3.org/TR/shacl/#results-validation-result for details
             // about each property
+            console.log("###################");
             console.log(result.message)
             console.log(result.path)
             console.log(result.focusNode)
             console.log(result.severity)
             console.log(result.sourceConstraintComponent)
             console.log(result.sourceShape)
+            console.log("###################");
           }
         response.json({ message: 'hello world' });
     };

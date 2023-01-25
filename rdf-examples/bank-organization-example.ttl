@@ -10,9 +10,26 @@
 @prefix time: <http://www.w3.org/2006/time#>.
 
 
-:04 a :BankEmployee;
-    id:id "404xxxx";
-    pid:pid "A04xxxx";
+:MyTitle a :BankCorporateTitle;
+    rdfs:label "Staff"@en;
+    rdfs:comment "A staff title is a corporate title that is held by a bank employee."@en.
+
+id:4041234 a :BankEmployee;
+    id:id "4041234";
+    pid:pid "A041234";
     foaf:firstName "John";
     foaf:surname "Hawkins".
 
+id:2013-01-01 a :xsdDateTimeInstant;
+    time:inXSDDateTime "2013-01-01T00:00:00.000Z"^^xsd:dateTime.
+id:2013-12-31 a :xsdDateTimeInstant;
+    time:inXSDDateTime "2013-12-31T00:00:00.000Z"^^xsd:dateTime.
+
+id:4041234-staff-membership-during a :BankEmployeeCorporateTitleMembershipDuration;
+    time:hasBeginning id:2013-01-01;
+    time:hasEnd id:2013-12-31.
+
+id:4041234-Staff a :BankEmployeeCorporateTitleMembership;
+    :BankCorporateTitle :StaffTitle;
+    org:member id:4041234;
+    org:memberDuring id:4041234-staff-membership-during.
