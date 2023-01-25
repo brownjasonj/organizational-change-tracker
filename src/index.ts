@@ -1,7 +1,7 @@
 import cors from 'cors';
 import Express from 'express';
 import morgan from 'morgan';
-import OpenAPIBackend, { Request } from 'openapi-backend';
+import { OpenAPIBackend, Request } from 'openapi-backend';
 import * as swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import {addEmployeeRecordHandler, addEmployeesHandler} from './handlers/addEmployeeRecordHandler';

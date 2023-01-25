@@ -1,0 +1,44 @@
+@prefix : <http://example.org/id#>.
+@prefix pid: <http://example.org/pid#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1#>.
+@prefix org: <http://www.w3.org/ns/org#>.
+@prefix time: <http://www.w3.org/2006/time#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix corp: <http://example.org/organization/corporate-title#>.
+
+
+corp:corporate-title rdfs:subClassOf org:Role;
+    rdfs:label "Corporate Title"@en;
+    rdfs:comment "A corporate title is a role that is held by a corporate body, such as a company or a government agency."@en.
+
+corp:staff rdfs:label "Staff"@en;
+    rdfs:comment "A staff role is a role that is held by a person who is employed by a corporate body."@en.
+corpt:avp rdfs:lavel "Assistant Vice President"@en;
+    rdfs:comment "An assistant vice president is a staff role that is held by a person who is employed by a corporate body."@en.
+corp:vp rdfs:label "Vice President"@en;
+    rdfs:comment "A vice president is a staff role that is held by a person who is employed by a corporate body."@en.
+corp:dir rdfs:label "Director"@en;
+    rdfs:comment "A director is a staff role that is held by a person who is employed by a corporate body."@en.
+corp:mdf rdfs:label "Managing Director"@en;
+    rdfs:comment "A managing director is a staff role that is held by a person who is employed by a corporate body."@en.
+
+
+
+:staff-role a org:Role;
+    rdfs:label "Staff".
+:avp-role a org:Role;
+    rdfs:label "AVP".
+org:vp-role a org:Role;
+    rdfs:label "VP".
+org:dir-role a org:Role;
+    rdfs:label "DIR".
+org:mdr-role a org:Role;
+    rdfs:label "MDR".
+
+
+:04 a foaf:Person;
+    pid:pid "04";
+    foaf:firstName "John";
+    foaf:surname "Hawkins".

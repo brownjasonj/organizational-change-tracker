@@ -59,34 +59,34 @@
 
 :BankEmployeeShape a sh:NodeShape;
     sh:targetClass :BankEmployee;
-    sh:property :hadEmployeeID,
+    sh:property :hasEmployeeID,
                 :hasSystemID,
                 :hasfirstName,
                 :hassurname.
 
 :hasEmployeeID sh:path id:id;
-    sh:datatype xsd:string;
+    sh:datatype rdfs:string;
     sh:minCount 1;
     sh:maxCount 1;
     sh:minLength 7;
     sh:maxLength 7.
 
 
-:pid sh:path pid:pid;
-    sh:datatype xsd:string;
+:hasSystemID sh:path pid:pid;
+    sh:datatype rdfs:string;
     sh:minCount 1;
     sh:maxCount 1;
     sh:minLength 7;
     sh:maxLength 7.
 
 :hasfirstName sh:path foaf:firstName;
-    sh:datatype xsd:string;
+    sh:datatype rdfs:string;
     sh:minCount 1;
     sh:maxCount 1;
     sh:minLength 1.
 
 :hassurname sh:path foaf:surname;
-    sh:datatype xsd:string;
+    sh:datatype rdfs:string;
     sh:minCount 1;
     sh:maxCount 1;
     sh:minLength 1.
@@ -102,6 +102,16 @@
     rdfs:label "Corporate Title Duration"@en;
     rdfs:comment """A corporate title duration is a period of time that a bank employee has held a corporate title."""@en.
 
+:BankEmployeeCorporateTitleDuration a sh:NodeShape;
+    sh:targetClass :BankEmployeeCorporateTitleDuration;
+    sh:property :hasBeginningTime,
+                :hasEndTime.
+
+
+:hasTimeInterval sh:path org:memberDuring;
+    sh:datatype time:Interval;
+    sh:minCount 1;
+    sh:maxCount 1.
 
 ############################################################################################################
 #
@@ -113,7 +123,6 @@
     rdfs:label "Corporate Title"@en;
     rdfs:comment """A corporate title is a role defined by a banking organization that reflects both seniority, but also implies a certain 
                     salary band.  This is in contrast to other types of organization where corporate title and level (pay) are separate."""@en.
-
 
 :BankEmployeeCorporateTitleShape a sh:NodeShape;
     sh:targetClass :BankEmployeeCorporateTitle;
@@ -132,9 +141,8 @@
     sh:minCount 1;
     sh:maxCount 1.
 
-:hasTimeInterval sh:path org:memberDuring;
-    sh:datatype time:Interval;
+:hasCorporateTitleDuration sh:path :BankEmployeeCorporateTitleDuration;
+    sh:datatype :BankEmployeeCorporateTitleDuration;
     sh:minCount 1;
     sh:maxCount 1.
-
 

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as es from 'event-stream';
-var JSONStream = require('JSONStream');
+import JSONStream from 'jsonstream';
 
 const processFileStreamAsJson = async (filePath: string, processObject: (data: any) => void): Promise<string> => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
