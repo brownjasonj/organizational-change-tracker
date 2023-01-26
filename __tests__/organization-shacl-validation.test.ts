@@ -1,6 +1,6 @@
-import factory from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
 import { loadN3DataSet } from '../src/utils/loadN3DataSet';
+import factory from 'rdf-ext';
 
 describe("Stupid Test That should pass!", () => {
   test("Validate Static organization example against organization shape", async () => {
