@@ -12,7 +12,8 @@ type rdfNameSpace = {
     path: string
 };
 
-const idNS: rdfNameSpace = {prefix: ":", path: "http://example.org/id#"};
+const bankOrgfNS: rdfNameSpace = {prefix: ":", path: ": <http://example.org/organization#>."};
+const idNS: rdfNameSpace = {prefix: "id:", path: "http://example.org/id#"};
 const pidNS: rdfNameSpace = {prefix: "pid:", path: "http://example.org/pid#"};
 const foafNS: rdfNameSpace = {prefix: "foaf:", path: "http://xmlns.com/foaf/0.1#"};
 const orgNS: rdfNameSpace = {prefix: "org:", path: "http://www.w3.org/ns/org#"};
@@ -21,56 +22,47 @@ const rdfNS: rdfNameSpace = {prefix: "rdf:", path: "http://www.w3.org/1999/02/22
 const rdfsNS: rdfNameSpace = {prefix: "rdfs:", path: "http://www.w3.org/2001/XMLSchema#"};
 const xsdNS: rdfNameSpace = {prefix: "xsd:", path: "http://www.w3.org/2000/01/rdf-schema#"};
 
+/*
+@prefix : <http://example.org/organization#>.
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix id: <http://example.org/id#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1#>.
+@prefix org: <http://www.w3.org/ns/org#>.
+@prefix time: <http://www.w3.org/2006/time#>.
+*/
 
-function organizationaRdfGenerator(employee:Employee): Promise<string> {
-    const writer = new Writer({ prefixes: { '': 'http://example.org/id#',
+function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
+    const writer = new Writer({ prefixes: { '': 'http://example.org/organization#',
+                                            id: 'http://example.org/id#',
                                             pid: 'http://example.org/pid#',
                                             foaf: 'http://xmlns.com/foaf/0.1#',
                                             org: 'http://www.w3.org/ns/org#',
                                             time: 'http://www.w3.org/2006/time#',
                                             rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
                                             rdfs: 'http://www.w3.org/2001/XMLSchema#',
-                                            xsd: 'http://www.w3.org/2000/01/rdf-schema#'} });
+                                            xsd: 'http://www.w3.org/2000/01/rdf-schema#'
+                                        }});
 
+    const staffRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'StaffTitle');
+    const avpRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'AVPTitle');
+    const vpRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'VPTitle');
+    const dirRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'DIRTitle');
+    const mdrRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'MDRTitle');
 
-
-    const staffRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'staff-role');
-    const avpRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'avp-role');
-    const vpRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'vp-role');
-    const dirRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'dir-role');
-    const mdrRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'mdr-role');
-
-    writer.addQuads([
-        triple(staffRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
-        triple(staffRoleNode, namedNode(rdfsNS.path + 'label'), literal('Staff')),
-        triple(avpRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
-        triple(avpRoleNode, namedNode(rdfsNS.path + 'label'), literal('AVP')),
-        triple(vpRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
-        triple(vpRoleNode, namedNode(rdfsNS.path + 'label'), literal('VP')),
-        triple(dirRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
-        triple(dirRoleNode, namedNode(rdfsNS.path + 'label'), literal('DIR')),
-        triple(mdrRoleNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Role')),
-        triple(mdrRoleNode, namedNode(rdfsNS.path + 'label'), literal('MDR')),
-    ])
 
     const personNodeName: string = idNS.prefix + employee.employee_id;
     const personNode = namedNode(personNodeName.toLowerCase());
     writer.addQuads([
-        triple(personNode, namedNode(rdfNS.path + 'type'), namedNode(foafNS.prefix + 'Person')),
-        triple(personNode, namedNode(pidNS.prefix + 'pid'),literal(employee.employee_id)),
+        triple(personNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'BankEmployee')),
+        triple(personNode, namedNode(idNS.prefix + 'id'),literal(employee.employee_id)),
+        triple(personNode, namedNode(pidNS.prefix + 'pid'),literal(employee.system_id)),
         triple(personNode, namedNode(foafNS.prefix + 'firstName'), literal(employee.firstName)),
         triple(personNode, namedNode(foafNS.prefix + 'surname'), literal(employee.secondName))
     ]);
     
-    /*
-    const organizationNodeName: string = idNS.prefix + employee.department + "-organization";
-    const organizationNode = namedNode(organizationNodeName.toLowerCase());
-    writer.addQuads([
-        triple(organizationNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'FormalOrganization')),
-        triple(organizationNode, namedNode(orgNS.prefix + 'name'),literal(employee.department))
-    ]);
-    */
-
     const organizationNode = createSubOrganizations(employee.department, writer);
 
     // set up the membership and time interval
@@ -225,4 +217,4 @@ function getDepartmentCodeHierarchy(str: string): string[] {
     return result;
 }
 
-export default organizationaRdfGenerator;
+export { BankOrgRdfDataGenerator };

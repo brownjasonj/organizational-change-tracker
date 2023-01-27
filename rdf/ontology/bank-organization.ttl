@@ -4,6 +4,7 @@
 @prefix rdfs: <http://www.w3.org/2001/XMLSchema#>.
 @prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix id: <http://example.org/id#>.
+@prefix pid: <http://example.org/pid#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1#>.
 @prefix org: <http://www.w3.org/ns/org#>.
 @prefix time: <http://www.w3.org/2006/time#>.
@@ -39,17 +40,27 @@
 
 
 
-id:employeeid a rdf:Property;
+id:id a rdf:Property, sh:PropertyShape;
     rdfs:range rdfs:string;
     rdfs:label "Employee ID"@en;
     rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
+    sh:path id:id;
+    sh:datatype rdfs:string;
+    sh:minCount 1;
+    sh:maxCount 1;
+    sh:minLength 7;
+    sh:maxLength 7.
 
-    .
-
-id:employee-systemid a rdf:Property;
+pid:pid a rdf:Property, sh:PropertyShape;
     rdfs:range rdfs:string;
     rdfs:label "Employee ID"@en;
-    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en.
+    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
+    sh:path pid:pid;
+    sh:datatype rdfs:string;
+    sh:minCount 1;
+    sh:maxCount 1;
+    sh:minLength 7;
+    sh:maxLength 7.
 
 
 :BankEmployee a rdfs:Class, sh:NodeShape;
@@ -59,8 +70,8 @@ id:employee-systemid a rdf:Property;
                     relating to the Bank such as an employee identifier, a corporate title, and organization."""@en;
     sh:targetClass :BankEmployee;
     sh:nodeKind sh:IRI;
-    sh:property id:employeeid,
-                id:systemid;
+    sh:property id:id,
+                id:pid;
     sh:property [
         sh:path foaf:firstName;
         sh:datatype rdfs:string;
