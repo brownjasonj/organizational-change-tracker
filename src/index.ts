@@ -31,7 +31,7 @@ app.use(cors({
     origin: 'http://localhost:3000',
 }));
 
-const openApiDocumentPath = './schemas/organizational-changes-openapi.yaml';
+const openApiDocumentPath = './openapi-schemas/organizational-changes-openapi.yaml';
 
 // create api with your definition file or object
 const api = new OpenAPIBackend({ 

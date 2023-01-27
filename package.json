@@ -1,5 +1,5 @@
 {
-  "name": "organizational-changes-neo4j-node",
+  "name": "organizational-change-tracker",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
