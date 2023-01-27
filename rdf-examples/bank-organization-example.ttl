@@ -20,12 +20,19 @@ id:4041234 a :BankEmployee;
     foaf:firstName "John";
     foaf:surname "Hawkins".
 
+
+:a-organization a org:FormalOrganization;
+    org:name "A".
+:ab-organization a org:FormalOrganization;
+    org:name "AB";
+    org:subOrganizationOf :a-organization.
+
 id:20130101000000 a :xsdDateTimeInstant;
     time:inXSDDateTime "2013-01-01T00:00:00.000Z"^^xsd:dateTime.
 id:20131231000000 a :xsdDateTimeInstant;
     time:inXSDDateTime "2013-12-31T00:00:00.000Z"^^xsd:dateTime.
 
-id:4041234-staff-membership-during a :BankEmployeeCorporateTitleMembershipDuration;
+id:4041234-staff-membership-during a :MembershipDuration;
     time:hasBeginning id:20130101000000;
     time:hasEnd id:20131231000000.
 
@@ -33,3 +40,12 @@ id:4041234-staff a :BankEmployeeCorporateTitleMembership;
     :BankCorporateTitle :StaffTitle;
     org:member id:4041234;
     org:memberDuring id:4041234-staff-membership-during.
+
+id:4041234-a-membership-during a :MembershipDuration;
+    time:hasBeginning id:20130101000000;
+    time:hasEnd id:20131231000000.
+
+id:4041234-a a :BankEmployeeOrganizationalEntityMembership;
+    org:organization :a-organization;
+    org:member id:4041234;
+    org:memberDuring id:4041234-a-membership-during.

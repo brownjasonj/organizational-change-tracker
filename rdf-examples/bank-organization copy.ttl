@@ -39,28 +39,45 @@
 
 
 
-id:employeeid a rdf:Property;
-    rdfs:range rdfs:string;
+:bankemployeesystem-id a rdf:Property;
+    rdfs:range id:id;
     rdfs:label "Employee ID"@en;
     rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
 
     .
 
-id:employee-systemid a rdf:Property;
-    rdfs:range rdfs:string;
+:bankemployeesystem-id a rdf:Property;
+    rdfs:range pid:pid;
     rdfs:label "Employee ID"@en;
     rdfs:comment "An employee ID is a unique identifier for a bank employee."@en.
 
 
-:BankEmployee a rdfs:Class, sh:NodeShape;
+:BankEmployee a rdfs:Class;
     rdfs:subClassOf foaf:Person;
     rdfs:label "Bank Employee"@en;
     rdfs:comment """A Bank Employee is a foaf:person who works for a bank, but will also have other properties
-                    relating to the Bank such as an employee identifier, a corporate title, and organization."""@en;
+                    relating to the Bank such as an employee identifier, a corporate title, and organization."""@en.
+
+
+:BankEmployeeShape a sh:NodeShape;
     sh:targetClass :BankEmployee;
     sh:nodeKind sh:IRI;
-    sh:property id:employeeid,
-                id:systemid;
+    sh:property [
+        sh:path id:id;
+        sh:datatype rdfs:string;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:minLength 7;
+        sh:maxLength 7;
+    ];
+    sh:property [
+        sh:path pid:pid;
+        sh:datatype rdfs:string;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:minLength 7;
+        sh:maxLength 7;
+    ];
     sh:property [
         sh:path foaf:firstName;
         sh:datatype rdfs:string;
@@ -75,6 +92,7 @@ id:employee-systemid a rdf:Property;
         sh:maxCount 1;
         sh:minLength 1;
     ].
+
 
 
 ############################################################################################################
@@ -101,12 +119,12 @@ id:employee-systemid a rdf:Property;
     ];
     sh:property [
         sh:path org:memberDuring;
-        sh:class :MembershipDuration;
+        sh:class :BankEmployeeCorporateTitleMembershipDuration;
         sh:minCount 1;
         sh:maxCount 1;
     ].
 
-:MembershipDuration a rdfs:Class, sh:NodeShape;
+:BankEmployeeCorporateTitleMembershipDuration a rdfs:Class, sh:NodeShape;
     rdfs:subClassOf time:Interval;
     rdfs:label "Corporate Title Duration"@en;
     rdfs:comment """A corporate title duration is a period of time that a bank employee has held a corporate title."""@en;
@@ -132,56 +150,6 @@ id:employee-systemid a rdf:Property;
     sh:property [
         sh:path time:inXSDDateTime;
         sh:datatype xsd:dateTime;
-        sh:minCount 1;
-        sh:maxCount 1;
-    ].
-
-
-############################################################################################################
-#
-# Organization entity
-#
-############################################################################################################
-:OrganizationalEntity a sh:NodeShape;
-    sh:targetClass org:FormalOrganization;
-    sh:nodeKind sh:IRI;
-    sh:property [
-        sh:path org:name;
-        sh:datatype rdfs:string;
-        sh:minCount 1;
-        sh:maxCount 1;
-        sh:minLength 1;
-    ];
-    sh:property [
-        sh:path org:subOrganizationOf;
-        sh:minCount 0;
-        sh:maxCount 1;
-    ].
-
-############################################################################################################
-#
-# Bank Employee's organization entity for a defined period of time
-#
-############################################################################################################
-:BankEmployeeOrganizationalEntityMembership a rdfs:Class, sh:NodeShape;
-    rdfs:subClassOf org:membership;
-    sh:targetClass :BankEmployeeOrganizationalEntityMembership;
-    sh:nodeKind sh:IRI;
-    sh:property [
-        sh:path org:member;
-        sh:class :BankEmployee;
-        sh:minCount 1;
-        sh:maxCount 1;
-    ];
-    sh:property [
-        sh:path org:organization;
-        sh:class org:FormalOrganization;
-        sh:minCount 1;
-        sh:maxCount 1;
-    ];
-    sh:property [
-        sh:path org:memberDuring;
-        sh:class :MembershipDuration;
         sh:minCount 1;
         sh:maxCount 1;
     ].

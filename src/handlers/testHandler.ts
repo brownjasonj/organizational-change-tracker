@@ -14,10 +14,10 @@ const testHandler = async (context: Context, request: Request, response: Respons
             // See https://www.w3.org/TR/shacl/#results-validation-result for details
             // about each property
             console.log("###################");
-            console.log(result.message)
-            console.log(result.path)
-            console.log(result.focusNode)
-            console.log(result.severity)
+            console.log(result.message.toString());
+            console.log(result.path?.toString());
+            console.log(result.focusNode?.toString());
+            console.log(result.severity?.toString());
             console.log(result.sourceConstraintComponent)
             console.log(result.sourceShape)
             console.log("###################");
