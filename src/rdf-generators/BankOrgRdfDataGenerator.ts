@@ -2,6 +2,7 @@ import { write } from "fs";
 import { Writer, DataFactory, NamedNode } from "n3";
 import { DateTime } from "neo4j-driver-core";
 import { CorporateRole } from "../models/eom/CorporateRole";
+import { date } from 'date-time-format'
 
 const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
 
@@ -68,12 +69,9 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     // set up the membership and time interval
     const organizationMembershipNodeName: string = (idNS.prefix + employee.employee_id + "-" + employee.department + "-membership").toLocaleLowerCase();
     const organizationMembershipNode = namedNode(organizationMembershipNodeName);
+
     const organizationMembershipTimeIntervalNodeName: string = (organizationMembershipNodeName + "-timeinterval").toLocaleLowerCase();
     const organizationMembershipTimeIntervalNode = namedNode(organizationMembershipTimeIntervalNodeName);
-    const organizationMembershipTimeIntervalStartDateNodeName: string = (organizationMembershipNodeName + "-start").toLocaleLowerCase();
-    const organizationMembershipTimeIntervalStartDateNode = namedNode(organizationMembershipTimeIntervalStartDateNodeName);
-    const organizationMembershipTimeIntervalEndDateNodeName: string = (organizationMembershipNodeName + "-end").toLocaleLowerCase();
-    const organizationMembershipTimeIntervalEndDateNode = namedNode(organizationMembershipTimeIntervalEndDateNodeName);
     
     writer.addQuads([
         triple(organizationMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Membership')),
@@ -82,22 +80,35 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
         triple(organizationMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), organizationMembershipTimeIntervalNode),
     ]);
 
+
+
+    // Form time for the starting and ending of the duration.  The time is formed as an xsdDateTimeInstant and name of the 
+    // node identifying the time is an id with a name of the form YYYYMMDDhhmmss, unique to the precision of seconds.  thousanths 
+    // of a second are ignored
+    const employeeStartDate: Date = (new Date(employee.departmentStartDate));
+    
+    const employeeStartDateId: string = `${employeeStartDate.getFullYear()}${employeeStartDate.getMonth().toLocaleString()}${employeeStartDate.getDay()}`;
+    const employeeEndDate: Date = (new Date(employee.departmentEndDate));
+    const employeeEndDateId: string = `${employeeEndDate.getFullYear()}${employeeEndDate.getMonth()}${employeeEndDate.getDay()}`;
+
+    const organizationMembershipTimeIntervalStartDateNodeName: string = (idNS.prefix + employeeStartDateId).toLocaleLowerCase();
+    const organizationMembershipTimeIntervalStartDateNode = namedNode(organizationMembershipTimeIntervalStartDateNodeName);
+    const organizationMembershipTimeIntervalEndDateNodeName: string = (idNS.prefix + employeeEndDateId).toLocaleLowerCase();
+    const organizationMembershipTimeIntervalEndDateNode = namedNode(organizationMembershipTimeIntervalEndDateNodeName);
+
     writer.addQuads([
-        triple(organizationMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'Interval')),
+        triple(organizationMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'MembershipDuration')),
         triple(organizationMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasBeginning'), organizationMembershipTimeIntervalStartDateNode),
         triple(organizationMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), organizationMembershipTimeIntervalEndDateNode)
     ]);
-
-    const employeeStartDate: string = (new Date(employee.departmentStartDate)).toISOString() + "^^xsd:dateTime";
     writer.addQuads([
-        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasBeginning')),
-        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(employeeStartDate))
+        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
+        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(employeeStartDate.toISOString(),namedNode("xsd:dateTime")))
     ]);
 
-    const employeeEndDate: string = (new Date(employee.departmentEndDate)).toISOString() + "^^xsd:dateTime";
     writer.addQuads([
-        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasEnd')),
-        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(employeeEndDate))
+        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
+        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(employeeEndDate.toISOString(), namedNode("xsd:dateTime")))
     ]);
 
     // Corporate Title Role Membership (e.g., Staff, Asoociate VP, VP, Director, Managing Director, etc.)
