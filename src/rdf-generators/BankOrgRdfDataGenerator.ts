@@ -2,7 +2,6 @@ import { write } from "fs";
 import { Writer, DataFactory, NamedNode } from "n3";
 import { DateTime } from "neo4j-driver-core";
 import { CorporateRole } from "../models/eom/CorporateRole";
-import { date } from 'date-time-format'
 
 const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
 

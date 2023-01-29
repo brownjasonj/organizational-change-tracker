@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { Context, Handler, Request } from "openapi-backend";
 import SHACLValidator from "rdf-validate-shacl";
-import { loadN3DataSet } from "../utils/loadN3DataSet";
+import { loadN3DataSetfromFile } from "../utils/loadN3DataSet";
 import factory from "rdf-ext";
 
 const testHandler = async (context: Context, request: Request, response: Response) => {
