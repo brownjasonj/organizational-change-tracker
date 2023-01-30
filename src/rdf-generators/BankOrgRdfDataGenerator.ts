@@ -12,6 +12,11 @@ type rdfNameSpace = {
     path: string
 };
 
+const zeroPad = (num: number, places: number) => String(num).padStart(places, '0')
+const dateAsId = (date: Date): string => {
+    return `${date.getFullYear()}${zeroPad(date.getMonth() + 1, 2)}${zeroPad(date.getDay()+1, 2)}${zeroPad(date.getHours(), 2)}${zeroPad(date.getMinutes(), 2)}${zeroPad(date.getSeconds(), 2)}`
+}
+
 const bankOrgfNS: rdfNameSpace = {prefix: ":", path: ": <http://example.org/organization#>."};
 const idNS: rdfNameSpace = {prefix: "id:", path: "http://example.org/id#"};
 const pidNS: rdfNameSpace = {prefix: "pid:", path: "http://example.org/pid#"};
@@ -85,10 +90,9 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     // node identifying the time is an id with a name of the form YYYYMMDDhhmmss, unique to the precision of seconds.  thousanths 
     // of a second are ignored
     const employeeStartDate: Date = (new Date(employee.departmentStartDate));
-    
-    const employeeStartDateId: string = `${employeeStartDate.getFullYear()}${employeeStartDate.getMonth().toLocaleString()}${employeeStartDate.getDay()}`;
+    const employeeStartDateId: string = dateAsId(employeeStartDate);
     const employeeEndDate: Date = (new Date(employee.departmentEndDate));
-    const employeeEndDateId: string = `${employeeEndDate.getFullYear()}${employeeEndDate.getMonth()}${employeeEndDate.getDay()}`;
+    const employeeEndDateId: string = dateAsId(employeeEndDate);
 
     const organizationMembershipTimeIntervalStartDateNodeName: string = (idNS.prefix + employeeStartDateId).toLocaleLowerCase();
     const organizationMembershipTimeIntervalStartDateNode = namedNode(organizationMembershipTimeIntervalStartDateNodeName);
@@ -145,10 +149,6 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     const coprTitleMembershipNode = namedNode(corpTitleMembershipName);
     const corpTitleMembershipTimeIntervalName: string = (corpTitleMembershipName + "-timeinterval").toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalNode = namedNode(corpTitleMembershipTimeIntervalName);
-    const corpTitleMembershipTimeIntervalStartDateName: string = (corpTitleMembershipName + "-start").toLocaleLowerCase();
-    const corpTitleMembershipTimeIntervalStartDateNode = namedNode(corpTitleMembershipTimeIntervalStartDateName);
-    const corpTitleMembershipTimeIntervalEndDateName: string = (corpTitleMembershipName + "-end").toLocaleLowerCase();
-    const corpTitleMembershipTimeIntervalEndDateNode = namedNode(corpTitleMembershipTimeIntervalEndDateName);
     
     // corporate title membership
     writer.addQuads([
@@ -158,23 +158,30 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
         triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), corpTitleMembershipTimeIntervalNode),
     ]);
 
+    const corpTitleStartDate: string = dateAsId(new Date(employee.employmentStartDate));
+    const corpTitleEndDate: string = dateAsId(new Date(employee.employmentEndDate));
+    const corpTitleMembershipTimeIntervalStartDateName: string = (idNS.prefix + corpTitleStartDate).toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalStartDateNode = namedNode(corpTitleMembershipTimeIntervalStartDateName);
+    const corpTitleMembershipTimeIntervalEndDateName: string = (idNS.prefix + corpTitleEndDate).toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalEndDateNode = namedNode(corpTitleMembershipTimeIntervalEndDateName);
+
+
     // corporate title membership time interval
     writer.addQuads([
-        triple(corpTitleMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'Interval')),
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'MembershipDuration')),
         triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasBeginning'), corpTitleMembershipTimeIntervalStartDateNode),
         triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), corpTitleMembershipTimeIntervalEndDateNode)
     ]);
 
-    const corpTitleStartDate: string = (new Date(employee.departmentStartDate)).toISOString() + "^^xsd:dateTime";
+
     writer.addQuads([
-        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasBeginning')),
-        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(corpTitleStartDate))
+        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
+        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(employee.employmentStartDate.toISOString(), namedNode("xsd:dateTime")))
     ]);
 
-    const corpTitleEndDate: string = (new Date(employee.departmentEndDate)).toISOString() + "^^xsd:dateTime";
     writer.addQuads([
-        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(timeNS.prefix + 'hasEnd')),
-        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(corpTitleEndDate))
+        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
+        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTime'), literal(employee.departmentEndDate.toISOString(), namedNode("xsd:dateTime")))
     ]);
 
     // writer.end((error, result) => console.log(result));
