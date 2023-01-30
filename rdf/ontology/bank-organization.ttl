@@ -94,7 +94,7 @@ pid:pid a rdf:Property, sh:PropertyShape;
 #
 ############################################################################################################
 :BankEmployeeCorporateTitleMembership a rdfs:Class, sh:NodeShape;
-    rdfs:subClassOf org:membership;
+    rdfs:subClassOf org:Membership;
     sh:targetClass :BankEmployeeCorporateTitleMembership;
     sh:nodeKind sh:IRI;
     sh:property [
@@ -175,7 +175,7 @@ pid:pid a rdf:Property, sh:PropertyShape;
 #
 ############################################################################################################
 :BankEmployeeOrganizationalEntityMembership a rdfs:Class, sh:NodeShape;
-    rdfs:subClassOf org:membership;
+    rdfs:subClassOf org:Membership;
     sh:targetClass :BankEmployeeOrganizationalEntityMembership;
     sh:nodeKind sh:IRI;
     sh:property [

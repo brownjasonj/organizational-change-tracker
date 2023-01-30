@@ -51,11 +51,11 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
                                             xsd: 'http://www.w3.org/2000/01/rdf-schema#'
                                         }});
 
-    const staffRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'StaffTitle');
-    const avpRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'AVPTitle');
-    const vpRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'VPTitle');
-    const dirRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'DIRTitle');
-    const mdrRoleNode: NamedNode<string> = namedNode(idNS.prefix + 'MDRTitle');
+    const staffRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'StaffTitle');
+    const avpRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'AVPTitle');
+    const vpRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'VPTitle');
+    const dirRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'DIRTitle');
+    const mdrRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'MDRTitle');
 
 
     const personNodeName: string = idNS.prefix + employee.employee_id;
@@ -78,7 +78,7 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     const organizationMembershipTimeIntervalNode = namedNode(organizationMembershipTimeIntervalNodeName);
     
     writer.addQuads([
-        triple(organizationMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Membership')),
+        triple(organizationMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'BankEmployeeOrganizationalEntityMembership')),
         triple(organizationMembershipNode, namedNode(orgNS.prefix + 'member'), personNode),
         triple(organizationMembershipNode, namedNode(orgNS.prefix + 'organization'), organizationNode),
         triple(organizationMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), organizationMembershipTimeIntervalNode),
@@ -152,9 +152,9 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     
     // corporate title membership
     writer.addQuads([
-        triple(coprTitleMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'Membership')),
+        triple(coprTitleMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix +  'BankEmployeeCorporateTitleMembership')),
         triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'member'), personNode),
-        triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'role'), corporateTitleNode),
+        triple(coprTitleMembershipNode, namedNode(bankOrgfNS.prefix + 'BankCorporateTitle'), corporateTitleNode),
         triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), corpTitleMembershipTimeIntervalNode),
     ]);
 

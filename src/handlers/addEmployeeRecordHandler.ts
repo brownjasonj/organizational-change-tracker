@@ -8,7 +8,7 @@ import { EmployeeDto } from "../models/dto/EmployeeDto";
 import { Employee } from "../models/eom/Employee";
 import { employeeDtoToEmployee } from "../models/mappers/EmployeeMapper";
 import neo4jAddEmployeeRecord from "../neo4jDriver/neo4jAddEmployeeRecord";
-import organizationaRdfGenerator from "../rdf-generators/OrganizationRdfGenerator";
+import { BankOrgRdfDataGenerator } from "../rdf-generators/BankOrgRdfDataGenerator";
 
 // const uri = 'neo4j://localhost:7687';
 // const driver: Driver = neo4j.driver(uri, neo4j.auth.basic('neo4j', 'admin'));
@@ -18,32 +18,22 @@ const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
 
 const addEmployeeRecordHandler = async (context: Context, request: Request, response: Response) => {
 
-    const employeeRecord1 : Employee = new Employee("01", "01", "John", "Hawkins", "A", "Staff",
+    const employeeRecord : Employee = new Employee("4041234", "A041234", "John", "Hawkins", "A", "Staff",
                                                             new Date("2012-01-01"),
                                                             new Date("2012-12-31"),
                                                             new Date("2009-11-02"),
-                                                            new Date("9999-12-31"));
-    const employeeRecord2 : Employee = new Employee("02", "02", "John", "Hawkins", "AB", "Staff",
-                                                            new Date("2012-01-01"),
-                                                            new Date("2012-12-31"),
-                                                            new Date("2009-11-02"),
-                                                            new Date("9999-12-31"));
-    const employeeRecord3 : Employee = new Employee("03", "03", "John", "Hawkins", "ABC", "AVP",
-                                                            new Date("2012-01-01"),
-                                                            new Date("2012-12-31"),
-                                                            new Date("2009-11-02"),
-                                                            new Date("9999-12-31"));
-    const employeeRecord4 : Employee = new Employee("04", "04", "John", "Hawkins", "ABCD", "AVP",
-                                                            new Date("2012-01-01"),
-                                                            new Date("2012-12-31"),
-                                                            new Date("2009-11-02"),
-                                                           new Date("9999-12-31"));
-/*
-    organizationaRdfGenerator(employeeRecord1, (error, result) => console.log(result));
-    organizationaRdfGenerator(employeeRecord2, (error, result) => console.log(result));
-    organizationaRdfGenerator(employeeRecord3, (error, result) => console.log(result));
-    organizationaRdfGenerator(employeeRecord4, (error, result) => console.log(result));
-*/
+                                                          new Date("9999-12-31"));
+    BankOrgRdfDataGenerator(employeeRecord)
+    .then((result) => {
+        blazegraph.turtleUpdate(result)
+        .then((res) => {
+            console.log(xml2json(res))
+            })
+        .catch((err) => console.log(err));
+    })
+    .catch((error) => {
+        console.log(error);
+    });
     response.json({ message: "done" });
 
     };
@@ -53,7 +43,7 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
     await request.body.forEach((employeeDto: EmployeeDto) => {
         const employeeRecord: Employee = employeeDtoToEmployee(employeeDto);
         console.log(employeeRecord);
-        organizationaRdfGenerator(employeeRecord)
+        BankOrgRdfDataGenerator(employeeRecord)
         .then((result) => {
             blazegraph.turtleUpdate(result)
              .then((res) => {

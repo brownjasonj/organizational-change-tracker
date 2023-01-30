@@ -1,0 +1,40 @@
+prefix : <http://example.org/organization#>
+prefix sh: <http://www.w3.org/ns/shacl#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2001/XMLSchema#>
+prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
+prefix id: <http://example.org/id#>
+prefix pid: <http://example.org/pid#>
+prefix foaf: <http://xmlns.com/foaf/0.1#>
+prefix org: <http://www.w3.org/ns/org#>
+prefix time: <http://www.w3.org/2006/time#>
+
+select ?n
+where {
+	?n rdf:type :BankEmployee.
+      }
+
+
+prefix : <http://example.org/organization#>
+prefix sh: <http://www.w3.org/ns/shacl#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2001/XMLSchema#>
+prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
+prefix id: <http://example.org/id#>
+prefix pid: <http://example.org/pid#>
+prefix foaf: <http://xmlns.com/foaf/0.1#>
+prefix org: <http://www.w3.org/ns/org#>
+prefix time: <http://www.w3.org/2006/time#>
+
+
+construct {
+    ?n org:hasMembership ?titlemembers.
+  	?n org:hasMembership ?orgmember
+      } 
+where {
+    ?n rdf:type :BankEmployee.
+    ?titlemembers org:member ?n.
+    ?titlemembers rdf:type :BankEmployeeCorporateTitleMembership.
+    ?orgmember org:member ?n.
+  	?orgmember rdf:type :BankEmployeeOrganizationalEntityMembership.
+      }
