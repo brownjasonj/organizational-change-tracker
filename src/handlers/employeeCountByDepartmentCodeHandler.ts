@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { DateTime } from "neo4j-driver";
 import { Context, Request } from "openapi-backend";
-import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../blazegraph/blazegraph";
+import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../persistence/blazegraph/blazegraph";
 
 const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
 const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));

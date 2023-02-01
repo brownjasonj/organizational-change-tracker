@@ -14,35 +14,6 @@ describe("Stupid Test That should pass!", () => {
     expect(report.conforms).toBe(true);
   });
 
-  // test("Validate RDF organization generator satisfies bank organization ontology", async () => {
-    
-  //   const employeeRecord : Employee = new Employee("01", "01", "John", "Hawkins", "A", "Staff",
-  //                                                           new Date("2012-01-01"),
-  //                                                           new Date("2012-12-31"),
-  //                                                           new Date("2009-11-02"),
-  //                                                         new Date("9999-12-31"));
-  //   console.log(employeeRecord);
-  //   // generate the RDF from the employee record
-  //   organizationaRdfGenerator(employeeRecord).then(async (employeeRdfString) => {
-  //     // load the ontology for which the RDF should be validated against
-  //     loadN3DataSetfromFile('rdf/ontology/bank-organization.ttl').then((shapes) => {
-  //       // load the N3 w
-  //       loadN3DataSetfromString(employeeRdfString).then((data) => {
-  //         const validator = new SHACLValidator(shapes, { factory });
-  //         const report = validator.validate(data);
-  //         expect(report.conforms).toBe(true);
-  //       }).catch((error) => {
-  //         // There is a problem witth loading the data from the string
-  //       });
-  //     }).catch((error) => {
-  //       // there is a problem loading the ontology file!
-  //     });
-  //   }).catch((error) => {
-  //     // There is a problem with the RDF generator
-  //   });
-  // });
-
-
   test("Validate RDF organization generator satisfies bank organization ontology", async () => {
     
     const employeeRecord : Employee = new Employee("4041234", "A041234", "John", "Hawkins", "A", "Staff",

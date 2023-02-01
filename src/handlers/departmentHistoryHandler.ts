@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
-import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../blazegraph/blazegraph";
+import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../persistence/blazegraph/blazegraph";
 import { Employee } from "../models/eom/Employee";
 
 const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});

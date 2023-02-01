@@ -1,77 +1,88 @@
-@prefix : <http://example.org/organization#>.
+@prefix bank-org: <http://example.org/bank-org#>.
+@prefix bank-id: <http://example.org/bank-id#>.
 @prefix sh: <http://www.w3.org/ns/shacl#>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2001/XMLSchema#>.
 @prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>.
-@prefix id: <http://example.org/id#>.
-@prefix pid: <http://example.org/pid#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1#>.
 @prefix org: <http://www.w3.org/ns/org#>.
 @prefix time: <http://www.w3.org/2006/time#>.
 
+############################################################################################################
+#
+# Bank Specific Properties, over and above the Organization vocabulary
+#
+############################################################################################################
+bank-id:id a rdf:Property, sh:PropertyShape;
+    rdfs:range rdfs:string;
+    rdfs:label "Employee ID"@en;
+    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
+    sh:path bank-id:id;
+    sh:datatype rdfs:string;
+    sh:minCount 1;
+    sh:maxCount 1;
+    sh:minLength 7;
+    sh:maxLength 7.
 
-:BankCorporateTitle a rdfs:Class;
+bank-id:pid a rdf:Property, sh:PropertyShape;
+    rdfs:range rdfs:string;
+    rdfs:label "Employee ID"@en;
+    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
+    sh:path bank-id:pid;
+    sh:datatype rdfs:string;
+    sh:minCount 1;
+    sh:maxCount 1;
+    sh:minLength 7;
+    sh:maxLength 7.
+
+bank-org:bankOrganizationEmployeeCount a rdf:Property, sh:PropertyShape;
+    rdfs:label "Employee ID"@en;
+    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
+    sh:path bank-org:bankOrganizationEmployeeCount;
+    sh:datatype xsd:number;
+    sh:minCount 1;
+    sh:maxCount 1.
+
+bank-org:BankCorporateTitle a rdfs:Class;
     rdfs:subClassOf org:Role;
     rdfs:label "Corporate Title"@en;
     rdfs:comment """A corporate title is a role defined by a banking organization that reflects both seniority, but also implies a certain 
                     salary band.  This is in contrast to other types of organization where corporate title and level (pay) are separate."""@en.
 
-:StaffTitle a :BankCorporateTitle;
+bank-org:StaffTitle a bank-org:BankCorporateTitle;
     rdfs:label "Staff"@en;
     rdfs:comment "A staff title is a corporate title that is held by a bank employee."@en.
-:AVPTitle a :BankCorporateTitle;
+bank-org:AVPTitle a bank-org:BankCorporateTitle;
     rdfs:label "AVP"@en;
     rdfs:comment "An AVP title is Assistant Vice President corporate title that is held by a bank employee."@en.
-:VPTitle a :BankCorporateTitle;
+bank-org:VPTitle a bank-org:BankCorporateTitle;
     rdfs:label "VP"@en;
     rdfs:comment "A VP title is a Vice President corporate title that is held by a bank employee."@en.
-:SVPTitle a :BankCorporateTitle;
+bank-org:SVPTitle a bank-org:BankCorporateTitle;
     rdfs:label "Senior VP"@en;
     rdfs:comment "An VP title is a Senior Vice President corporate title that is held by a bank employee."@en.
-:DIRTitle a :BankCorporateTitle;
+bank-org:DIRTitle a bank-org:BankCorporateTitle;
     rdfs:label "Director"@en;
     rdfs:comment "A director title is a corporate title that is held by a bank employee."@en.
-:SDIRTitle a :BankCorporateTitle;
+bank-org:SDIRTitle a bank-org:BankCorporateTitle;
     rdfs:label "Senior Director"@en;
     rdfs:comment "A SDIR title is a Senior Director corporate title that is held by a bank employee."@en.
-:MDRTitle a :BankCorporateTitle;
+bank-org:MDRTitle a bank-org:BankCorporateTitle;
     rdfs:label "Managing Director"@en;
     rdfs:comment "A managing director title is a corporate title that is held by a bank employee."@en.
 
 
 
-id:id a rdf:Property, sh:PropertyShape;
-    rdfs:range rdfs:string;
-    rdfs:label "Employee ID"@en;
-    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
-    sh:path id:id;
-    sh:datatype rdfs:string;
-    sh:minCount 1;
-    sh:maxCount 1;
-    sh:minLength 7;
-    sh:maxLength 7.
 
-pid:pid a rdf:Property, sh:PropertyShape;
-    rdfs:range rdfs:string;
-    rdfs:label "Employee ID"@en;
-    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
-    sh:path pid:pid;
-    sh:datatype rdfs:string;
-    sh:minCount 1;
-    sh:maxCount 1;
-    sh:minLength 7;
-    sh:maxLength 7.
-
-
-:BankEmployee a rdfs:Class, sh:NodeShape;
+bank-org:BankEmployee a rdfs:Class, sh:NodeShape;
     rdfs:subClassOf foaf:Person;
     rdfs:label "Bank Employee"@en;
     rdfs:comment """A Bank Employee is a foaf:person who works for a bank, but will also have other properties
                     relating to the Bank such as an employee identifier, a corporate title, and organization."""@en;
-    sh:targetClass :BankEmployee;
+    sh:targetClass bank-org:BankEmployee;
     sh:nodeKind sh:IRI;
-    sh:property id:id,
-                id:pid;
+    sh:property bank-id:id,
+                bank-id:pid;
     sh:property [
         sh:path foaf:firstName;
         sh:datatype rdfs:string;
@@ -93,56 +104,62 @@ pid:pid a rdf:Property, sh:PropertyShape;
 # Bank Employee's Corporate Title for defined period of time
 #
 ############################################################################################################
-:BankEmployeeCorporateTitleMembership a rdfs:Class, sh:NodeShape;
+bank-org:BankEmployeeCorporateTitleMembership a rdfs:Class, sh:NodeShape;
     rdfs:subClassOf org:Membership;
-    sh:targetClass :BankEmployeeCorporateTitleMembership;
+    sh:targetClass bank-org:BankEmployeeCorporateTitleMembership;
     sh:nodeKind sh:IRI;
     sh:property [
         sh:path org:member;
-        sh:class :BankEmployee;
+        sh:class bank-org:BankEmployee;
         sh:minCount 1;
         sh:maxCount 1;
     ];
     sh:property [
-        sh:path :BankCorporateTitle;
-        sh:node :BankCorporateTitle;
+        sh:path bank-org:BankCorporateTitle;
+        sh:node bank-org:BankCorporateTitle;
         sh:minCount 1;
         sh:maxCount 1;
-        sh:in (:StaffTitle :AVPTitle :VPTitle :SVPTitle :DIRTitle :SDIRTitle :MDRTitle);
+        sh:in (bank-org:StaffTitle bank-org:AVPTitle bank-org:VPTitle bank-org:SVPTitle bank-org:DIRTitle bank-org:SDIRTitle bank-org:MDRTitle);
     ];
     sh:property [
         sh:path org:memberDuring;
-        sh:class :MembershipDuration;
+        sh:class bank-org:MembershipDuration;
         sh:minCount 1;
         sh:maxCount 1;
     ].
 
-:MembershipDuration a rdfs:Class, sh:NodeShape;
+bank-org:MembershipDuration a rdfs:Class, sh:NodeShape;
     rdfs:subClassOf time:Interval;
     rdfs:label "Corporate Title Duration"@en;
     rdfs:comment """A corporate title duration is a period of time that a bank employee has held a corporate title."""@en;
-    sh:targetClass :BankEmployeeCorporateTitleMembershipDuration;
+    sh:targetClass bank-org:BankEmployeeCorporateTitleMembershipDuration;
     sh:nodeKind sh:IRI;
     sh:property [
         sh:path time:hasBeginning;
-        sh:class :xsdDateTimeInstant;
+        sh:class bank-org:xsdDateTimeInstant;
         sh:minCount 1;
         sh:maxCount 1;
     ];
     sh:property [
         sh:path time:hasEnd;
-        sh:class :xsdDateTimeInstant;
+        sh:class bank-org:xsdDateTimeInstant;
         sh:minCount 1;
         sh:maxCount 1;
     ].
 
-:xsdDateTimeInstant a rdfs:Class, sh:NodeShape;
+bank-org:xsdDateTimeInstant a rdfs:Class, sh:NodeShape;
     rdfs:subClassOf time:Instant;
-    sh:targetClass :xsdDateTimeInstant;
+    sh:targetClass bank-org:xsdDateTimeInstant;
     sh:nodeKind sh:IRI;
     sh:property [
-        sh:path time:inXSDDateTime;
-        sh:datatype xsd:dateTime;
+        sh:path time:inXSDDateTimeStamp;
+        sh:datatype xsd:dateTimeStamp;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ];
+    sh:property [
+        sh:path bank-org:dateTimeStamp;
+        sh:datatype rdfs:string;
         sh:minCount 1;
         sh:maxCount 1;
     ].
@@ -153,7 +170,7 @@ pid:pid a rdf:Property, sh:PropertyShape;
 # Organization entity
 #
 ############################################################################################################
-:OrganizationalEntity a sh:NodeShape;
+bank-org:OrganizationalEntity a sh:NodeShape;
     sh:targetClass org:FormalOrganization;
     sh:nodeKind sh:IRI;
     sh:property [
@@ -174,13 +191,13 @@ pid:pid a rdf:Property, sh:PropertyShape;
 # Bank Employee's organization entity for a defined period of time
 #
 ############################################################################################################
-:BankEmployeeOrganizationalEntityMembership a rdfs:Class, sh:NodeShape;
+bank-org:BankEmployeeOrganizationalEntityMembership a rdfs:Class, sh:NodeShape;
     rdfs:subClassOf org:Membership;
-    sh:targetClass :BankEmployeeOrganizationalEntityMembership;
+    sh:targetClass bank-org:BankEmployeeOrganizationalEntityMembership;
     sh:nodeKind sh:IRI;
     sh:property [
         sh:path org:member;
-        sh:class :BankEmployee;
+        sh:class bank-org:BankEmployee;
         sh:minCount 1;
         sh:maxCount 1;
     ];
@@ -192,7 +209,38 @@ pid:pid a rdf:Property, sh:PropertyShape;
     ];
     sh:property [
         sh:path org:memberDuring;
-        sh:class :MembershipDuration;
+        sh:class bank-org:MembershipDuration;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ].
+
+
+
+############################################################################################################
+#
+# Employee Count in an organizational entity at a given point in time
+#
+############################################################################################################
+bank-org:BankNumberOfEmployeesInOrg a rdfs:Class, sh:NodeShape;
+    rdfs:label "The number of BankEmployees in the given organization."@en;
+    rdfs:comment """An organization is defined as a tree structure."""@en;
+    sh:targetClass bank-org:BankNumberOfEmployeesInOrg;
+    sh:nodeKind sh:IRI;
+    sh:property [
+        sh:path org:organization;
+        sh:class org:FormalOrganization;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ];
+    sh:property [
+        sh:path time:inXSDDateTime;
+        sh:datatype xsd:dateTime;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ];
+    sh:property [
+        sh:path bank-org:bankOrganizationEmployeeCount;
+        sh:datatype xsd:number;
         sh:minCount 1;
         sh:maxCount 1;
     ].

@@ -50,7 +50,7 @@ api.register('notImplemented', notImplementedHandler);
 // register openapi application handlers
 api.register('test', testHandler);
 api.register('addemployeeGet', addEmployeeRecordHandler);
-api.register('addemployeePost', addEmployeesHandler);
+api.register('addemployeesPost', addEmployeesHandler);
 api.register('employeeDepartmentHistory', employeeDepartmentHistoryHandler);
 api.register('employeeRoleHistory', employeeRoleHistoryHandler);
 api.register('employee-count-by-department-code', employeeCountByDepartmentCodeHandler);

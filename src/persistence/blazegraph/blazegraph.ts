@@ -1,6 +1,7 @@
 import axios from "axios";
 import http from "http";
 import https from "https";
+import { IRdfGraphDB, SparqlQueryResultType } from "../../interfaces/IRdfGraphDB";
 
 const defaultOptions = {
     host: 'localhost',
@@ -23,14 +24,8 @@ class BlazeGraphOptions {
     }
 }
 
-enum SparqlQueryResultType {
-    CSV = "text/csv",
-    TSV = "text/tsv",
-    JSON = "application/sparql-results+json",
-    XML = "application/sparql-results+xml",
-    TABLE = "application/x-binary-rdf-results-table"
-  }
-class BlazeGraph {
+
+class BlazeGraph implements IRdfGraphDB {
     private options: BlazeGraphOptions;
     private url: string;
     private axios: any;

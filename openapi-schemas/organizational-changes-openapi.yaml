@@ -22,7 +22,20 @@ paths:
           description: OK
     post:
       description: "Simple test end-point returning a Hello World!"
-      operationId: "addemployeePost"
+      operationId: "addemployeesPost"
+      parameters:
+        - in: query
+          name: departmentExistsAfterDate
+          schema:
+            type: string
+          required: false
+          description: If the departmentExistsAfterDate is defined, only records where the department endDate is after the startDate (meaning are still live) will be processed.
+        - in: query
+          name: employeeExistsAfterDate
+          schema:
+            type: string
+          required: false
+          description: If the employeeExistsAfterDate is defined, only records where the employee endDate is after the startDate (meaning are still live) will be processed.
       requestBody: 
         description: Optional description in *Markdown*
         required: true
@@ -30,6 +43,14 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/employees"
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                # 'file' will be the field name in this multipart request
+                file:
+                  type: string
+                  format: base64
       responses:
         "200":
           description: OK

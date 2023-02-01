@@ -1,7 +1,7 @@
 import { session } from "neo4j-driver";
 import { Driver } from "neo4j-driver-core";
 import { abort } from "process";
-import { Employee } from "../models/eom/Employee";
+import { Employee } from "../../models/eom/Employee";
 
 const addEmployeeRecordCypher: string = 
     'merge (e: Employee {id: $id}) \

@@ -1,10 +1,10 @@
-@prefix : <http://example.org/organization#>.
+@prefix : <http://example.org/bank-org#>.
 @prefix sh: <http://www.w3.org/ns/shacl#>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2001/XMLSchema#>.
 @prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>.
-@prefix id: <http://example.org/id#>.
-@prefix pid: <http://example.org/pid#>.
+@prefix id: <http://example.org/bank-id#>.
+@prefix pid: <http://example.org/bank-id#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1#>.
 @prefix org: <http://www.w3.org/ns/org#>.
 @prefix time: <http://www.w3.org/2006/time#>.
@@ -28,9 +28,11 @@ id:4041234 a :BankEmployee;
     org:subOrganizationOf :a-organization.
 
 id:20130101000000 a :xsdDateTimeInstant;
-    time:inXSDDateTime "2013-01-01T00:00:00.000Z"^^xsd:dateTime.
+    time:inXSDDateTimeStamp "2013-01-01T00:00:00.000Z"^^xsd:dateTimeStamp;
+    :dateTimeStamp "2013-01-01T00:00:00.000Z".
 id:20131231000000 a :xsdDateTimeInstant;
-    time:inXSDDateTime "2013-12-31T00:00:00.000Z"^^xsd:dateTime.
+    time:inXSDDateTimeStamp "2013-12-31T00:00:00.000Z"^^xsd:dateTimeStamp;
+    :dateTimeStamp "2013-12-31T00:00:00.000Z".
 
 id:4041234-staff-membership-during a :MembershipDuration;
     time:hasBeginning id:20130101000000;
@@ -49,3 +51,9 @@ id:4041234-a a :BankEmployeeOrganizationalEntityMembership;
     org:organization :a-organization;
     org:member id:4041234;
     org:memberDuring id:4041234-a-membership-during.
+
+id:a-org-employee-count a :bankOrganizationEmployeeCount;
+    org:organization :a-organization;
+    :bankOrganizationEmployeeCount 2;
+    time:inXSDDateTimeStamp "2013-01-01T00:00:00.000Z"^^xsd:dateTimeStamp.
+    
