@@ -1,21 +1,20 @@
-import { write } from "fs";
-import { Writer, DataFactory, NamedNode, Quad } from "n3";
-import { DateTime } from "neo4j-driver-core";
+import { DataFactory, NamedNode, Quad } from "n3";
 import { CorporateRole } from "../models/eom/CorporateRole";
+import { Employee } from "../models/eom/Employee";
 
 const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
-
-import { Employee } from "../models/eom/Employee";
 
 type rdfNameSpace = {
     prefix: string,
     path: string
 };
 
-const zeroPad = (num: number, places: number) => String(num).padStart(places, '0')
-const dateAsId = (date: Date): string => {
-    return `${date.getFullYear()}${zeroPad(date.getMonth() + 1, 2)}${zeroPad(date.getDay()+1, 2)}${zeroPad(date.getHours(), 2)}${zeroPad(date.getMinutes(), 2)}${zeroPad(date.getSeconds(), 2)}`
-}
+
+type LinkedData = {
+    prefixes: object,
+    triples: Quad[]
+};
+
 
 const bankOrgfNS: rdfNameSpace = {prefix: "bank-org:", path: "http://example.org/bank-org#"};
 const idNS: rdfNameSpace = {prefix: "bank-id:", path: "http://example.org/bank-id#"};
@@ -27,28 +26,56 @@ const rdfNS: rdfNameSpace = {prefix: "rdf:", path: "http://www.w3.org/1999/02/22
 const rdfsNS: rdfNameSpace = {prefix: "rdfs:", path: "http://www.w3.org/2001/XMLSchema#"};
 const xsdNS: rdfNameSpace = {prefix: "xsd:", path: "http://www.w3.org/2000/01/rdf-schema#"};
 
-/*
-@prefix : <http://example.org/organization#>.
-@prefix sh: <http://www.w3.org/ns/shacl#>.
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
-@prefix rdfs: <http://www.w3.org/2001/XMLSchema#>.
-@prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>.
-@prefix id: <http://example.org/id#>.
-@prefix foaf: <http://xmlns.com/foaf/0.1#>.
-@prefix org: <http://www.w3.org/ns/org#>.
-@prefix time: <http://www.w3.org/2006/time#>.
-*/
+const prefixes = { 'bank-org': 'http://example.org/bank-org#',
+                    'bank-id': 'http://example.org/bank-id#',
+                    foaf: 'http://xmlns.com/foaf/0.1#',
+                    org: 'http://www.w3.org/ns/org#',
+                    time: 'http://www.w3.org/2006/time#',
+                    rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                    rdfs: 'http://www.w3.org/2001/XMLSchema#',
+                    xsd: 'http://www.w3.org/2000/01/rdf-schema#'
+                };
 
-function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
-    const writer = new Writer({ prefixes: { 'bank-org': 'http://example.org/bank-org#',
-                                            'bank-id': 'http://example.org/bank-id#',
-                                            foaf: 'http://xmlns.com/foaf/0.1#',
-                                            org: 'http://www.w3.org/ns/org#',
-                                            time: 'http://www.w3.org/2006/time#',
-                                            rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                                            rdfs: 'http://www.w3.org/2001/XMLSchema#',
-                                            xsd: 'http://www.w3.org/2000/01/rdf-schema#'
-                                        }});
+
+function createSubOrganizations(organization: string): Quad[] {
+    const triples: Quad[] = [];
+    const departmentHierarchy: string[] = getDepartmentCodeHierarchy(organization).reverse();
+    var lastDepartmentNode: NamedNode<string> | null = null;
+
+    departmentHierarchy.forEach((department: string) => {
+        const organizationNodeName: string = idNS.prefix + department + "-organization";
+        const organizationNode = namedNode(organizationNodeName.toLowerCase());
+        triples.push(...[
+            triple(organizationNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'FormalOrganization')),
+            triple(organizationNode, namedNode(orgNS.prefix + 'name'),literal(department))
+        ]);
+        if (lastDepartmentNode) {
+            triples.push(
+                triple(organizationNode, namedNode(orgNS.prefix + 'subOrganizationOf'), lastDepartmentNode)
+            );
+        }
+        lastDepartmentNode = organizationNode;
+    });
+
+    return triples;
+}
+
+/*
+*/
+function getDepartmentCodeHierarchy(str: string): string[] {
+    const length: number = str.length;
+    const result: string[] = [];
+
+    for (let i = length; i != 0; i--) {
+        if (str.charAt(i - 1) != " ") {
+            result.push(str.slice(0, i));
+        }
+    }
+    return result;
+}
+
+function GenerateBankOrgRdfTriples(employee:Employee): LinkedData {
+    const triples: Quad[] = [];
 
     const staffRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'StaffTitle');
     const avpRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'AVPTitle');
@@ -59,7 +86,8 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
 
     const personNodeName: string = idNS.prefix + employee.employee_id;
     const personNode = namedNode(personNodeName.toLowerCase());
-    writer.addQuads([
+
+    triples.push(...[
         triple(personNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'BankEmployee')),
         triple(personNode, namedNode(idNS.prefix + 'id'),literal(employee.employee_id)),
         triple(personNode, namedNode(pidNS.prefix + 'pid'),literal(employee.system_id)),
@@ -67,7 +95,10 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
         triple(personNode, namedNode(foafNS.prefix + 'surname'), literal(employee.secondName))
     ]);
     
-    const organizationNode = createSubOrganizations(employee.department, writer);
+    const organizationalNodes = createSubOrganizations(employee.department);
+    const organizationNode = organizationalNodes[organizationalNodes.length - 1];
+    triples.push(...organizationalNodes);
+
 
     // set up the membership and time interval
     const organizationMembershipNodeName: string = (idNS.prefix + employee.employee_id + "-" + employee.department + "-membership").toLocaleLowerCase();
@@ -76,7 +107,7 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     const organizationMembershipTimeIntervalNodeName: string = (organizationMembershipNodeName + "-timeinterval").toLocaleLowerCase();
     const organizationMembershipTimeIntervalNode = namedNode(organizationMembershipTimeIntervalNodeName);
     
-    writer.addQuads([
+    triples.push(...[
         triple(organizationMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'BankEmployeeOrganizationalEntityMembership')),
         triple(organizationMembershipNode, namedNode(orgNS.prefix + 'member'), personNode),
         triple(organizationMembershipNode, namedNode(orgNS.prefix + 'organization'), organizationNode),
@@ -96,23 +127,17 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     const organizationMembershipTimeIntervalEndDateNodeName: string = (idNS.prefix + departmentEndDateId).toLocaleLowerCase();
     const organizationMembershipTimeIntervalEndDateNode = namedNode(organizationMembershipTimeIntervalEndDateNodeName);
 
-    writer.addQuads([
+    triples.push(...([
         triple(organizationMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'MembershipDuration')),
         triple(organizationMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasBeginning'), organizationMembershipTimeIntervalStartDateNode),
-        triple(organizationMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), organizationMembershipTimeIntervalEndDateNode)
-    ]);
-    writer.addQuads([
+        triple(organizationMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), organizationMembershipTimeIntervalEndDateNode),
         triple(organizationMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
         triple(organizationMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.employmentStartDate.toISOString(),namedNode("xsd:dateTimeStamp"))),
-        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(bankOrgfNS.prefix + 'dateTimeStamp'), literal(employee.employmentStartDate.toISOString()))
-
-    ]);
-
-    writer.addQuads([
+        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(bankOrgfNS.prefix + 'dateTimeStamp'), literal(employee.employmentStartDate.toISOString())),
         triple(organizationMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
         triple(organizationMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.employmentEndDate.toISOString(), namedNode("xsd:dateTimeStamp"))),
         triple(organizationMembershipTimeIntervalEndDateNode, namedNode(bankOrgfNS.prefix + 'dateTimeStamp'), literal(employee.employmentEndDate.toISOString()))
-    ]);
+    ]));
 
     // Corporate Title Role Membership (e.g., Staff, Asoociate VP, VP, Director, Managing Director, etc.)
 
@@ -151,7 +176,7 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     const corpTitleMembershipTimeIntervalNode = namedNode(corpTitleMembershipTimeIntervalName);
     
     // corporate title membership
-    writer.addQuads([
+    triples.push(...[
         triple(coprTitleMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix +  'BankEmployeeCorporateTitleMembership')),
         triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'member'), personNode),
         triple(coprTitleMembershipNode, namedNode(bankOrgfNS.prefix + 'BankCorporateTitle'), corporateTitleNode),
@@ -167,21 +192,13 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
 
 
     // corporate title membership time interval
-    writer.addQuads([
+    triples.push(...[
         triple(corpTitleMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'MembershipDuration')),
         triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasBeginning'), corpTitleMembershipTimeIntervalStartDateNode),
-        triple(corpTitleMembershipTimeIntervalNode, namedNode(bankOrgfNS.prefix + 'hasEnd'), corpTitleMembershipTimeIntervalEndDateNode)
-    ]);
-
-    writer.addQuads([
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(bankOrgfNS.prefix + 'hasEnd'), corpTitleMembershipTimeIntervalEndDateNode),
         triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
         triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.employmentStartDate.toISOString(), namedNode("xsd:dateTimeStamp"))),
-        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(bankOrgfNS.prefix + 'dateTimeStamp'), literal(employee.employmentStartDate.toISOString()))
-
-        
-    ]);
-
-    writer.addQuads([
+        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(bankOrgfNS.prefix + 'dateTimeStamp'), literal(employee.employmentStartDate.toISOString())),
         triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
         triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.employmentEndDate.toISOString(), namedNode("xsd:dateTimeStamp"))),
         triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(bankOrgfNS.prefix + 'dateTimeStamp'), literal(employee.employmentEndDate.toISOString()))
@@ -189,53 +206,16 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
 
     // writer.end((error, result) => console.log(result));
 
-    return new Promise((resolve, reject) => {
-        writer.end((error, result) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-}
-
-function createSubOrganizations(organization: string, writer: Writer): NamedNode<string> {
-    const departmentHierarchy: string[] = getDepartmentCodeHierarchy(organization).reverse();
-    var departmentNodeNames: NamedNode<string>[] = [];
-    var lastDepartmentNode: NamedNode<string> | null = null;
-
-    departmentHierarchy.forEach((department: string) => {
-        const organizationNodeName: string = idNS.prefix + department + "-organization";
-        const organizationNode = namedNode(organizationNodeName.toLowerCase());
-        writer.addQuads([
-            triple(organizationNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'FormalOrganization')),
-            triple(organizationNode, namedNode(orgNS.prefix + 'name'),literal(department))
-        ]);
-        if (lastDepartmentNode) {
-            writer.addQuads([
-                triple(organizationNode, namedNode(orgNS.prefix + 'subOrganizationOf'), lastDepartmentNode)
-            ]);
-        }
-        lastDepartmentNode = organizationNode;
-    });
-
-    return lastDepartmentNode!;
-}
-
-/*
-*/
-function getDepartmentCodeHierarchy(str: string): string[] {
-    const length: number = str.length;
-    const result: string[] = [];
-
-    for (let i = length; i != 0; i--) {
-        if (str.charAt(i - 1) != " ") {
-            result.push(str.slice(0, i));
-        }
-    }
-    return result;
+    return {
+        prefixes: prefixes,
+        triples: triples
+    };
 }
 
 
-export { BankOrgRdfDataGenerator };
+const zeroPad = (num: number, places: number) => String(num).padStart(places, '0')
+const dateAsId = (date: Date): string => {
+    return `${date.getFullYear()}${zeroPad(date.getMonth() + 1, 2)}${zeroPad(date.getDay()+1, 2)}${zeroPad(date.getHours(), 2)}${zeroPad(date.getMinutes(), 2)}${zeroPad(date.getSeconds(), 2)}`
+}
+
+export { GenerateBankOrgRdfTriples }
