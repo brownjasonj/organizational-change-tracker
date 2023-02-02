@@ -63,7 +63,6 @@ const getSparqlQuery2 = (departmentCode: string, asOf: string) => {
                 (count(distinct ?member) as ?count)
         WHERE {
             ?parentorg org:name "${departmentCode}".
-            ?parentorg org:name ?name.
             ?member org:organization ?org.
             ?org org:subOrganizationOf* ?parentorg.
             ?member org:memberDuring ?interval.
