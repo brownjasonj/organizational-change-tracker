@@ -6,16 +6,12 @@ import { CorporateRole } from "../models/eom/CorporateRole";
 const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
 
 import { Employee } from "../models/eom/Employee";
+import { dateIdGenerator } from "../utils/dateIdGenerator";
 
 type rdfNameSpace = {
     prefix: string,
     path: string
 };
-
-const zeroPad = (num: number, places: number) => String(num).padStart(places, '0')
-const dateAsId = (date: Date): string => {
-    return `${date.getFullYear()}${zeroPad(date.getMonth() + 1, 2)}${zeroPad(date.getDay()+1, 2)}${zeroPad(date.getHours(), 2)}${zeroPad(date.getMinutes(), 2)}${zeroPad(date.getSeconds(), 2)}`
-}
 
 const bankOrgfNS: rdfNameSpace = {prefix: "bank-org:", path: "http://example.org/bank-org#"};
 const idNS: rdfNameSpace = {prefix: "bank-id:", path: "http://example.org/bank-id#"};
@@ -24,8 +20,8 @@ const foafNS: rdfNameSpace = {prefix: "foaf:", path: "http://xmlns.com/foaf/0.1#
 const orgNS: rdfNameSpace = {prefix: "org:", path: "http://www.w3.org/ns/org#"};
 const timeNS: rdfNameSpace = {prefix: "time:", path: "http://www.w3.org/2006/time#"};
 const rdfNS: rdfNameSpace = {prefix: "rdf:", path: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"};
-const rdfsNS: rdfNameSpace = {prefix: "rdfs:", path: "http://www.w3.org/2001/XMLSchema#"};
-const xsdNS: rdfNameSpace = {prefix: "xsd:", path: "http://www.w3.org/2000/01/rdf-schema#"};
+const rdfsNS: rdfNameSpace = {prefix: "rdfs:", path: "http://www.w3.org/2000/01/rdf-schema#"};
+const xsdNS: rdfNameSpace = {prefix: "xsd:", path:  "http://www.w3.org/2001/XMLSchema#"};
 
 /*
 @prefix : <http://example.org/organization#>.
@@ -46,8 +42,8 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
                                             org: 'http://www.w3.org/ns/org#',
                                             time: 'http://www.w3.org/2006/time#',
                                             rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                                            rdfs: 'http://www.w3.org/2001/XMLSchema#',
-                                            xsd: 'http://www.w3.org/2000/01/rdf-schema#'
+                                            rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+                                            xsd: 'http://www.w3.org/2001/XMLSchema#'
                                         }});
 
     const staffRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'StaffTitle');
@@ -88,8 +84,8 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     // Form time for the starting and ending of the duration.  The time is formed as an xsdDateTimeInstant and name of the 
     // node identifying the time is an id with a name of the form YYYYMMDDhhmmss, unique to the precision of seconds.  thousanths 
     // of a second are ignored
-    const deparmentStartDateId: string = dateAsId(new Date(employee.departmentStartDate));
-    const departmentEndDateId: string = dateAsId(new Date(employee.departmentEndDate));
+    const deparmentStartDateId: string = dateIdGenerator(new Date(employee.departmentStartDate));
+    const departmentEndDateId: string = dateIdGenerator(new Date(employee.departmentEndDate));
 
     const organizationMembershipTimeIntervalStartDateNodeName: string = (idNS.prefix + deparmentStartDateId).toLocaleLowerCase();
     const organizationMembershipTimeIntervalStartDateNode = namedNode(organizationMembershipTimeIntervalStartDateNodeName);
@@ -103,15 +99,12 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     ]);
     writer.addQuads([
         triple(organizationMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
-        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.employmentStartDate.toISOString(),namedNode("xsd:dateTimeStamp"))),
-        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(bankOrgfNS.prefix + 'dateTimeStamp'), literal(employee.employmentStartDate.toISOString()))
-
+        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.departmentStartDate.toISOString(),namedNode("xsd:dateTimeStamp"))),
     ]);
 
     writer.addQuads([
         triple(organizationMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
-        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.employmentEndDate.toISOString(), namedNode("xsd:dateTimeStamp"))),
-        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(bankOrgfNS.prefix + 'dateTimeStamp'), literal(employee.employmentEndDate.toISOString()))
+        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.departmentEndDate.toISOString(), namedNode("xsd:dateTimeStamp"))),
     ]);
 
     // Corporate Title Role Membership (e.g., Staff, Asoociate VP, VP, Director, Managing Director, etc.)
@@ -158,8 +151,8 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
         triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), corpTitleMembershipTimeIntervalNode),
     ]);
 
-    const corpTitleStartDate: string = dateAsId(new Date(employee.employmentStartDate));
-    const corpTitleEndDate: string = dateAsId(new Date(employee.employmentEndDate));
+    const corpTitleStartDate: string = dateIdGenerator(new Date(employee.employmentStartDate));
+    const corpTitleEndDate: string = dateIdGenerator(new Date(employee.employmentEndDate));
     const corpTitleMembershipTimeIntervalStartDateName: string = (idNS.prefix + corpTitleStartDate).toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalStartDateNode = namedNode(corpTitleMembershipTimeIntervalStartDateName);
     const corpTitleMembershipTimeIntervalEndDateName: string = (idNS.prefix + corpTitleEndDate).toLocaleLowerCase();
@@ -176,15 +169,11 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     writer.addQuads([
         triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
         triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.employmentStartDate.toISOString(), namedNode("xsd:dateTimeStamp"))),
-        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(bankOrgfNS.prefix + 'dateTimeStamp'), literal(employee.employmentStartDate.toISOString()))
-
-        
     ]);
 
     writer.addQuads([
         triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
         triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.employmentEndDate.toISOString(), namedNode("xsd:dateTimeStamp"))),
-        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(bankOrgfNS.prefix + 'dateTimeStamp'), literal(employee.employmentEndDate.toISOString()))
     ]);
 
     // writer.end((error, result) => console.log(result));

@@ -10,12 +10,15 @@ import { employeeDtoToEmployee } from "../models/mappers/EmployeeMapper";
 import neo4jAddEmployeeRecord from "../persistence/neo4jDriver/neo4jAddEmployeeRecord";
 import { BankOrgRdfDataGenerator } from "../rdf-generators/BankOrgRdfDataGenerator";
 import { persisteEmployeeDtoStringData } from "../persistence/persistEmployeeDtoStringData";
+import { GraphDB } from "../persistence/graphdb/GraphDB";
 
 // const uri = 'neo4j://localhost:7687';
 // const driver: Driver = neo4j.driver(uri, neo4j.auth.basic('neo4j', 'admin'));
 
 const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
 const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
+const graphDB: GraphDB =  new GraphDB();
+graphDB.init();
 
 const addEmployeeRecordHandler = async (context: Context, request: Request, response: Response) => {
 
@@ -27,9 +30,9 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
 
     BankOrgRdfDataGenerator(employeeRecord)
     .then((result) => {
-        blazegraph.turtleUpdate(result)
+        graphDB.turtleUpdate(result)
         .then((res) => {
-            console.log(xml2json(res))
+            console.log(res)
             })
         .catch((err) => console.log(err));
     })
@@ -46,7 +49,7 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
 const addEmployeesHandler =  async (context: Context, request: Request, response: Response) => {
     var employeeRecords: Employee[] = [];
     await request.body.forEach((employeeDto: EmployeeDto) => {
-        persisteEmployeeDtoStringData(blazegraph, employeeDto)
+        persisteEmployeeDtoStringData(graphDB, employeeDto)
         .then((result) => {
             employeeRecords.push(result);
         })

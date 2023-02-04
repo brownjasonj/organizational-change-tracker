@@ -12,9 +12,10 @@ const persisteEmployeeDtoStringData = (graphDB: IRdfGraphDB, employeeDto: Employ
         console.log(employeeRecord);
         BankOrgRdfDataGenerator(employeeRecord)
         .then((result) => {
+            console.log(result);
             graphDB.turtleUpdate(result)
             .then((res) => {
-                console.log(xml2json(res));
+                console.log(res);
                 resolve(employeeRecord);
                 })
             .catch((err) => {

@@ -46,7 +46,7 @@ class GraphDB implements IRdfGraphDB {
 
     async turtleUpdate(turtle: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.graphDBEndpoint.update(turtle, GRAPHDB_CONTEXT_TEST)
+            this.graphDBEndpoint.update(`insert data {${turtle}}`, GRAPHDB_CONTEXT_TEST)
             .then((result: any) => {
                 console.log("inserted a class :\n" + JSON.stringify(result, null, 2));
                 resolve(result);
@@ -58,7 +58,15 @@ class GraphDB implements IRdfGraphDB {
     }
 
     async sparqlQuery(query: string, resultType: string): Promise<any> {
-        throw new Error("Method not implemented.");
+        return new Promise((resolve, reject) => {
+            this.graphDBEndpoint.query(query)
+            .then((result: any) =>{
+                resolve(result);
+            })
+            .catch((err: any) => {
+                reject(err);
+            });
+        });
     }
 }
 

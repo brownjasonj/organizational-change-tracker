@@ -2,8 +2,8 @@
 @prefix bank-id: <http://example.org/bank-id#>.
 @prefix sh: <http://www.w3.org/ns/shacl#>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
-@prefix rdfs: <http://www.w3.org/2001/XMLSchema#>.
-@prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1#>.
 @prefix org: <http://www.w3.org/ns/org#>.
 @prefix time: <http://www.w3.org/2006/time#>.
@@ -14,22 +14,22 @@
 #
 ############################################################################################################
 bank-id:id a rdf:Property, sh:PropertyShape;
-    rdfs:range rdfs:string;
+    rdfs:range xsd:string;
     rdfs:label "Employee ID"@en;
     rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
     sh:path bank-id:id;
-    sh:datatype rdfs:string;
+    sh:datatype xsd:string;
     sh:minCount 1;
     sh:maxCount 1;
     sh:minLength 7;
     sh:maxLength 7.
 
 bank-id:pid a rdf:Property, sh:PropertyShape;
-    rdfs:range rdfs:string;
+    rdfs:range xsd:string;
     rdfs:label "Employee ID"@en;
     rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
     sh:path bank-id:pid;
-    sh:datatype rdfs:string;
+    sh:datatype xsd:string;
     sh:minCount 1;
     sh:maxCount 1;
     sh:minLength 7;
@@ -85,14 +85,14 @@ bank-org:BankEmployee a rdfs:Class, sh:NodeShape;
                 bank-id:pid;
     sh:property [
         sh:path foaf:firstName;
-        sh:datatype rdfs:string;
+        sh:datatype xsd:string;
         sh:minCount 1;
         sh:maxCount 1;
         sh:minLength 1;
     ];
     sh:property [
         sh:path foaf:surname;
-        sh:datatype rdfs:string;
+        sh:datatype xsd:string;
         sh:minCount 1;
         sh:maxCount 1;
         sh:minLength 1;
@@ -156,12 +156,6 @@ bank-org:xsdDateTimeInstant a rdfs:Class, sh:NodeShape;
         sh:datatype xsd:dateTimeStamp;
         sh:minCount 1;
         sh:maxCount 1;
-    ];
-    sh:property [
-        sh:path bank-org:dateTimeStamp;
-        sh:datatype rdfs:string;
-        sh:minCount 1;
-        sh:maxCount 1;
     ].
 
 
@@ -175,7 +169,7 @@ bank-org:OrganizationalEntity a sh:NodeShape;
     sh:nodeKind sh:IRI;
     sh:property [
         sh:path org:name;
-        sh:datatype rdfs:string;
+        sh:datatype xsd:string;
         sh:minCount 1;
         sh:maxCount 1;
         sh:minLength 1;

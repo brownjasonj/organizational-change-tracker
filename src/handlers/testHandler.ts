@@ -5,8 +5,8 @@ import { loadN3DataSetfromFile } from "../utils/loadN3DataSet";
 import factory from "rdf-ext";
 
 const testHandler = async (context: Context, request: Request, response: Response) => {
-        const shapes = await loadN3DataSetfromFile('rdf-examples/bank-organization.ttl');
-        const data = await loadN3DataSetfromFile('rdf-examples/bank-organization-example.ttl');
+        const shapes = await loadN3DataSetfromFile('rdf/ontology/bank-organization.ttl');
+        const data = await loadN3DataSetfromFile('rdf/data/bank-organization-example.ttl');
         const validator = new SHACLValidator(shapes, { factory });
         const report = await validator.validate(data);
         console.log(report.conforms);

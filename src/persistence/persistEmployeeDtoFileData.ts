@@ -15,7 +15,7 @@ const persistEmployeeDtoFileData = async (graphDB: IRdfGraphDB, filePath: string
         .then((result) => {
             graphDB.turtleUpdate(result)
                 .then((res) => {
-                console.log(xml2json(res));
+                    console.log(res);
                 })
             .catch((err) => {
                 console.log(`Error: ${err.message}.  Pushing to retry list.`);

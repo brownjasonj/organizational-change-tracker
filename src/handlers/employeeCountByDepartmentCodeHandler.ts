@@ -2,9 +2,12 @@ import { Response } from "express";
 import { DateTime } from "neo4j-driver";
 import { Context, Request } from "openapi-backend";
 import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../persistence/blazegraph/blazegraph";
+import { GraphDB } from "../persistence/graphdb/GraphDB";
 
 const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
 const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
+const graphDB: GraphDB =  new GraphDB();
+graphDB.init();
 
 const getSparqlQuery = (departmentCode: string, asOf: string) => {
     return `prefix : <http://example.org/id#>
@@ -40,55 +43,69 @@ const getSparqlQuery = (departmentCode: string, asOf: string) => {
 
 const getSparqlQuery2 = (departmentCode: string, asOf: string) => {
     return `prefix : <http://example.org/bank-org#>
-    prefix sh: <http://www.w3.org/ns/shacl#>
-    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    prefix rdfs: <http://www.w3.org/2001/XMLSchema#>
-    prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
     prefix id: <http://example.org/bank-id#>
-    prefix pid: <http://example.org/bank-id#>
-    prefix foaf: <http://xmlns.com/foaf/0.1#>
-    prefix org: <http://www.w3.org/ns/org#>
-    prefix time: <http://www.w3.org/2006/time#>
-
-
+    PREFIX org: <http://www.w3.org/ns/org#>
+    PREFIX time: <http://www.w3.org/2006/time#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1#>
+    
     construct {
-        id:${asOf}-${departmentCode}-bankorgemployeecount a :bankOrganizationEmployeeCount;
+        id:a-org-employee-count a :bankOrganizationEmployeeCount;
         org:organization ?org;
         :bankOrganizationEmployeeCount ?count;
-        time:inXSDDateTime "${asOf}"^^xsd:dateTime.
-        } 
+        time:inXSDDateTime "2013-01-01T00:00:00.000Z"^^xsd:dateTimeStamp.
+          } from <http://ont.enapso.com/repo>
     where {
-        {
-        SELECT ?org
-                (count(distinct ?member) as ?count)
-        WHERE {
+        select (count(?employee) as ?count)
+        where {
+            {
+                select distinct ?employeememberduring
+                where {
+                    ?beginning time:inXSDDateTimeStamp ?startDateTime.
+                    filter(?startDateTime <= "${asOf}T00:00:00Z"^^xsd:dateTimeStamp).
+                    ?end time:inXSDDateTimeStamp ?endDateTime.
+                    filter(?endDateTime >= "${asOf}T22:59:59Z"^^xsd:dateTimeStamp).
+                    ?employeememberduring time:hasBeginning ?beginning.
+                    ?employeememberduring time:hasEnd ?end.
+                }
+            }
+            ?employeemember org:memberDuring ?employeememberduring.
             ?parentorg org:name "${departmentCode}".
-            ?member org:organization ?org.
             ?org org:subOrganizationOf* ?parentorg.
-            ?member org:memberDuring ?interval.
-            ?interval time:hasBeginning ?start.
-            ?interval time:hasEnd ?end.
-            ?start :dateTimeStamp ?startDateTime.
-            ?end :dateTimeStamp ?endDateTime.
-            filter (
-                ?startDateTime <= "${asOf}"
-                && ?endDateTime >= "${asOf}").
-        }
-        GROUP BY ?org ?count
+            ?employeemember org:organization ?org.
+            ?employeemember org:member ?employee.
         }
     }`;
 }
 
+const getSparqlQuery3 = (departmentCode: string, asOf: string) => {
+    return `prefix : <http://example.org/bank-org#>
+
+            construct {
+                ?employee rdf:type :BankEmployee
+            }
+            where {
+                ?employee rdf:type :BankEmployee.
+            }
+        `
+}
 const employeeCountByDepartmentCodeHandler = async (context: Context, request: Request, response: Response) => {
     if (request.query) {
         if (typeof(request.query === 'object')) {
             const queryParams: {[key: string]: string | string[]} = Object.assign({}, (Object)(request.query));
-            const sparqlQuery = getSparqlQuery2(queryParams['department-code'] as string, queryParams['as-of'] as string);
+            const sparqlQuery = getSparqlQuery3(queryParams['department-code'] as string, queryParams['as-of'] as string);
             console.log(sparqlQuery);
-            blazegraph.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((data) => {
                 response.json(data);
-            });
+            })
+            .catch((err) => {
+                console.log(err);
+                response.json({err});
+            }
+            );
         }
     }
 }

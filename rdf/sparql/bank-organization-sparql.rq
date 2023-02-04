@@ -43,8 +43,8 @@ where {
 prefix : <http://example.org/bank-org#>
 prefix sh: <http://www.w3.org/ns/shacl#>
 prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-prefix rdfs: <http://www.w3.org/2001/XMLSchema#>
-prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 prefix id: <http://example.org/bank-id#>
 prefix pid: <http://example.org/bank-id#>
 prefix foaf: <http://xmlns.com/foaf/0.1#>
@@ -75,24 +75,42 @@ prefix id: <http://example.org/bank-id#>
 prefix pid: <http://example.org/bank-id#>
 prefix interval: <http://example.org/interval#>
 prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
-SELECT (count(?member) as ?count) WHERE {
-    ?member org:organization ?org.
-    ?member org:memberDuring ?interval.
+SELECT ?org ?startDateTime ?endDateTime
+WHERE {
+    ?parentorg org:name "A".                   #find parent organization with given name for which you want to count employees
+    ?parentorg org:name ?name.
+    ?member org:organization ?org.              # find all members of the organization
+    ?org org:subOrganizationOf* ?parentorg.     # where the organization is a suborganization of the parent organization
     ?interval time:hasBeginning ?start.
     ?interval time:hasEnd ?end.
-  	?start time:inXSDDateTime ?date1.
-  	?end time:inXSDDateTime ?date2.
-  	filter(?date1 <= "2012-12-17T08:00:00Z").
-    filter(?date2 >= "2012-12-17T08:00:00Z").
+    ?start time:inXSDDateTimeStamp ?startDateTime.
+  	?end time:inXSDDateTimeStamp ?endDateTime.
+    filter(?startDateTime <= "2012-01-01T00:00:00Z"^^xsd:dateTimeStamp).
+    filter(?endDateTime >= "2012-01-01T00:00:00Z"^^xsd:dateTimeStamp).
 }
+
+select ?org (count(?member) as ?count)
+where {
+    ?parentorg org:name "A".                   #find parent organization with given name for which you want to count employees
+    ?member org:organization ?org.              # find all members of the organization
+    ?org org:subOrganizationOf* ?parentorg.     # where the organization is a suborganization of the parent organization
+    ?interval time:hasBeginning ?start.
+    ?interval time:hasEnd ?end.
+    ?start time:inXSDDateTimeStamp ?startDateTime.
+  	?end time:inXSDDateTimeStamp ?endDateTime.
+    filter(?startDateTime <= "2012-01-01T00:00:00Z"^^xsd:dateTimeStamp).
+    filter(?endDateTime >= "2012-01-01T00:00:00Z"^^xsd:dateTimeStamp).
+}
+group by ?org
+
 
 prefix : <http://example.org/bank-org#>
 prefix sh: <http://www.w3.org/ns/shacl#>
 prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-prefix rdfs: <http://www.w3.org/2001/XMLSchema#>
-prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 prefix id: <http://example.org/bank-id#>
 prefix pid: <http://example.org/bank-id#>
 prefix foaf: <http://xmlns.com/foaf/0.1#>
@@ -118,11 +136,97 @@ where {
           ?member org:memberDuring ?interval.         # determine when the member was a member of the organization
           ?interval time:hasBeginning ?start.
           ?interval time:hasEnd ?end.
-          ?start :dateTimeStamp ?startDateTime.
-          ?end :dateTimeStamp ?endDateTime.
+          ?start time:inXSDDateTimeStamp ?startDateTime.
+          ?end time:inXSDDateTimeStamp ?endDateTime.
           filter(?startDateTime <= "2012-12-17T08:00:00Z").
           filter(?endDateTime >= "2012-12-17T08:00:00Z").
       }
       GROUP BY ?org ?count
+    }
+}
+
+
+
+prefix : <http://example.org/bank-org#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1#>
+
+select ?employee 
+where {
+    ?parentorg org:name "A".
+    ?employee rdfs:type :BankEmployee.
+    ?employeeorg org:member ?employee.
+    ?employeeorg org:mmberDuring ?employeeorgDuring.
+    ?org org:subOrganizationOf* ?parentorg.     # where the organization is a suborganization of the parent organization
+    ?interval time:hasBeginning ?start.
+    ?interval time:hasEnd ?end.
+    ?start time:inXSDDateTimeStamp ?startDateTime.
+  	?end time:inXSDDateTimeStamp ?endDateTime.
+    filter(?startDateTime <= "2012-01-01T00:00:00Z"^^xsd:dateTimeStamp
+    && ?endDateTime >= "2012-01-01T00:00:00Z"^^xsd:dateTimeStamp).
+}
+
+prefix : <http://example.org/bank-org#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1#>
+
+select ?employeememberduring
+where {
+    ?parentorg org:name "A".
+    ?org org:subOrganizationOf* ?parentorg.
+    ?employeemember org:organization ?org.
+    ?employeemember org:member ?employee.
+    ?employeemember org:memberDuring ?employeememberduring.
+    ?employeememberduring time:hasBeginning ?beginning.
+    ?employeememberduring time:hasEnd ?end.
+    ?beginning time:inXSDDateTimeStamp ?startDateTime.
+    ?end time:inXSDDateTimeStamp ?endDateTime.
+    filter(?startDateTime <= "2012-01-01T00:00:00Z"^^xsd:dateTimeStamp
+    && ?endDateTime >= "2012-01-01T00:00:00Z"^^xsd:dateTimeStamp).
+}
+
+
+prefix : <http://example.org/bank-org#>
+prefix id: <http://example.org/bank-id#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1#>
+
+construct {
+    id:a-org-employee-count a :bankOrganizationEmployeeCount;
+    org:organization ?org;
+    :bankOrganizationEmployeeCount ?count;
+    time:inXSDDateTime "2013-01-01T00:00:00.000Z"^^xsd:dateTimeStamp.
+      } 
+where {
+    select (count(?employee) as ?count)
+    where {
+        {
+            select distinct ?employeememberduring
+            where {
+                ?beginning time:inXSDDateTimeStamp ?startDateTime.
+                filter(?startDateTime <= "2012-01-04T00:00:00Z"^^xsd:dateTimeStamp).
+                ?end time:inXSDDateTimeStamp ?endDateTime.
+                filter(?endDateTime >= "2012-01-04T22:59:59Z"^^xsd:dateTimeStamp).
+                ?employeememberduring time:hasBeginning ?beginning.
+                ?employeememberduring time:hasEnd ?end.
+            }
+        }
+        ?employeemember org:memberDuring ?employeememberduring.
+        ?parentorg org:name "A".
+        ?org org:subOrganizationOf* ?parentorg.
+        ?employeemember org:organization ?org.
+        ?employeemember org:member ?employee.
     }
 }

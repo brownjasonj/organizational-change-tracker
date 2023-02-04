@@ -44,7 +44,7 @@ describe("GraphDB IRdfGraph interface testing", () => {
     //     });
         BankOrgRdfDataGenerator(employeeRecord)
         .then((result) => {
-            graphDB.turtleUpdate(`insert data {${result}}`)
+            graphDB.turtleUpdate(result)
                 .then((res) => {
                     console.log("inserted a class :\n" + JSON.stringify(result, null, 2));
                 })
