@@ -204,16 +204,16 @@ components:
           type: string
         departmentStartDate:
           type: string
-          format: date
+          example: "2019-05-17"
         departmentEndDate:
           type: string
-          format: date
+          example: "2019-05-17"
         employmentStartDate:
           type: string
-          format: date
+          example: "2019-05-17"
         employementEndDate:
           type: string
-          format: date
+          example: "2019-05-17"
 
     employees:
       type: array
@@ -230,10 +230,10 @@ components:
           example: "ABCD1"
         startdate:
           type: string
-          format: date
+          example: "2019-05-17"
         enddate:
           type: string
-          format: date
+          example: "2019-05-17"
 
     employeeDepartmentEpocs:
       type: object
@@ -258,10 +258,10 @@ components:
           example: "Vice President"
         startdate:
           type: string
-          format: date
+          example: "2019-05-17"
         enddate:
           type: string
-          format: date
+          example: "2019-05-17"
 
     employeeRoleEpocs:
       type: array
@@ -281,10 +281,10 @@ components:
       properties:
         startDate:
           type: string
-          format: date
+          example: "2019-05-17"
         endDate:
           type: string
-          format: date
+          example: "2019-05-17"
         dateStep:
           $ref: "#/components/schemas/dateStep"
         history:
@@ -300,7 +300,7 @@ components:
           example: "ABCD1"
         date:
           type: string
-          format: date
+          example: "2019-05-17"
         size:
           type: integer
           example: 23
