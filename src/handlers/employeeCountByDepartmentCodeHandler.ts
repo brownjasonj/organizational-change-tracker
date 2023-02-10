@@ -1,13 +1,18 @@
 import { Response } from "express";
 import { DateTime } from "neo4j-driver";
 import { Context, Request } from "openapi-backend";
-import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../persistence/blazegraph/blazegraph";
-import { GraphDB } from "../persistence/graphdb/GraphDB";
+import { OnToTextGraphDB } from "../persistence/graphdb/OnToTextGraphDB";
+import { SparqlQueryResultType } from "../interfaces/IRdfGraphDB";
+// import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../persistence/blazegraph/blazegraph";
+// import { GraphDB } from "../persistence/graphdb/GraphDB";
 
-const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
-const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
-const graphDB: GraphDB =  new GraphDB();
-graphDB.init();
+// const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
+// const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
+
+// const graphDB: GraphDB =  new GraphDB();
+// graphDB.init();
+
+const graphDB: OnToTextGraphDB =  new OnToTextGraphDB();
 
 const getSparqlQuery = (departmentCode: string, asOf: string) => {
     return `prefix : <http://example.org/id#>

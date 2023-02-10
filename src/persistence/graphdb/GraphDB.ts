@@ -1,5 +1,5 @@
 import { IRdfGraphDB } from "../../interfaces/IRdfGraphDB";
-import { EnapsoGraphDBClient } from "@innotrade/enapso-graphdb-client";
+// import { EnapsoGraphDBClient } from "@innotrade/enapso-graphdb-client";
 
 // connection data to the run GraphDB instance
 const GRAPHDB_BASE_URL = "http://localhost:7200",
@@ -8,6 +8,7 @@ const GRAPHDB_BASE_URL = "http://localhost:7200",
     GRAPHDB_PASSWORD = "test",
     GRAPHDB_CONTEXT_TEST = "http://example.org/#";
 
+/*
 const DEFAULT_PREFIXES = [
     EnapsoGraphDBClient.PREFIX_OWL,
     EnapsoGraphDBClient.PREFIX_RDF,
@@ -70,4 +71,4 @@ class GraphDB implements IRdfGraphDB {
     }
 }
 
-export { GraphDB };
+export { GraphDB }; */

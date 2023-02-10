@@ -1,24 +1,21 @@
 import { Response } from "express";
-import neo4j, { Driver } from "neo4j-driver";
 import { Context, Handler, Request } from "openapi-backend";
-import { ReadableStreamBYOBRequest } from "stream/web";
-import { xml2json } from "xml-js";
-import { BlazeGraph, BlazeGraphOptions } from "../persistence/blazegraph/blazegraph";
 import { EmployeeDto } from "../models/dto/EmployeeDto";
 import { Employee } from "../models/eom/Employee";
-import { employeeDtoToEmployee } from "../models/mappers/EmployeeMapper";
-import neo4jAddEmployeeRecord from "../persistence/neo4jDriver/neo4jAddEmployeeRecord";
 import { BankOrgRdfDataGenerator } from "../rdf-generators/BankOrgRdfDataGenerator";
 import { persisteEmployeeDtoStringData } from "../persistence/persistEmployeeDtoStringData";
-import { GraphDB } from "../persistence/graphdb/GraphDB";
+import { OnToTextGraphDB } from "../persistence/graphdb/OnToTextGraphDB";
 
 // const uri = 'neo4j://localhost:7687';
 // const driver: Driver = neo4j.driver(uri, neo4j.auth.basic('neo4j', 'admin'));
 
-const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
-const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
-const graphDB: GraphDB =  new GraphDB();
-graphDB.init();
+// const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
+// const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
+
+// const graphDB: GraphDB =  new GraphDB();
+// graphDB.init();
+
+const graphDB: OnToTextGraphDB =  new OnToTextGraphDB();
 
 const addEmployeeRecordHandler = async (context: Context, request: Request, response: Response) => {
 
