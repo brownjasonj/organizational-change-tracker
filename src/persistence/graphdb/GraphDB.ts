@@ -3,10 +3,10 @@ import { EnapsoGraphDBClient } from "@innotrade/enapso-graphdb-client";
 
 // connection data to the run GraphDB instance
 const GRAPHDB_BASE_URL = "http://localhost:7200",
-    GRAPHDB_REPOSITORY = "Test",
-    GRAPHDB_USERNAME = "Test",
+    GRAPHDB_REPOSITORY = "organization",
+    GRAPHDB_USERNAME = "test",
     GRAPHDB_PASSWORD = "test",
-    GRAPHDB_CONTEXT_TEST = "http://ont.enapso.com/repo";
+    GRAPHDB_CONTEXT_TEST = "http://example.org/#";
 
 const DEFAULT_PREFIXES = [
     EnapsoGraphDBClient.PREFIX_OWL,
