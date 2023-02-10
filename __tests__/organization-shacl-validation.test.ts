@@ -29,6 +29,7 @@ describe("Stupid Test That should pass!", () => {
     console.log(employeeRDFString);
     const validator = new SHACLValidator(shapes, { factory });
     const report = validator.validate(data);
+    console.log(`Report: ${report.conforms}`);
     expect(report.conforms).toBe(true);
   });
 

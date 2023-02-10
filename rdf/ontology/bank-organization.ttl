@@ -227,14 +227,14 @@ bank-org:BankNumberOfEmployeesInOrg a rdfs:Class, sh:NodeShape;
         sh:maxCount 1;
     ];
     sh:property [
-        sh:path time:inXSDDateTime;
-        sh:datatype xsd:dateTime;
+        sh:path time:inXSDDateTimeStamp;
+        sh:datatype xsd:dateTimeStamp;
         sh:minCount 1;
         sh:maxCount 1;
     ];
     sh:property [
         sh:path bank-org:bankOrganizationEmployeeCount;
-        sh:datatype xsd:number;
+        sh:datatype xsd:integer;
         sh:minCount 1;
         sh:maxCount 1;
     ].

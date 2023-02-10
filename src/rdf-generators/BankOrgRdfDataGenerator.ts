@@ -163,7 +163,7 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     writer.addQuads([
         triple(corpTitleMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'MembershipDuration')),
         triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasBeginning'), corpTitleMembershipTimeIntervalStartDateNode),
-        triple(corpTitleMembershipTimeIntervalNode, namedNode(bankOrgfNS.prefix + 'hasEnd'), corpTitleMembershipTimeIntervalEndDateNode)
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), corpTitleMembershipTimeIntervalEndDateNode)
     ]);
 
     writer.addQuads([

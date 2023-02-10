@@ -1,59 +1,51 @@
-@prefix : <http://example.org/bank-org#>.
+@prefix bank-org: <http://example.org/bank-org#>.
+@prefix bank-id: <http://example.org/bank-id#>.
 @prefix sh: <http://www.w3.org/ns/shacl#>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-@prefix id: <http://example.org/bank-id#>.
-@prefix pid: <http://example.org/bank-id#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1#>.
 @prefix org: <http://www.w3.org/ns/org#>.
 @prefix time: <http://www.w3.org/2006/time#>.
 
-
-:MyTitle a :BankCorporateTitle;
-    rdfs:label "Staff"@en;
-    rdfs:comment "A staff title is a corporate title that is held by a bank employee."@en.
-
-id:4041234 a :BankEmployee;
-    id:id "4041234";
-    pid:pid "A041234";
+bank-id:4041234 a bank-org:BankEmployee;
+    bank-id:id "4041234";
+    bank-id:pid "A041234";
     foaf:firstName "John";
     foaf:surname "Hawkins".
 
 
-:a-organization a org:FormalOrganization;
+bank-id:a-organization a org:FormalOrganization;
     org:name "A".
-:ab-organization a org:FormalOrganization;
+bank-id:ab-organization a org:FormalOrganization;
     org:name "AB";
-    org:subOrganizationOf :a-organization.
+    org:subOrganizationOf bank-id:a-organization.
 
-id:20130101000000 a :xsdDateTimeInstant;
-    time:inXSDDateTimeStamp "2013-01-01T00:00:00.000Z"^^xsd:dateTimeStamp;
-    :dateTimeStamp "2013-01-01T00:00:00.000Z".
-id:20131231000000 a :xsdDateTimeInstant;
-    time:inXSDDateTimeStamp "2013-12-31T00:00:00.000Z"^^xsd:dateTimeStamp;
-    :dateTimeStamp "2013-12-31T00:00:00.000Z".
+bank-id:20130101000000 a bank-org:xsdDateTimeInstant;
+    time:inXSDDateTimeStamp "2013-01-01T00:00:00.000Z"^^xsd:dateTimeStamp.
+bank-id:20131231000000 a bank-org:xsdDateTimeInstant;
+    time:inXSDDateTimeStamp "2013-12-31T00:00:00.000Z"^^xsd:dateTimeStamp.
 
-id:4041234-staff-membership-during a :MembershipDuration;
-    time:hasBeginning id:20130101000000;
-    time:hasEnd id:20131231000000.
+bank-id:4041234-staff-membership-during a bank-org:MembershipDuration;
+    time:hasBeginning bank-id:20130101000000;
+    time:hasEnd bank-id:20131231000000.
 
-id:4041234-staff a :BankEmployeeCorporateTitleMembership;
-    :BankCorporateTitle :StaffTitle;
-    org:member id:4041234;
-    org:memberDuring id:4041234-staff-membership-during.
+bank-id:4041234-staff a bank-org:BankEmployeeCorporateTitleMembership;
+    bank-org:BankCorporateTitle bank-org:StaffTitle;
+    org:member bank-id:4041234;
+    org:memberDuring bank-id:4041234-staff-membership-during.
 
-id:4041234-a-membership-during a :MembershipDuration;
-    time:hasBeginning id:20130101000000;
-    time:hasEnd id:20131231000000.
+bank-id:4041234-a-membership-during a bank-org:MembershipDuration;
+    time:hasBeginning bank-id:20130101000000;
+    time:hasEnd bank-id:20131231000000.
 
-id:4041234-a a :BankEmployeeOrganizationalEntityMembership;
-    org:organization :a-organization;
-    org:member id:4041234;
-    org:memberDuring id:4041234-a-membership-during.
+bank-id:4041234-a a bank-org:BankEmployeeOrganizationalEntityMembership;
+    org:organization bank-id:a-organization;
+    org:member bank-id:4041234;
+    org:memberDuring bank-id:4041234-a-membership-during.
 
-id:a-org-employee-count a :bankOrganizationEmployeeCount;
-    org:organization :a-organization;
-    :bankOrganizationEmployeeCount 2;
+bank-id:a-org-employee-count a bank-org:BankNumberOfEmployeesInOrg;
+    org:organization bank-id:a-organization;
+    bank-org:bankOrganizationEmployeeCount 2;
     time:inXSDDateTimeStamp "2013-01-01T00:00:00.000Z"^^xsd:dateTimeStamp.
     
