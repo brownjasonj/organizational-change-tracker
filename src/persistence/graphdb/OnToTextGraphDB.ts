@@ -47,12 +47,10 @@ class OnToTextGraphDB implements IRdfGraphDB {
     async turtleUpdate(turtle: string): Promise<any>{
         const contentType = RDFMimeType.TURTLE;
         return new Promise((resolve, reject) => {
-            this.rdfRespositoryClient.overwrite(turtle, contentType, GRAPHDB_CONTEXT_TEST)
+            this.rdfRespositoryClient.upload(turtle, contentType, GRAPHDB_CONTEXT_TEST)
             .then((result: any) => {
-                console.log("inserted a class :\n" + JSON.stringify(result, null, 2));
-                resolve(result);
+                resolve(turtle);
             }).catch((err: any) => {
-                console.log(err);
                 reject(err);
             });
         });

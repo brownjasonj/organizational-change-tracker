@@ -5,17 +5,12 @@ import { Employee } from "../models/eom/Employee";
 import { BankOrgRdfDataGenerator } from "../rdf-generators/BankOrgRdfDataGenerator";
 import { persisteEmployeeDtoStringData } from "../persistence/persistEmployeeDtoStringData";
 import { OnToTextGraphDB } from "../persistence/graphdb/OnToTextGraphDB";
+import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
+import { GraphPersistenceFactory } from "../persistence/graphPersistenceFactory";
 
-// const uri = 'neo4j://localhost:7687';
-// const driver: Driver = neo4j.driver(uri, neo4j.auth.basic('neo4j', 'admin'));
 
-// const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
-// const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
 
-// const graphDB: GraphDB =  new GraphDB();
-// graphDB.init();
-
-const graphDB: OnToTextGraphDB =  new OnToTextGraphDB();
+const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
 
 const addEmployeeRecordHandler = async (context: Context, request: Request, response: Response) => {
 

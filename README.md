@@ -4,15 +4,64 @@ The objective of this project is to explore the use of knowledge graph for track
 <p>
 
 <p>
-Trying to stick to standards as much as possible is a key tenat of the project.  As such we currently recommend using Blazegraph as it readily supports RDF Turtle and SPARQL.  Furthermore it is very easy to set up.
+Trying to stick to standards as much as possible is a key tenat of the project. I have been experimenting with Neo4j, Blazegraph and OntoText GraphDB.
+</p>
 
+<p>
+<h3>
+GraphDB (<a href="https://www.ontotext.com/">OnToText</a>)
+</h3>
+So far this has been the most standard version of an RDF triple store that I have experimented with.
+</p>
+
+<h3>
+Blazegraph
+</h3>
+It is not clear to me how well supported this is anymore, but seems quite popular.  The only issue that I ran into was the handling of timestamps that are used in the organization ontology membership relationship.  It seems that blazegraph doesn't handle <code>xsd:dateTimeStamp</code> at all, what I mean by this is that in a SPARQL query one should be able to do comparisons or be able to pick out the year, month etc. from a <code>dateTimeStamp</code>.  
+
+<p>
+For example the following
+
+<code>
+    filter(?endDateTime >= "2012-12-17T08:00:00Z").
+</code>
+
+and this
+
+<code>
+    filter(?endDateTime >="2012-12-17T08:00:00Z"^^xsd:dateTimeStamp).
+</code>
+
+do not work, meaning that if the endDateTime is indeed after the date time defined in the string, blazegraph returns false.
+
+As such the queries that are dependent on datetime, basically everything, do not work when using blazegraph as the triple store.  As such I've now essentially moved to using OnToText GraphDB which does work correctly for the very same turtle being ingested and sparql queries.
+</p>
+
+<p>
+<h3> AWS Neptune</h3>
+AWS are offering a blazegraph serverless solution called Neptune. I haven't yet tried this, but am eager to see if the aforementioned problems i'm having with Blazegraph have been solved. I assume so, but need to check.
+
+Once I get around to it I'll push terraform code to create Neptune store so that you can run the same example against that triple store.
+</p>
+
+<p>
+<h3>
+NEO4J
+</h3>
 We have experimented extensively with Neo4j which is popular, however have found that the neosemantic module isn't mature enough, particularly in the handling of namespaces.  Furthetmore, there is no current support for SPARQL as the company has it's own query language (Cypher).  However, this project does containt examples of Cypher, but it is more complex than using SPARQL queries (compare the <a href="https://github.com/brownjasonj/organizational-change-tracker/blob/main/rdf-examples/sample-cypher.cql">sample-cypher.cql</a> and <a href="https://github.com/brownjasonj/organizational-change-tracker/blob/main/rdf-examples/sample-sparql.rq">sample sample-sparql.rq</a> files to see what we mean).
 </p>
 
-<h1>Blazegraph Setup</h1>
+
+<h1> Graph DB Installations</h1>
+You can find all necessary instructions on installing the various triple stores, but just in case here is a simple index into them.
+
+<h2> OnToText GraphDB </h2>
+Go to <a href="https://www.ontotext.com/">OnToText</a> for the desktop version of their triple store.  Unfortuantely you'll have to leave you details and email address to get the download, but after that it is free to use for your experiments.
+
+<h2>Blazegraph Setup</h2>
 For set up got to <a href="https://github.com/blazegraph/database/wiki/Main_Page">Blazegraph Quickstart</a>.
 
-<h1>NEO4J Setup</h1>
+<h2>NEO4J Setup</h2>
 
 1. Install Neo4j Desktop (<a href="https://neo4j.com/docs/desktop-manual/current/installation/">Neo4j Installation</a>)
 2. Start Neo4j
