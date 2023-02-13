@@ -4,9 +4,8 @@ import { EmployeeDto } from "../models/dto/EmployeeDto";
 import { Employee } from "../models/eom/Employee";
 import { BankOrgRdfDataGenerator } from "../rdf-generators/BankOrgRdfDataGenerator";
 import { persisteEmployeeDtoStringData } from "../persistence/persistEmployeeDtoStringData";
-import { OnToTextGraphDB } from "../persistence/graphdb/OnToTextGraphDB";
 import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
-import { GraphPersistenceFactory } from "../persistence/graphPersistenceFactory";
+import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 
 
 

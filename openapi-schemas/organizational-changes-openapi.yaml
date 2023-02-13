@@ -21,23 +21,17 @@ paths:
         '200':
           description: OK
     post:
-      description: "Simple test end-point returning a Hello World!"
+      description: "Upload of employee data"
       operationId: "addemployeesPost"
       parameters:
         - in: query
-          name: departmentExistsAfterDate
+          name: employeeEndsBefore
           schema:
             type: string
           required: false
-          description: If the departmentExistsAfterDate is defined, only records where the department endDate is after the startDate (meaning are still live) will be processed.
-        - in: query
-          name: employeeExistsAfterDate
-          schema:
-            type: string
-          required: false
-          description: If the employeeExistsAfterDate is defined, only records where the employee endDate is after the startDate (meaning are still live) will be processed.
+          description: If the employee end date is before this date then the employee is not loaded.
       requestBody: 
-        description: Optional description in *Markdown*
+        description: The content to be upload should be JSON format as per the given schema, either directly in post of via a file.
         required: true
         content:
           application/json:

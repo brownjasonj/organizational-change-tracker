@@ -2,12 +2,13 @@ import * as fs from 'fs';
 import { Response, Request} from "express"
 import { UploadedFile } from "express-fileupload";
 import { Context } from "openapi-backend"
-import { BlazeGraph, BlazeGraphOptions } from '../persistence/blazegraph/blazegraph';
 import { IRdfGraphDB } from '../interfaces/IRdfGraphDB';
 import { persistEmployeeDtoFileData } from '../persistence/persistEmployeeDtoFileData';
+import { employeeDtoFileToEmployeStream } from '../dataingestors/employeeDtoFileToEmployeeStream';
+import { GraphPersistenceFactory } from '../persistence/GraphPersistenceFactory';
 
 
-const graphDB: IRdfGraphDB = new BlazeGraph(new BlazeGraphOptions({}));
+const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
 
 const uploadHandler = async (context: Context, request: Request, response: Response) => {
     if (!request.files) {
@@ -29,7 +30,10 @@ const uploadHandler = async (context: Context, request: Request, response: Respo
             });
 
             console.log(uploadedFiles.name);
-            persistEmployeeDtoFileData(graphDB, filePath);
+
+            // persistEmployeeDtoFileData(graphDB, filePath);
+
+            employeeDtoFileToEmployeStream(filePath);
         }
         response.json({ message: "done" });
     }
