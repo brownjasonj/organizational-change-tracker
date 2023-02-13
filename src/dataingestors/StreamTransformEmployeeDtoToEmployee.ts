@@ -10,7 +10,6 @@ class StreamTransformEmployeeDtoToEmployee extends Duplex {
     }
 
     _write(data: EmployeeDto, encoding: string, callback: Function) {
-        console.log(data);
         const employeeRecord: Employee = employeeDtoToEmployee(data);
         this.push(employeeRecord);
         callback();

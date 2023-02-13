@@ -12,19 +12,23 @@ describe("GraphDB IRdfGraph interface testing", () => {
             new Date("2009-11-02"),
             new Date("9999-12-31"));
 
-        BankOrgRdfDataGenerator(employeeRecord)
+        var turtleData: string = "";
+        await BankOrgRdfDataGenerator(employeeRecord)
         .then((result) => {
-            graphDB.turtleUpdate(result)
+            turtleData = result;
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+        await graphDB.turtleUpdate(turtleData)
                 .then((res) => {
-                    console.log("inserted a class :\n" + JSON.stringify(result, null, 2));
+                    console.log("inserted a class :\n" + JSON.stringify(turtleData, null, 2));
                 })
                 .catch((err) => {
                     console.log(err);
                 });
-            })
-        .catch((error) => {
-            console.log(error);
-        });
+           
         graphDB.destroy();
     });
 });

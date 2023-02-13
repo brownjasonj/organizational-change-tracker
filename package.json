@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --detectOpenHandles --forceExit",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --detectOpenHandles --coverage",
     "start:dev": "npx nodemon",
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node build/index.js"

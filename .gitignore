@@ -10,6 +10,9 @@ build/
 **/.DS_Store
 .DS_Store
 
+### Test Code Coverage ###
+coverage/
+
 ### STS ###
 .apt_generated
 .classpath
