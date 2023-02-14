@@ -3,6 +3,7 @@ import { loadN3DataSetfromFile, loadN3DataSetfromString } from '../src/utils/loa
 import factory from 'rdf-ext';
 import { Employee } from "../src/models/eom/Employee";
 import { BankOrgRdfDataGenerator } from "../src/rdf-generators/BankOrgRdfDataGenerator";
+import "@types/jest";
 
 describe("Stupid Test That should pass!", () => {
   test("Validate Static organization example against organization shape", async () => {

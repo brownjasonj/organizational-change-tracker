@@ -1,6 +1,7 @@
 import { Employee } from "../../../src/models/eom/Employee";
 import { BankOrgRdfDataGenerator } from "../../../src/rdf-generators/BankOrgRdfDataGenerator";
 import { OnToTextGraphDB } from "../../../src/persistence/graphdb/OnToTextGraphDB";
+import "@types/jest";
 
 describe("GraphDB IRdfGraph interface testing", () => {
     test("Load single employee turtle and retreive", async () => {

@@ -3,9 +3,9 @@ import { Response, Request} from "express"
 import { UploadedFile } from "express-fileupload";
 import { Context } from "openapi-backend"
 import { IRdfGraphDB } from '../interfaces/IRdfGraphDB';
-import { persistEmployeeDtoFileData } from '../persistence/persistEmployeeDtoFileData';
 import { employeeDtoFileToEmployeStream } from '../dataingestors/employeeDtoFileToEmployeeStream';
 import { GraphPersistenceFactory } from '../persistence/GraphPersistenceFactory';
+import { loadN3DataSetfromFile } from '../utils/loadN3DataSet';
 
 
 const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
@@ -32,8 +32,9 @@ const uploadHandler = async (context: Context, request: Request, response: Respo
             console.log(uploadedFiles.name);
 
             // persistEmployeeDtoFileData(graphDB, filePath);
+            const shapes = await loadN3DataSetfromFile('rdf/ontology/bank-organization.ttl');
 
-            employeeDtoFileToEmployeStream(filePath);
+            employeeDtoFileToEmployeStream(filePath, shapes);
         }
         response.json({ message: "done" });
     }
