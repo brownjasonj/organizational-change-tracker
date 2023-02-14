@@ -1,11 +1,11 @@
 import { Employee } from "../../../src/models/eom/Employee";
 import { BankOrgRdfDataGenerator } from "../../../src/rdf-generators/BankOrgRdfDataGenerator";
-import { OnToTextGraphDB } from "../../../src/persistence/graphdb/OnToTextGraphDB";
-import "@types/jest";
+import { GraphPersistenceFactory } from "../../../src/persistence/GraphPersistenceFactory";
+import { IRdfGraphDB } from "../../../src/interfaces/IRdfGraphDB";
 
 describe("GraphDB IRdfGraph interface testing", () => {
     test("Load single employee turtle and retreive", async () => {
-        const graphDB: OnToTextGraphDB =  new OnToTextGraphDB();
+        const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
         // await graphDB.init();
         const employeeRecord : Employee = new Employee("4041234", "A041234", "John", "Hawkins", "A", "Staff",
             new Date("2012-01-01"),
@@ -13,23 +13,9 @@ describe("GraphDB IRdfGraph interface testing", () => {
             new Date("2009-11-02"),
             new Date("9999-12-31"));
 
-        var turtleData: string = "";
-        await BankOrgRdfDataGenerator(employeeRecord)
-        .then((result) => {
-            turtleData = result;
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-
-        await graphDB.turtleUpdate(turtleData)
-                .then((res) => {
-                    console.log("inserted a class :\n" + JSON.stringify(turtleData, null, 2));
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-           
-        graphDB.destroy();
+        const turtleData: string = await BankOrgRdfDataGenerator(employeeRecord);
+        expect(turtleData).toBeDefined();
+        const insertResponse = await graphDB.turtleUpdate(turtleData);
+        expect(insertResponse).toBeDefined();
     });
 });

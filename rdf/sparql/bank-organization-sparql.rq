@@ -1,17 +1,15 @@
-prefix : <http://example.org/organization#>
-prefix sh: <http://www.w3.org/ns/shacl#>
-prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-prefix rdfs: <http://www.w3.org/2001/XMLSchema#>
-prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
-prefix id: <http://example.org/id#>
-prefix pid: <http://example.org/pid#>
-prefix foaf: <http://xmlns.com/foaf/0.1#>
-prefix org: <http://www.w3.org/ns/org#>
-prefix time: <http://www.w3.org/2006/time#>
+prefix bank-org: <http://example.org/bank-org#>
+prefix id: <http://example.org/bank-id#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1#>
 
 select ?n
 where {
-	?n rdf:type :BankEmployee.
+	?n rdf:type bank-org:BankEmployee.
       }
 
 

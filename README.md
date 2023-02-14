@@ -17,6 +17,17 @@ So far this has been the most standard version of an RDF triple store that I hav
 <h3>
 Blazegraph
 </h3>
+Download the latest version of blazegraph <a href="">here</a>.  There are are several command line arguments, port setting is perhaps one you might need:
+
+<p>
+<code>
+    java -server -Xmx64g -jar blazegraph.jar
+</code>
+
+<code>
+    java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar
+</code>
+</p>
 It is not clear to me how well supported this is anymore, but seems quite popular.  The only issue that I ran into was the handling of timestamps that are used in the organization ontology membership relationship.  It seems that blazegraph doesn't handle <code>xsd:dateTimeStamp</code> at all, what I mean by this is that in a SPARQL query one should be able to do comparisons or be able to pick out the year, month etc. from a <code>dateTimeStamp</code>.  
 
 <p>

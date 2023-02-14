@@ -1,21 +1,17 @@
 import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
+import { BlazeGraph, BlazeGraphOptions } from "./blazegraph/blazegraph";
 import { OnToTextGraphDB } from "./graphdb/OnToTextGraphDB";
-
-
-// const uri = 'neo4j://localhost:7687';
-// const driver: Driver = neo4j.driver(uri, neo4j.auth.basic('neo4j', 'admin'));
-
-// const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
-// const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
-
-// const graphDB: GraphDB =  new GraphDB();
-// graphDB.init();
 
 class GraphPersistenceFactory {
     private static graphDB: IRdfGraphDB;
 
     static {
-        GraphPersistenceFactory.graphDB = new OnToTextGraphDB();
+        // To use the OnToTextGraphDB, uncomment the following line and comment out the BlazeGraph line
+        // GraphPersistenceFactory.graphDB = new OnToTextGraphDB();
+
+        // To use the BlazeGraph, uncomment the following line and comment out the OnToTextGraphDB line
+        const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
+        GraphPersistenceFactory.graphDB = new BlazeGraph(new BlazeGraphOptions({}));
     }
 
     static getGraphDB(): IRdfGraphDB {
