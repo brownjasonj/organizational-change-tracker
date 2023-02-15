@@ -5,7 +5,7 @@ import { IRdfGraphDB, SparqlQueryResultType } from "../../interfaces/IRdfGraphDB
 
 const defaultOptions = {
     host: 'localhost',
-    port: 9999,
+    port: 19999,
     namespace: 'sparql',
     blazename: 'blazegraph', // it was 'blazegraph' before
 };
@@ -52,32 +52,62 @@ class BlazeGraph implements IRdfGraphDB {
 
     async sparqlQuery(query: string, resultType: SparqlQueryResultType): Promise<any> {
         const url = `${this.url}?query=${encodeURIComponent(query)}`;
-        return this.axios({
-            method: 'get',
-            url: url,
-            headers: {
-                'Accept': resultType
-            }
-        }).then((response: { data: unknown; }) => {
-            return new Promise((resolve, reject) => {resolve(response.data)});
-        }).catch((error: any) => {
-            return new Promise((resolve, reject) => {reject(error)});
+        // return this.axios({
+        //     method: 'get',
+        //     url: url,
+        //     headers: {
+        //         'Accept': resultType
+        //     }
+        // }).then((response: { data: unknown; }) => {
+        //     return new Promise((resolve, reject) => {resolve(response.data)});
+        // }).catch((error: any) => {
+        //     return new Promise((resolve, reject) => {reject(error)});
+        // });
+
+        return new Promise((resolve, reject) => {
+            this.axios({
+                method: 'get',
+                url: url,
+                headers: {
+                    'Accept': resultType
+                }
+            }).then((response: { data: unknown; }) => {
+                resolve(response.data);
+            }).catch((error: any) => {
+                reject(error);
+            })
         });
     }
 
     async turtleUpdate(turtle: string): Promise<any> {
-        return this.axios({
-            method: 'post',
-            url: `${this.url}`,
-            headers: {
-                'Content-Type': 'application/x-turtle',
-                'Accept': 'application/sparql-results+json'
-            },
-            data: turtle
-        }).then((response: { data: unknown; }) => {
-            return new Promise((resolve, reject) => {resolve(response.data)});
-        }).catch((error: any) => {
-            return new Promise((resolve, reject) => {reject(error)});
+        // return this.axios({
+        //     method: 'post',
+        //     url: `${this.url}`,
+        //     headers: {
+        //         'Content-Type': 'application/x-turtle',
+        //         'Accept': 'application/sparql-results+json'
+        //     },
+        //     data: turtle
+        // }).then((response: { data: unknown; }) => {
+        //     return new Promise((resolve, reject) => {resolve(response.data)});
+        // }).catch((error: any) => {
+        //     return new Promise((resolve, reject) => {reject(error)});
+        // });
+
+        return new Promise((resolve, reject) => {
+            this.axios({
+                method: 'post',
+                url: `${this.url}`,
+                headers: {
+                    'Content-Type': 'application/x-turtle',
+                    'Accept': 'application/sparql-results+json'
+                },
+                data: turtle
+            }).then((response: { data: unknown; }) => {
+                resolve(response.data);
+            }).catch((error: any) => {
+                reject(error);
+            });
         });
     }
 }

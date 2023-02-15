@@ -15,7 +15,7 @@ const employeeDtoFileToEmployeStream = (filePath: string, organizationSchema: Da
         .pipe(parser)
         .pipe(new StreamTransformEmployeeDtoToEmployee())
         .pipe(new StreamTransformEmployeeToRdf())
-        .pipe(new StreamRdfBankOrgValidation(organizationSchema))
+//        .pipe(new StreamRdfBankOrgValidation(organizationSchema))
         .pipe(new StreamRdfTurtlePersistToGraphStore());
 }
 
