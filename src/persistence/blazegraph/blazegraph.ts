@@ -74,7 +74,7 @@ class BlazeGraph implements IRdfGraphDB {
                 url: `${this.url}`,
                 headers: {
                     'Content-Type': 'application/x-turtle',
-                    'Accept': 'application/sparql-results+json'
+                    'Accept': 'application/json'
                 },
                 data: turtle
             }).then((response: { data: unknown; }) => {

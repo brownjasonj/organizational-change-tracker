@@ -1,10 +1,9 @@
 import { Response } from "express"
 import { Context, Request } from "openapi-backend"
-import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../persistence/blazegraph/blazegraph";
+import { IRdfGraphDB, SparqlQueryResultType } from "../interfaces/IRdfGraphDB";
+import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 
-
-const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
-const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
+const graphdb: IRdfGraphDB = GraphPersistenceFactory.getGraphDB();
 
 class EmployeeDepartmentEpoc {
     employeeId: string;
@@ -71,7 +70,7 @@ const getSparqlQuery = () => {
 
     return new Promise((resolve, reject) => {
         const employeeDepartmentEpocs = new Map<string, EmployeeDepartmentEpocs>();
-        blazegraph.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+        graphdb.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
         .then((result) => {
             console.log(result);
             result.results.bindings.forEach((binding: any) => {

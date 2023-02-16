@@ -1,10 +1,10 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
-import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../persistence/blazegraph/blazegraph";
 import { Employee } from "../models/eom/Employee";
+import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
+import { IRdfGraphDB, SparqlQueryResultType } from "../interfaces/IRdfGraphDB";
 
-const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
-const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
+const graphdb: IRdfGraphDB = GraphPersistenceFactory.getGraphDB();
 
 const getSparqlQuery = (departmentCode: string, asOf: Date): Promise<HistoricPoint> => {
     const sparqlQuery = `prefix : <http://example.org/id#>
@@ -38,7 +38,7 @@ const getSparqlQuery = (departmentCode: string, asOf: Date): Promise<HistoricPoi
 
     console.log(sparqlQuery);
     return new Promise((resolve, reject) => {
-        blazegraph.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+        graphdb.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
         .then((result) => {
             console.log(result);
             if (result.results.bindings.length > 0)

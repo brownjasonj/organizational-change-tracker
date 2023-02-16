@@ -1,10 +1,9 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
-import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../persistence/blazegraph/blazegraph";
+import { IRdfGraphDB, SparqlQueryResultType } from "../interfaces/IRdfGraphDB";
+import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 
-
-const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
-const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
+const graphdb: IRdfGraphDB = GraphPersistenceFactory.getGraphDB();
 
 const getSparqlQuery = (asOf: string) => {
     return `prefix org: <http://www.w3.org/ns/org#>
@@ -27,7 +26,6 @@ const getSparqlQuery = (asOf: string) => {
             && ?date2 >= "${asOf}").
     }`;
 }
-
 const departmentCodesHandler = async (context: Context, request: Request, response: Response) => {
     if (request.query) {
         if (typeof(request.query === 'object')) {
@@ -35,7 +33,7 @@ const departmentCodesHandler = async (context: Context, request: Request, respon
             const sparqlQuery = getSparqlQuery(queryParams['as-of'] as string);
             console.log("Accept: " + request.headers['accept']);
             console.log(sparqlQuery);
-            blazegraph.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            graphdb.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((data) => {
                 response.json(data)
             });

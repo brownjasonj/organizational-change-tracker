@@ -33,13 +33,6 @@ const employeeDtoFileToEmployeStream = (filePath: string, organizationSchema: Da
 //         }
         err => console.log('end', err)
      );
-
-    //  stream
-    //      .pipe(parser)
-//         .pipe(new StreamTransformEmployeeDtoToEmployee())
-//         .pipe(new StreamTransformEmployeeToRdf())
-// //        .pipe(new StreamRdfBankOrgValidation(organizationSchema))
-//         .pipe(new StreamRdfTurtlePersistToGraphStore());
 }
 
 export { employeeDtoFileToEmployeStream }

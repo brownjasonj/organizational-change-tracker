@@ -1,5 +1,5 @@
 import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
-import { BlazeGraph, BlazeGraphOptions } from "./blazegraph/blazegraph";
+import { BlazeGraph, BlazeGraphOptions } from "./blazegraph/BlazeGraph";
 import { OnToTextGraphDB } from "./graphdb/OnToTextGraphDB";
 
 class GraphPersistenceFactory {

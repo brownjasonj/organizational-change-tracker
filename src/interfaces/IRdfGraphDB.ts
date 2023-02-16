@@ -7,9 +7,13 @@ enum SparqlQueryResultType {
     TABLE = "application/x-binary-rdf-results-table"
 }
 
+interface IRdfGraphUpdateResponse {
+    responseTime: number;
+}
+
 interface IRdfGraphDB {
     sparqlQuery: (query: string, resultType: SparqlQueryResultType) => Promise<any>;
-    turtleUpdate: (turtle: string) => Promise<any>;
+    turtleUpdate: (turtle: string) => Promise<IRdfGraphUpdateResponse>;
 }
 
 export { SparqlQueryResultType, IRdfGraphDB }
