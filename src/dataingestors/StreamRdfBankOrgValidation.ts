@@ -1,11 +1,11 @@
-import { Duplex } from "stream";
+import { PassThrough } from "stream";
 import { loadN3DataSetfromFile, loadN3DataSetfromString, syncLoadN3DataSetfromFile } from "../utils/loadN3DataSet";
 import SHACLValidator from "rdf-validate-shacl";
 import factory from "rdf-ext";
 import DatasetExt from "rdf-ext/lib/Dataset";
 
 
-class StreamRdfBankOrgValidation extends Duplex {
+class StreamRdfBankOrgValidation extends PassThrough {
     private organizationSchema: DatasetExt;
     private validator: SHACLValidator;
     constructor(organizationSchema: DatasetExt) {
@@ -38,8 +38,9 @@ class StreamRdfBankOrgValidation extends Duplex {
         });
     }
 
-    _read() {
-        // do nothing
+    // When all the data is done passing, it stops.
+    _final() {
+        this.push(null);
     }
 }
 

@@ -101,7 +101,7 @@ prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 select ?org where {
   ?org rdf:type org:FormalOrganization.
   filter not exists {
-    ?org org:subOrganizationOf{2,} ?parentorg
+    ?org org:subOrganizationOf ?parentorg
   }
 }
 

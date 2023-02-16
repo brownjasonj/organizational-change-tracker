@@ -1,8 +1,8 @@
-import { Duplex } from "stream";
+import { PassThrough, Transform } from "stream";
 import { Employee } from "../models/eom/Employee";
 import { BankOrgRdfDataGenerator } from "../rdf-generators/BankOrgRdfDataGenerator";
 
-class StreamTransformEmployeeToRdf extends Duplex {
+class StreamTransformEmployeeToRdf extends Transform {
     constructor() {
         super({ objectMode: true });
     }
@@ -14,8 +14,9 @@ class StreamTransformEmployeeToRdf extends Duplex {
         });
     }
 
-    _read() {
-        // do nothing
+    // When all the data is done passing, it stops.
+    _final() {
+        this.push(null);
     }
 }
 

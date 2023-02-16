@@ -5,7 +5,7 @@ import { IRdfGraphDB, SparqlQueryResultType } from "../../interfaces/IRdfGraphDB
 
 const defaultOptions = {
     host: 'localhost',
-    port: 9999,
+    port: 19999,
     namespace: 'sparql',
     blazename: 'blazegraph', // it was 'blazegraph' before
 };

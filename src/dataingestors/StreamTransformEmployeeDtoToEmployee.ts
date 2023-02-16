@@ -1,10 +1,10 @@
-import { Duplex } from "stream";
+import { PassThrough, Transform } from "stream";
 import { EmployeeDto } from "../models/dto/EmployeeDto";
 import { employeeDtoToEmployee } from "../models/mappers/EmployeeMapper";
 import { Employee } from "../models/eom/Employee";
 
 
-class StreamTransformEmployeeDtoToEmployee extends Duplex {
+class StreamTransformEmployeeDtoToEmployee extends Transform {
     constructor() {
         super({ objectMode: true });
     }
@@ -15,8 +15,9 @@ class StreamTransformEmployeeDtoToEmployee extends Duplex {
         callback();
     }
 
-    _read() {
-        // do nothing
+    // When all the data is done passing, it stops.
+    _final() {
+        this.push(null);
     }
 }
 

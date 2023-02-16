@@ -1,6 +1,7 @@
 import { Writable } from "stream";
 import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
 import { GraphPersistenceFactory } from "./GraphPersistenceFactory";
+import { StreamThrottle } from "../dataingestors/StreamThrottle";
 
 
 class StreamRdfTurtlePersistToGraphStore extends Writable {
@@ -8,17 +9,12 @@ class StreamRdfTurtlePersistToGraphStore extends Writable {
     private TIME_OUT_MS = 1000;
     private msgCount = 0;
     private graphDB: IRdfGraphDB;
-    constructor() {
+    private msgsQueued = 1;
+    private streamThrottle: StreamThrottle;
+    constructor(streamThrottle: StreamThrottle, graphDB: IRdfGraphDB) {
         super({ objectMode: true });
-        this.graphDB = GraphPersistenceFactory.getGraphDB();
-    }
-
-    private syncWait(ms: number) {
-        const start = Date.now();
-        let now = start;
-        while (now - start < ms) {
-            now = Date.now();
-        }
+        this.graphDB = graphDB;
+        this.streamThrottle = streamThrottle;
     }
 
     trywrite(data: string, msg: number, retries: number, next: Function) {
@@ -26,28 +22,35 @@ class StreamRdfTurtlePersistToGraphStore extends Writable {
         .then((res) => {
             console.log(`Message ${msg} persisted`);
             console.log(res);
+            this.msgsQueued--;
+            this.streamThrottle.updateTimeout(this.TIME_OUT_MS * this.msgsQueued);
             next();
         })
         .catch((err) => {
             if (retries < this.MAX_RETRIES) {
-                console.log(`Error: ${err.message}.  Trying Again ${msg}`);
-                this.syncWait(this.TIME_OUT_MS);
-                this.trywrite(data, msg, retries + 1, next);
+                console.log(`Error: ${err.message}.  Trying Again ${msg} after ${this.TIME_OUT_MS * this.msgsQueued} ms`);
+                setTimeout(() => {
+                    this.trywrite(data, msg, retries + 1, next);
+                }, 1000);   
             }
             else {
                 console.log(`Error: ${err.message}.  Giving up processing after ${this.MAX_RETRIES} retries}`);
+                this.msgsQueued--;
+                this.streamThrottle.updateTimeout(this.TIME_OUT_MS * this.msgsQueued);
                 next();
             }
         });
     }
 
 
-    async _write(data: string, encoding: string, next: Function) {
-        console.log(`>>> Persisting the following: ${this.msgCount}`);            
-        this.trywrite(data, this.msgCount++, 0, next);
-        next();
+    _write(data: string, encoding: string, next: Function) {
+        console.log(`>>> Persisting the following: ${this.msgCount}`);
+        this.msgsQueued++;
+        this.streamThrottle.updateTimeout(this.TIME_OUT_MS * this.msgsQueued);
+        setTimeout(() => {
+            this.trywrite(data, this.msgCount++, 0, next);
+        }, 0);
     }
-
 }
 
 export { StreamRdfTurtlePersistToGraphStore }
