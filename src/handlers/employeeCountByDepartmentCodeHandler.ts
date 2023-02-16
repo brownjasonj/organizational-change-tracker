@@ -2,17 +2,10 @@ import { Response } from "express";
 import { DateTime } from "neo4j-driver";
 import { Context, Request } from "openapi-backend";
 import { OnToTextGraphDB } from "../persistence/graphdb/OnToTextGraphDB";
-import { SparqlQueryResultType } from "../interfaces/IRdfGraphDB";
-// import { BlazeGraph, BlazeGraphOptions, SparqlQueryResultType } from "../persistence/blazegraph/blazegraph";
-// import { GraphDB } from "../persistence/graphdb/GraphDB";
+import { IRdfGraphDB, SparqlQueryResultType } from "../interfaces/IRdfGraphDB";
+import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 
-// const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
-// const blazegraph: BlazeGraph = new BlazeGraph(new BlazeGraphOptions({}));
-
-// const graphDB: GraphDB =  new GraphDB();
-// graphDB.init();
-
-const graphDB: OnToTextGraphDB =  new OnToTextGraphDB();
+const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
 
 const getSparqlQuery = (departmentCode: string, asOf: string) => {
     return `prefix : <http://example.org/id#>
@@ -60,8 +53,8 @@ const getSparqlQuery2 = (departmentCode: string, asOf: string) => {
         id:a-org-employee-count a :bankOrganizationEmployeeCount;
         org:organization ?org;
         :bankOrganizationEmployeeCount ?count;
-        time:inXSDDateTime "2013-01-01T00:00:00.000Z"^^xsd:dateTimeStamp.
-          } from <http://ont.enapso.com/repo>
+        time:inXSDDateTime "2013-01-01T00:00:00.000Z"^^xsd:dateTime.
+          }
     where {
         select (count(?employee) as ?count)
         where {
@@ -69,9 +62,9 @@ const getSparqlQuery2 = (departmentCode: string, asOf: string) => {
                 select distinct ?employeememberduring
                 where {
                     ?beginning time:inXSDDateTimeStamp ?startDateTime.
-                    filter(?startDateTime <= "${asOf}T00:00:00Z"^^xsd:dateTimeStamp).
+                    filter(?startDateTime <= "${asOf}T00:00:00Z"^^xsd:dateTime).
                     ?end time:inXSDDateTimeStamp ?endDateTime.
-                    filter(?endDateTime >= "${asOf}T22:59:59Z"^^xsd:dateTimeStamp).
+                    filter(?endDateTime >= "${asOf}T22:59:59Z"^^xsd:dateTime).
                     ?employeememberduring time:hasBeginning ?beginning.
                     ?employeememberduring time:hasEnd ?end.
                 }
@@ -100,17 +93,15 @@ const employeeCountByDepartmentCodeHandler = async (context: Context, request: R
     if (request.query) {
         if (typeof(request.query === 'object')) {
             const queryParams: {[key: string]: string | string[]} = Object.assign({}, (Object)(request.query));
-            const sparqlQuery = getSparqlQuery3(queryParams['department-code'] as string, queryParams['as-of'] as string);
-            console.log(sparqlQuery);
-            graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
-            .then((data) => {
-                response.json(data);
-            })
-            .catch((err) => {
+            const sparqlQuery = getSparqlQuery2(queryParams['department-code'] as string, queryParams['as-of'] as string);
+            try {
+                const data = await graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON);
+                response.json(data)
+            }
+            catch (err) {
                 console.log(err);
                 response.json({err});
             }
-            );
         }
     }
 }
