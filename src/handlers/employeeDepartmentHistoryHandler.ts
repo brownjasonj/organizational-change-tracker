@@ -38,12 +38,12 @@ class EmployeeDepartmentEpocs {
 
 const getSparqlQuery = () => {
     const sparqlQuery = 
-    `   prefix : <http://example.org/id#>
+    `prefix bank-org: <http://example.org/bank-org#>
+    prefix bank-id: <http://example.org/bank-id#>
     prefix csorg: <http://example.org/org#>
     prefix foaf: <http://xmlns.com/foaf/0.1#>
     prefix org: <http://www.w3.org/ns/org#>
     prefix time: <http://www.w3.org/2006/time#>
-    prefix pid: <http://example.org/pid#>
     prefix interval: <http://example.org/interval#>
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
@@ -51,8 +51,8 @@ const getSparqlQuery = () => {
     select distinct ?pid ?department ?startDate ?endDate
     where {
         ?member org:organization ?org.              # find all members of the organization
-          ?member org:member ?person.
-          ?person pid:pid ?pid.
+          ?member org:member ?employee.
+          ?employee bank-id:pid ?pid.
           ?org org:name ?department 
         {
           optional {
@@ -61,8 +61,8 @@ const getSparqlQuery = () => {
                   ?member org:memberDuring ?interval.			# determine when the member was a member of the organization
                   ?interval time:hasBeginning ?start.
                   ?interval time:hasEnd ?end.
-                  ?start time:inXSDDateTime ?date1.
-                    ?end time:inXSDDateTime ?date2.
+                  ?start time:inXSDDateTimeStamp ?date1.
+                    ?end time:inXSDDateTimeStamp ?date2.
             }
             group by ?member ?org ?startDate ?endDate
          } 
