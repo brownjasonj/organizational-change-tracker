@@ -16,6 +16,7 @@ import { uploadHandler } from './handlers/uploadHandler';
 import { employeeRoleHistoryHandler } from './handlers/employeeRoleHistoryHandler';
 import { employeeDepartmentHistoryHandler } from './handlers/employeeDepartmentHistoryHandler';
 import fileUpload from 'express-fileupload';
+import { operationsLoadStatusHandler } from './handlers/operationsLoadStatusHandler';
 
 const app = Express();
 // enable file uploads
@@ -57,6 +58,7 @@ api.register('employee-count-by-department-code', employeeCountByDepartmentCodeH
 api.register('department-codes', departmentCodesHandler);
 api.register('departmentHistory', departmentHistoryHandler);
 api.register('upload', uploadHandler);
+api.register('operationsLoadingStatus', operationsLoadStatusHandler);
 
 // register mock handlers
 //api.mockResponseForOperation('test');

@@ -1,10 +1,10 @@
-import { Writable } from "stream";
+import { PassThrough, Writable } from "stream";
 import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
 import { GraphPersistenceFactory } from "./GraphPersistenceFactory";
 import { StreamThrottle } from "../dataingestors/StreamThrottle";
 
 
-class StreamRdfTurtlePersistToGraphStore extends Writable {
+class StreamRdfTurtlePersistToGraphStore extends PassThrough {
     private MAX_RETRIES = 5;
     private TIME_OUT_MS = 200;
     private msgCount = 0;
@@ -24,6 +24,7 @@ class StreamRdfTurtlePersistToGraphStore extends Writable {
             console.log(res);
             this.msgsQueued--;
             this.streamThrottle.updateTimeout(this.TIME_OUT_MS * this.msgsQueued);
+            this.push(data)
             next();
         })
         .catch((err) => {

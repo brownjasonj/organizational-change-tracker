@@ -6,6 +6,7 @@ import { IRdfGraphDB } from '../interfaces/IRdfGraphDB';
 import { employeeDtoFileToEmployeStream } from '../dataingestors/employeeDtoFileToEmployeeStream';
 import { GraphPersistenceFactory } from '../persistence/GraphPersistenceFactory';
 import { loadN3DataSetfromFile } from '../utils/loadN3DataSet';
+import { DataIngestionStreamsFactory } from '../dataingestors/DataIngestionStreamsFactory';
 
 
 const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
@@ -34,10 +35,13 @@ const uploadHandler = async (context: Context, request: Request, response: Respo
             // persistEmployeeDtoFileData(graphDB, filePath);
             const shapes = await loadN3DataSetfromFile('rdf/ontology/bank-organization.ttl');
 
-            employeeDtoFileToEmployeStream(filePath, shapes);
+            // create a new stream status object
+            const dataIngestionStreamStatus = DataIngestionStreamsFactory.createStreamStatus();
+
+            employeeDtoFileToEmployeStream(filePath, shapes, dataIngestionStreamStatus);
+            response.status(202).json({'Operation-Location': `${dataIngestionStreamStatus.getOperationLocation()}`});
         }
-        response.json({ message: "done" });
-    }
+   }
 }
 
 

@@ -9,9 +9,11 @@ import DatasetExt from 'rdf-ext/lib/Dataset';
 import { pipeline } from 'stream';
 import { StreamThrottle } from './StreamThrottle';
 import { GraphPersistenceFactory } from '../persistence/GraphPersistenceFactory';
+import { DataIngestionStreamStatus } from './DataIngestionStreamsFactory';
+import { StreamDataIngestionStatusUpdater } from './StreamDataIngestionStatusUpdater';
 
 
-const employeeDtoFileToEmployeStream = (filePath: string, organizationSchema: DatasetExt) => {
+const employeeDtoFileToEmployeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
     const parser = JSONStream.parse('*');
     const streamThrottle = new StreamThrottle(100);
@@ -24,6 +26,7 @@ const employeeDtoFileToEmployeStream = (filePath: string, organizationSchema: Da
          new StreamTransformEmployeeToRdf(),
 //         new StreamRdfBankOrgValidation(organizationSchema),
          new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getGraphDB()),
+         new StreamDataIngestionStatusUpdater(dataIngestionStatus),
 //         (err) => {
 //             if (err) {
 //               console.error('Pipeline failed', err);

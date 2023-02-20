@@ -28,24 +28,7 @@ Download the latest version of blazegraph <a href="">here</a>.  There are are se
     java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar
 </code>
 </p>
-It is not clear to me how well supported this is anymore, but seems quite popular.  The only issue that I ran into was the handling of timestamps that are used in the organization ontology membership relationship.  It seems that blazegraph doesn't handle <code>xsd:dateTimeStamp</code> at all, what I mean by this is that in a SPARQL query one should be able to do comparisons or be able to pick out the year, month etc. from a <code>dateTimeStamp</code>.  
-
-<p>
-For example the following
-
-<code>
-    filter(?endDateTime >= "2012-12-17T08:00:00Z").
-</code>
-
-and this
-
-<code>
-    filter(?endDateTime >="2012-12-17T08:00:00Z"^^xsd:dateTimeStamp).
-</code>
-
-do not work, meaning that if the endDateTime is indeed after the date time defined in the string, blazegraph returns false.
-
-As such the queries that are dependent on datetime, basically everything, do not work when using blazegraph as the triple store.  As such I've now essentially moved to using OnToText GraphDB which does work correctly for the very same turtle being ingested and sparql queries.
+Blazegraph doesn't appear to support <code>xsd:dateTimeStamp</code> which is the replacement for <code>xsd:dateTime</code> (which is being depricated).  The RDF mapper in this project is using the latter in order that it will work on both blazegraph and Ontotext GraphDB.
 </p>
 
 <p>
