@@ -90,20 +90,21 @@ const getSparqlQuery3 = (departmentCode: string, asOf: string) => {
         `
 }
 const employeeCountByDepartmentCodeHandler = async (context: Context, request: Request, response: Response) => {
-    if (request.query) {
-        if (typeof(request.query === 'object')) {
-            const queryParams: {[key: string]: string | string[]} = Object.assign({}, (Object)(request.query));
-            const sparqlQuery = getSparqlQuery2(queryParams['department-code'] as string, queryParams['as-of'] as string);
-            try {
-                const data = await graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON);
-                response.json(data)
-            }
-            catch (err) {
-                console.log(err);
-                response.json({err});
-            }
+    if (context.request.params.departmentCode
+        && context.request.params.asOf) {
+        const sparqlQuery = getSparqlQuery2(context.request.params.departmentCode as string, context.request.params.asOf as string);
+        try {
+            const data = await graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON);
+            response.json(data)
+            return;
+        }
+        catch (err) {
+            console.log(err);
+            response.status(500).json({err});
+            return;
         }
     }
+    response.status(400).json({error: 'Missing required parameters'});
 }
 
 

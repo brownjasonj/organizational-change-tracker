@@ -103,43 +103,44 @@ const getDateStep = (dateStep: string): number => {
 }
 
 const departmentHistoryHandler = async (context: Context, request: Request, response: Response) => {
-    if (request.query) {
-        if (typeof(request.query === 'object')) {
-            const queryParams: {[key: string]: string | string[]} = Object.assign({}, (Object)(request.query));
-            const departmentCode: string = queryParams.departmentCode as string;
-            const startDate: Date = new Date(queryParams.startDate as string);
-            // set the start date time to 00:00:00
-            startDate.setHours(1,0,0,0);
-            var endDate: Date;
-            var dateStep: number;
-            if (queryParams.endDate) {
-                endDate = new Date (queryParams.endDate as string);
-            }
-            else {
-                endDate = new Date();
-            }
-            // set the end date time to 23:59:59
-            endDate.setHours(23,59,59,0);
-            dateStep = getDateStep(queryParams.dateStep as string);
-
-            const timeseries: DepartmentHistory = new DepartmentHistory(departmentCode, startDate, endDate, dateStep);
-
-            
-            for(var currentDate: Date = startDate; currentDate <= endDate; currentDate = new Date(currentDate.getTime() + 1000*60*60*24 * dateStep)) {
-//                console.log(`next ${currentDate}`);
-                await getSparqlQuery(departmentCode, currentDate)
-                .then((result) => {
-//                    timeseries.addPoint(new HistoricPoint(departmentCode, currentDate, 1));
-                    console.log(result);
-                    timeseries.addPoint(result);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            }
-
-            response.json(timeseries);            
+    if (context.request.params.departmentCode
+        && context.request.query.startDate) {
+        const departmentCode: string = context.request.params.departmentCode as string;
+        const startDate: Date = new Date(context.request.query.startDate as string);
+        // set the start date time to 00:00:00
+        startDate.setHours(1,0,0,0);
+        var endDate: Date;
+        var dateStep: number;
+        if (context.request.query.endDate) {
+            endDate = new Date (context.request.query.endDate as string);
         }
+        else {
+            endDate = new Date();
+        }
+        // set the end date time to 23:59:59
+        endDate.setHours(23,59,59,0);
+
+        if (context.request.query.dateStep) {
+            dateStep = getDateStep(context.request.query.dateStep as string);
+        }
+        else {
+            dateStep = getDateStep('day');
+        }
+
+        const timeseries: DepartmentHistory = new DepartmentHistory(departmentCode, startDate, endDate, dateStep);
+        
+        for(var currentDate: Date = startDate; currentDate <= endDate; currentDate = new Date(currentDate.getTime() + 1000*60*60*24 * dateStep)) {
+            try {
+                const result = await getSparqlQuery(departmentCode, currentDate);
+                console.log(result);
+                timeseries.addPoint(result);
+            }
+            catch (error) {
+                console.log(error);
+                response.status(500).send(error);
+            }
+        }
+        response.json(timeseries);            
     }
 }
 

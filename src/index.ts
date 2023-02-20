@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import { OpenAPIBackend, Request } from 'openapi-backend';
 import * as swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import {addEmployeeRecordHandler, addEmployeesHandler} from './handlers/addEmployeeRecordHandler';
+import {addEmployeeRecordHandler} from './handlers/addEmployeeRecordHandler';
 import notFoundHandler from './handlers/notFoundHandler';
 import notImplementedHandler from './handlers/notImplementedHandler';
 import testHandler from './handlers/testHandler';
@@ -12,11 +12,11 @@ import validationFailHandler from './handlers/validationFailHandler';
 import { employeeCountByDepartmentCodeHandler } from './handlers/employeeCountByDepartmentCodeHandler';
 import { departmentCodesHandler } from './handlers/departmentCodesHandler';
 import { departmentHistoryHandler } from './handlers/departmentHistoryHandler';
-import { uploadHandler } from './handlers/uploadHandler';
 import { employeeRoleHistoryHandler } from './handlers/employeeRoleHistoryHandler';
 import { employeeDepartmentHistoryHandler } from './handlers/employeeDepartmentHistoryHandler';
 import fileUpload from 'express-fileupload';
 import { operationsLoadStatusHandler } from './handlers/operationsLoadStatusHandler';
+import { addEmployeesHandler } from './handlers/addEmployessHandler';
 
 const app = Express();
 // enable file uploads
@@ -57,7 +57,7 @@ api.register('employeeRoleHistory', employeeRoleHistoryHandler);
 api.register('employee-count-by-department-code', employeeCountByDepartmentCodeHandler);
 api.register('department-codes', departmentCodesHandler);
 api.register('departmentHistory', departmentHistoryHandler);
-api.register('upload', uploadHandler);
+api.register('upload', addEmployeesHandler);
 api.register('operationsLoadingStatus', operationsLoadStatusHandler);
 
 // register mock handlers

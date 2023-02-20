@@ -34,9 +34,6 @@ paths:
         description: The content to be upload should be JSON format as per the given schema, either directly in post of via a file.
         required: true
         content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/employees"
           multipart/form-data:
             schema:
               type: object
@@ -58,13 +55,13 @@ paths:
       operationId: "employee-count-by-department-code"
       parameters:
         - in: query
-          name: department-code
+          name: departmentCode
           schema:
             type: string
           required: true
           description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
         - in: query
-          name: as-of
+          name: asOf
           schema:
             type: string
           required: true
@@ -76,6 +73,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/employee"
+        '500':
+          description: Internal error, most likely caused by a failure to connect to storage.
+        '400':
+          description: Poorly formed request, most commonly related to the query parameters.
   /employee-department-history:
     get:
       description: get the history of which department an employee has gone through.
@@ -140,7 +141,7 @@ paths:
       operationId: "department-codes"
       parameters:
         - in: query
-          name: as-of
+          name: asOf
           schema:
             type: string
           required: true

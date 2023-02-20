@@ -37,19 +37,5 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
 /*
 
 */
-const addEmployeesHandler =  async (context: Context, request: Request, response: Response) => {
-    var employeeRecords: Employee[] = [];
-    await request.body.forEach((employeeDto: EmployeeDto) => {
-        persisteEmployeeDtoStringData(graphDB, employeeDto)
-        .then((result) => {
-            employeeRecords.push(result);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    });
-    
-    response.json(employeeRecords);
-};
 
-export { addEmployeeRecordHandler, addEmployeesHandler };
+export { addEmployeeRecordHandler };

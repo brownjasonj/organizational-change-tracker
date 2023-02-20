@@ -44,7 +44,7 @@ const getSparqlQuery = () => {
     prefix org: <http://www.w3.org/ns/org#>
     prefix time: <http://www.w3.org/2006/time#>
     prefix interval: <http://example.org/interval#>
-    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>   
     prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
     
     select distinct ?pid ?department ?startDate ?endDate
@@ -105,7 +105,7 @@ const employeeDepartmentHistoryHandler = async (context: Context, request: Reque
         })
         .catch((error) => {
             console.log(error);
-            response.json(error);
+            response.status(500).json(error);
         });
 }
 

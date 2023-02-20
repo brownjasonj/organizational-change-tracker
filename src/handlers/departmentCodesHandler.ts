@@ -27,18 +27,23 @@ const getSparqlQuery = (asOf: string) => {
     }`;
 }
 const departmentCodesHandler = async (context: Context, request: Request, response: Response) => {
-    if (request.query) {
-        if (typeof(request.query === 'object')) {
-            const queryParams: {[key: string]: string | string[]} = Object.assign({}, (Object)(request.query));
-            const sparqlQuery = getSparqlQuery(queryParams['as-of'] as string);
-            console.log("Accept: " + request.headers['accept']);
-            console.log(sparqlQuery);
-            graphdb.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
-            .then((data) => {
-                response.json(data)
-            });
+    if (context.request.query.asOf) {
+        const sparqlQuery = getSparqlQuery(context.request.query.asOf as string);
+        if (context.request.headers.accept === 'application/json') {
+            console.log('sparqlQuery: ' + sparqlQuery);
+            try {
+                const result = await graphdb.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON);
+                response.json(result);
+                return;
+            }
+            catch (error) {
+                console.log(error);
+                response.status(500).send();
+                return;
+            }
         }
     }
+    response.status(404).send();
 }
 
 

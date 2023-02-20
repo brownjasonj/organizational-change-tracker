@@ -1,17 +1,16 @@
-import * as fs from 'fs';
-import { Response, Request} from "express"
+import { Context } from "openapi-backend";
+import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
+import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
+import { Response, Request } from "express";
+import { Employee } from "../models/eom/Employee";
 import { UploadedFile } from "express-fileupload";
-import { Context } from "openapi-backend"
-import { IRdfGraphDB } from '../interfaces/IRdfGraphDB';
-import { employeeDtoFileToEmployeStream } from '../dataingestors/employeeDtoFileToEmployeeStream';
-import { GraphPersistenceFactory } from '../persistence/GraphPersistenceFactory';
-import { loadN3DataSetfromFile } from '../utils/loadN3DataSet';
-import { DataIngestionStreamsFactory } from '../dataingestors/DataIngestionStreamsFactory';
-
+import { loadN3DataSetfromFile } from "../utils/loadN3DataSet";
+import { DataIngestionStreamsFactory } from "../dataingestors/DataIngestionStreamsFactory";
+import { employeeDtoFileToEmployeStream } from "../dataingestors/employeeDtoFileToEmployeeStream";
 
 const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
 
-const uploadHandler = async (context: Context, request: Request, response: Response) => {
+const addEmployeesHandler =  async (context: Context, request: Request, response: Response) => {
     if (!request.files) {
         return response.status(400).send('No files were uploaded.');
     }
@@ -42,7 +41,6 @@ const uploadHandler = async (context: Context, request: Request, response: Respo
             response.status(202).json({'Operation-Location': `${dataIngestionStreamStatus.getOperationLocation()}`});
         }
    }
-}
+};
 
-
-export { uploadHandler }
+export { addEmployeesHandler }
