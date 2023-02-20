@@ -20,6 +20,7 @@ paths:
       responses:
         '200':
           description: OK
+  /addemployees:
     post:
       description: "Upload of employee data"
       operationId: "addemployeesPost"
@@ -43,10 +44,8 @@ paths:
                   type: string
                   format: base64
       responses:
-        "202":
-          description: "Request for uploaded Accepted and processing"
-        "200":
-          description: OK
+        '202':
+          description: Request to upload file has been succesfully.   Response contains operational url to poll for upload status.
         "400":
           description: "Invalid status value"
   /employee-count-by-department-code:
