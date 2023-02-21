@@ -64,7 +64,7 @@ const getSparqlQuery2 = (departmentCode: string, asOf: string) => {
                     ?beginning time:inXSDDateTimeStamp ?startDateTime.
                     filter(?startDateTime <= "${asOf}T00:00:00Z"^^xsd:dateTime).
                     ?end time:inXSDDateTimeStamp ?endDateTime.
-                    filter(?endDateTime >= "${asOf}T22:59:59Z"^^xsd:dateTime).
+                    filter(?endDateTime >= "${asOf}T23:59:59Z"^^xsd:dateTime).
                     ?employeememberduring time:hasBeginning ?beginning.
                     ?employeememberduring time:hasEnd ?end.
                 }
@@ -90,9 +90,9 @@ const getSparqlQuery3 = (departmentCode: string, asOf: string) => {
         `
 }
 const employeeCountByDepartmentCodeHandler = async (context: Context, request: Request, response: Response) => {
-    if (context.request.params.departmentCode
-        && context.request.params.asOf) {
-        const sparqlQuery = getSparqlQuery2(context.request.params.departmentCode as string, context.request.params.asOf as string);
+    if (context.request.query.departmentCode
+        && context.request.query.asOf) {
+        const sparqlQuery = getSparqlQuery2(context.request.query.departmentCode as string, context.request.query.asOf as string);
         try {
             const data = await graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON);
             response.json(data)

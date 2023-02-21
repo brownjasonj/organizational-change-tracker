@@ -91,6 +91,13 @@ paths:
     get:
       description: get the history of which role an employee has gone through.
       operationId: "employeeRoleHistory"
+      parameters:
+        - in: query
+          name: employeeId
+          schema:
+            type: string
+          required: true
+          description: Employees Id
       responses:
         '200':
           description: OK

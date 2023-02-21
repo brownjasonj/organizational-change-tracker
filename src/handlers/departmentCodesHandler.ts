@@ -10,7 +10,7 @@ const getSparqlQuery = (asOf: string) => {
     prefix time: <http://www.w3.org/2006/time#>
     prefix interval: <http://example.org/interval#>
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
+    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
     
     select distinct ?name where {
         ?org rdf:type org:FormalOrganization.
@@ -19,11 +19,11 @@ const getSparqlQuery = (asOf: string) => {
         ?member org:memberDuring ?interval.         
         ?interval time:hasBeginning ?start.
         ?interval time:hasEnd ?end.
-          ?start time:inXSDDateTime ?date1.
-          ?end time:inXSDDateTime ?date2.
-          filter (
-            ?date1 <= "${asOf}"
-            && ?date2 >= "${asOf}").
+        ?start time:inXSDDateTimeStamp ?date1.
+        ?end time:inXSDDateTimeStamp ?date2.
+        filter (
+        ?date1 <= "${asOf}"^^xsd:dateTime
+        && ?date2 >= "${asOf}"^^xsd:dateTime).
     }`;
 }
 const departmentCodesHandler = async (context: Context, request: Request, response: Response) => {
