@@ -1,5 +1,5 @@
 import { PassThrough, Writable } from "stream";
-import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
+import { IRdfGraphDB } from "./IRdfGraphDB";
 import { GraphPersistenceFactory } from "./GraphPersistenceFactory";
 import { StreamThrottle } from "../dataingestors/StreamThrottle";
 
@@ -11,6 +11,7 @@ class StreamRdfTurtlePersistToGraphStore extends PassThrough {
     private graphDB: IRdfGraphDB;
     private msgsQueued = 1;
     private streamThrottle: StreamThrottle;
+    
     constructor(streamThrottle: StreamThrottle, graphDB: IRdfGraphDB) {
         super({ objectMode: true });
         this.graphDB = graphDB;

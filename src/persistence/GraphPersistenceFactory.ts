@@ -1,4 +1,4 @@
-import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
+import { IRdfGraphDB } from "./IRdfGraphDB";
 import { BlazeGraphDB, BlazeGraphDBOptions } from "./blazegraph/BlazeGraphDB";
 import { OnToTextGraphDB } from "./graphdb/OnToTextGraphDB";
 

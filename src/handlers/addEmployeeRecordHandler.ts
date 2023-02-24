@@ -4,7 +4,7 @@ import { EmployeeDto } from "../models/dto/EmployeeDto";
 import { Employee } from "../models/eom/Employee";
 import { BankOrgRdfDataGenerator } from "../rdf/generators/BankOrgRdfDataGenerator";
 import { persisteEmployeeDtoStringData } from "../persistence/persistEmployeeDtoStringData";
-import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
+import { IRdfGraphDB } from "../persistence/IRdfGraphDB";
 import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 
 

@@ -1,5 +1,5 @@
 import { Context } from "openapi-backend";
-import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
+import { IRdfGraphDB } from "../persistence/IRdfGraphDB";
 import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 import { Response, Request } from "express";
 import { Employee } from "../models/eom/Employee";

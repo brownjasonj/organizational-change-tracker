@@ -1,8 +1,9 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
 import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
-import { IRdfGraphDB, SparqlQueryResultType } from "../interfaces/IRdfGraphDB";
-import { DepartmentHistory, sparqlDepartmentHistoryQuery } from "../rdf/sparql/sparqlDepartmentHistoryQuery";
+import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
+import { sparqlDepartmentHistoryQuery } from "../rdf/sparql/sparqlDepartmentHistoryQuery";
+import { DepartmentTimeSeries } from "../models/eom/DepartmentTimeSeries";
 
 const graphdb: IRdfGraphDB = GraphPersistenceFactory.getGraphDB();
 
@@ -48,7 +49,7 @@ const departmentHistoryHandler = async (context: Context, request: Request, resp
 
         console.log(`departmentCode: ${departmentCode}`);
 
-        const timeseries: DepartmentHistory = new DepartmentHistory(departmentCode, startDate, endDate, dateStep);
+        const timeseries: DepartmentTimeSeries = new DepartmentTimeSeries(departmentCode, startDate, endDate, dateStep);
         
         for(var currentDate: Date = startDate; currentDate <= endDate; currentDate = new Date(currentDate.getTime() + 1000*60*60*24 * dateStep)) {
             try {

@@ -1,7 +1,7 @@
 import { exec } from "child_process"
 import {v4 as uuidv4} from 'uuid';
 import { BlazeGraphDB,BlazeGraphDBOptions } from "../../../src/persistence/blazegraph/BlazeGraphDB";
-import { IRdfGraphDB, SparqlQueryResultType } from "../../../src/interfaces/IRdfGraphDB";
+import { IRdfGraphDB, SparqlQueryResultType } from "../../../src/persistence/IRdfGraphDB";
 
 
 describe("create a new blazegraph DB", () => {

@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
-import { IRdfGraphDB, SparqlQueryResultType } from "../interfaces/IRdfGraphDB";
+import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
 import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 import { sparqlDepartmentCodesQuery } from "../rdf/sparql/sparqlDepartmentCodesQuery";
 

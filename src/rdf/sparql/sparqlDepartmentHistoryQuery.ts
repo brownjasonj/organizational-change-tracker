@@ -1,6 +1,7 @@
-import { IRdfGraphDB, SparqlQueryResultType } from "../../interfaces/IRdfGraphDB";
+import { DepartmentTimeEpoc } from "../../models/eom/DepartmentTimeEpoc";
+import { IRdfGraphDB, SparqlQueryResultType } from "../../persistence/IRdfGraphDB";
 
-const sparqlDepartmentHistoryQuery = (graphdb: IRdfGraphDB,  departmentCode: string, startDate: Date, endDate: Date): Promise<HistoricPoint> => {
+const sparqlDepartmentHistoryQuery = (graphdb: IRdfGraphDB,  departmentCode: string, startDate: Date, endDate: Date): Promise<DepartmentTimeEpoc> => {
     const sparqlQuery = `prefix org: <http://www.w3.org/ns/org#>
     prefix time: <http://www.w3.org/2006/time#>
     prefix xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -30,9 +31,9 @@ const sparqlDepartmentHistoryQuery = (graphdb: IRdfGraphDB,  departmentCode: str
         .then((result) => {
             console.log(result);
             if (result.results.bindings.length > 0)
-                resolve(new HistoricPoint(departmentCode, startDate, result.results.bindings[0].count.value));
+                resolve(new DepartmentTimeEpoc(departmentCode, startDate, result.results.bindings[0].count.value));
             else 
-                resolve(new HistoricPoint(departmentCode, startDate, 0));
+                resolve(new DepartmentTimeEpoc(departmentCode, startDate, 0));
         })
         .catch((error) => {
             console.log(error);
@@ -41,38 +42,8 @@ const sparqlDepartmentHistoryQuery = (graphdb: IRdfGraphDB,  departmentCode: str
     });
 }
 
-class HistoricPoint {
-  department: string;
-  date: Date;
-  size: number;
-
-  constructor(departmentName: string, date: Date, size: number) {
-    this.department = departmentName;
-    this.date = date;
-    this.size = size;
-  }
-}
 
 
-class DepartmentHistory {
-    departmentName: string;
-    startDate: Date;
-    endDate: Date;
-    dateStep: number;
-    timeseries: HistoricPoint[];
 
-    constructor(departmentName: string, startDate: Date, endDate: Date, dateStep: number) {
-        this.departmentName = departmentName;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.dateStep = dateStep;
-        this.timeseries = [];
-    }
 
-    addPoint(point: HistoricPoint): void {
-        if (point)
-            this.timeseries.push(point);
-    }
-}
-
-export { sparqlDepartmentHistoryQuery,  HistoricPoint, DepartmentHistory }
+export { sparqlDepartmentHistoryQuery }

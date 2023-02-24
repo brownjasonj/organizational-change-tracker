@@ -1,5 +1,5 @@
 import { xml2json } from "xml-js";
-import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
+import { IRdfGraphDB } from "./IRdfGraphDB";
 import { EmployeeDto } from "../models/dto/EmployeeDto";
 import { Employee } from "../models/eom/Employee";
 import { employeeDtoToEmployee } from "../models/mappers/EmployeeMapper";

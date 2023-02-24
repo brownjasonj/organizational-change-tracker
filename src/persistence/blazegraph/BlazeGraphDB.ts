@@ -1,7 +1,7 @@
 import axios from "axios";
 import http from "http";
 import https from "https";
-import { IRdfGraphDB, SparqlQueryResultType } from "../../interfaces/IRdfGraphDB";
+import { IRdfGraphDB, SparqlQueryResultType } from "../IRdfGraphDB";
 
 const defaultOptions = {
     host: 'localhost',

@@ -1,6 +1,6 @@
 import Module from "node:module";
 const require = Module.createRequire(import.meta.url);
-import { IRdfGraphDB, SparqlQueryResultType } from "../../interfaces/IRdfGraphDB";
+import { IRdfGraphDB, SparqlQueryResultType } from "../IRdfGraphDB";
 const {GraphDBServerClient, ServerClientConfig } = require('graphdb').server;
 const {RepositoryClientConfig, RDFRepositoryClient} = require('graphdb').repository;
 const {RDFMimeType} = require('graphdb').http;

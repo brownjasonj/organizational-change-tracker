@@ -1,33 +1,6 @@
-import { IRdfGraphDB, SparqlQueryResultType } from "../../interfaces/IRdfGraphDB";
-
-class EmployeeDepartmentEpoc {
-    employeeId: string;
-    department: string;
-    startdate: string;
-    enddate: string;
-
-    constructor(employeeId: string, department: string, startdate: string, enddate: string) {
-        this.employeeId = employeeId;
-        this.department = department;
-        this.startdate = startdate;
-        this.enddate = enddate;
-    }
-}
-
-class EmployeeDepartmentEpocs {
-    employeeId: string
-    epocs: EmployeeDepartmentEpoc[];
-
-    constructor(employeeId: string) {
-        this.employeeId = employeeId;
-        this.epocs = [];
-    }
-
-    addEpoc(epoc: EmployeeDepartmentEpoc) {
-        this.epocs.push(epoc);
-    }
-}
-
+import { EmployeeDepartmentEpoc } from "../../models/eom/EmployeeDepartmentEpoc";
+import { EmployeeDepartmentEpocs } from "../../models/eom/EmployeeDepartmentEpocs";
+import { IRdfGraphDB, SparqlQueryResultType } from "../../persistence/IRdfGraphDB";
 
 
 const sparqlEmployeeDepartmentHistoryQuery = (graphdb: IRdfGraphDB) => {
