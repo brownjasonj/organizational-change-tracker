@@ -60,6 +60,7 @@
     "rdf-data-factory": "^1.1.1",
     "rdf-ext": "^2.1.1",
     "rdf-validate-shacl": "^0.4.5",
+    "shacl-jsonschema-converter": "^0.1.3",
     "string-to-stream": "^3.0.1",
     "swagger-ui-express": "^4.6.0",
     "uuid": "^9.0.0",

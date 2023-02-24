@@ -10,7 +10,7 @@ const defaultOptions = {
     blazename: 'blazegraph', // it was 'blazegraph' before
 };
 
-class BlazeGraphOptions {
+class BlazeGraphDBOptions {
     host: string;
     port: number;
     namespace: string;
@@ -25,13 +25,13 @@ class BlazeGraphOptions {
 }
 
 
-class BlazeGraph implements IRdfGraphDB {
-    private options: BlazeGraphOptions;
+class BlazeGraphDB implements IRdfGraphDB {
+    private options: BlazeGraphDBOptions;
     private url: string;
     private axios: any;
 
       
-    constructor(options: BlazeGraphOptions) {
+    constructor(options: BlazeGraphDBOptions) {
         this.options = options;
         this.url = `http://${this.options.host}:${this.options.port}/${this.options.blazename}/${this.options.namespace}`;
         this.axios = axios.create({
@@ -86,4 +86,4 @@ class BlazeGraph implements IRdfGraphDB {
     }
 }
 
-export { BlazeGraphOptions, BlazeGraph, SparqlQueryResultType }
+export { BlazeGraphDBOptions, BlazeGraphDB }

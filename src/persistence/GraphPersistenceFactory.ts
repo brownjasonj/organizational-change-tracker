@@ -1,5 +1,5 @@
 import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
-import { BlazeGraph, BlazeGraphOptions } from "./blazegraph/BlazeGraph";
+import { BlazeGraphDB, BlazeGraphDBOptions } from "./blazegraph/BlazeGraphDB";
 import { OnToTextGraphDB } from "./graphdb/OnToTextGraphDB";
 
 class GraphPersistenceFactory {
@@ -10,8 +10,7 @@ class GraphPersistenceFactory {
         // GraphPersistenceFactory.graphDB = new OnToTextGraphDB();
 
         // To use the BlazeGraph, uncomment the following line and comment out the OnToTextGraphDB line
-        const blazeGraphOptions: BlazeGraphOptions = new BlazeGraphOptions({});
-        GraphPersistenceFactory.graphDB = new BlazeGraph(new BlazeGraphOptions({}));
+        GraphPersistenceFactory.graphDB = new BlazeGraphDB(new BlazeGraphDBOptions({}));
     }
 
     static getGraphDB(): IRdfGraphDB {

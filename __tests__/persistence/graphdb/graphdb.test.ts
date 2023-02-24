@@ -1,5 +1,5 @@
 import { Employee } from "../../../src/models/eom/Employee";
-import { BankOrgRdfDataGenerator } from "../../../src/rdf-generators/BankOrgRdfDataGenerator";
+import { BankOrgRdfDataGenerator } from "../../../src/rdf/generators/BankOrgRdfDataGenerator";
 import { GraphPersistenceFactory } from "../../../src/persistence/GraphPersistenceFactory";
 import { IRdfGraphDB } from "../../../src/interfaces/IRdfGraphDB";
 

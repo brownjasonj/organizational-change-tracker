@@ -2,33 +2,13 @@ import { Response } from "express";
 import { Context, Request } from "openapi-backend";
 import { IRdfGraphDB, SparqlQueryResultType } from "../interfaces/IRdfGraphDB";
 import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
+import { sparqlDepartmentCodesQuery } from "../rdf/sparql/sparqlDepartmentCodesQuery";
 
 const graphdb: IRdfGraphDB = GraphPersistenceFactory.getGraphDB();
 
-const getSparqlQuery = (asOf: string) => {
-    return `prefix org: <http://www.w3.org/ns/org#>
-    prefix time: <http://www.w3.org/2006/time#>
-    prefix interval: <http://example.org/interval#>
-    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-    
-    select distinct ?name where {
-        ?org rdf:type org:FormalOrganization.
-        ?org org:name ?name.
-        ?member org:organization ?org.              
-        ?member org:memberDuring ?interval.         
-        ?interval time:hasBeginning ?start.
-        ?interval time:hasEnd ?end.
-        ?start time:inXSDDateTimeStamp ?date1.
-        ?end time:inXSDDateTimeStamp ?date2.
-        filter (
-        ?date1 <= "${asOf}"^^xsd:dateTime
-        && ?date2 >= "${asOf}"^^xsd:dateTime).
-    }`;
-}
 const departmentCodesHandler = async (context: Context, request: Request, response: Response) => {
     if (context.request.query.asOf) {
-        const sparqlQuery = getSparqlQuery(context.request.query.asOf as string);
+        const sparqlQuery = sparqlDepartmentCodesQuery(context.request.query.asOf as string);
         if (context.request.headers.accept === 'application/json') {
             console.log('sparqlQuery: ' + sparqlQuery);
             try {

@@ -3,7 +3,7 @@ import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
 import { EmployeeDto } from "../models/dto/EmployeeDto";
 import { Employee } from "../models/eom/Employee";
 import { employeeDtoToEmployee } from "../models/mappers/EmployeeMapper";
-import organizationaRdfGenerator from "../rdf-generators/OrganizationRdfGenerator";
+import organizationaRdfGenerator from "../rdf/OrganizationRdfGenerator";
 import { processFileStreamAsJson } from "../utils/processFileStreamAsJson";
 
 const persistEmployeeDtoFileData = async (graphDB: IRdfGraphDB, filePath: string) => {

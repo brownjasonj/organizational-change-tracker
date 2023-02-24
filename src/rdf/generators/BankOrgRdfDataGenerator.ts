@@ -1,12 +1,12 @@
 import { write } from "fs";
 import { Writer, DataFactory, NamedNode, Quad } from "n3";
 import { DateTime } from "neo4j-driver-core";
-import { CorporateRole } from "../models/eom/CorporateRole";
+import { CorporateRole } from "../../models/eom/CorporateRole";
 
 const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
 
-import { Employee } from "../models/eom/Employee";
-import { dateIdGenerator } from "../utils/dateIdGenerator";
+import { Employee } from "../../models/eom/Employee";
+import { dateIdGenerator } from "../../utils/dateIdGenerator";
 
 type rdfNameSpace = {
     prefix: string,

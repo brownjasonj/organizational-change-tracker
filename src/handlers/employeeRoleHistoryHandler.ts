@@ -1,28 +1,26 @@
 import { Response } from "express"
 import { Context, Request } from "openapi-backend"
+import { IRdfGraphDB, SparqlQueryResultType } from "../interfaces/IRdfGraphDB";
+import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
+import { sparqlRoleHistoryQuery } from "../rdf/sparql/sparqlRoleHistoryQuery";
 
-
-const getSparqlQuery = (employeeId: string) => {
-    return `prefix bank-org: <http://example.org/bank-org#>
-    prefix bank-id: <http://example.org/bank-id#>
-    prefix org: <http://www.w3.org/ns/org#>
-    prefix time: <http://www.w3.org/2006/time#>
-    prefix interval: <http://example.org/interval#>
-    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-    
-    select  distinct ?corpTitle
-	where {
-        ?employee rdf:type bank-org:BankEmployee.
-        ?employee bank-id:id "e10".
-		?corpTitleMembership org:member ?employee.
-        ?corpTitleMembership bank-org:BankCorporateTitle ?corpTitle.
-
-    }`;
-}
+const graphdb: IRdfGraphDB = GraphPersistenceFactory.getGraphDB();
 
 const employeeRoleHistoryHandler = async (context: Context, request: Request, response: Response) => {
-    console.log(request.body);
+    if (context.request.query.employeeId) {
+        const sparqlQuery = sparqlRoleHistoryQuery(context.request.query.employeeId as string);
+        console.log(sparqlQuery);
+        try {
+            const result = await graphdb.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON);
+            response.status(200).json({result: result});
+        }
+        catch (err) {
+            console.log(err);
+            response.status(500).json(err);
+            return;
+        }
+
+    }
     response.json({ message: "done" });
 }
 

@@ -3,7 +3,7 @@ import { IRdfGraphDB } from "../interfaces/IRdfGraphDB";
 import { EmployeeDto } from "../models/dto/EmployeeDto";
 import { Employee } from "../models/eom/Employee";
 import { employeeDtoToEmployee } from "../models/mappers/EmployeeMapper";
-import { BankOrgRdfDataGenerator } from "../rdf-generators/BankOrgRdfDataGenerator";
+import { BankOrgRdfDataGenerator } from "../rdf/generators/BankOrgRdfDataGenerator";
 
 
 const persisteEmployeeDtoStringData = (graphDB: IRdfGraphDB, employeeDto: EmployeeDto): Promise<Employee>=> {
