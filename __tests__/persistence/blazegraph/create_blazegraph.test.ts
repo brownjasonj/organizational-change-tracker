@@ -8,9 +8,15 @@ describe("create a new blazegraph DB", () => {
     beforeAll(async () => {
         const myuuid = uuidv4();
         const testDirectory = `blazegraph-test-database${myuuid}`;
-        const createdDirectory = await exec(`mkdir ${testDirectory}; cd ${testDirectory}`);
-        await exec(`mkdir ${testDirectory}; cd ${testDirectory}; java -server -Xmx64g -Djetty.port=19999 -jar /Users/jason/Downloads/blazegraph.jar&`);
-
+//        const createdDirectory = await exec(`mkdir ${testDirectory}; cd ${testDirectory}`);
+        // await exec(`mkdir ${testDirectory}`);
+        // await exec(`cd ${testDirectory}`);
+        // await exec(`wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar`);
+        // await exec(`java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);
+        await exec(`mkdir ${testDirectory};
+                    cd ${testDirectory};
+                    wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar;
+                    java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);
     });
 
     test("create a new blazegraph DB", async () => {

@@ -22,9 +22,9 @@ bank-id:ab-organization a org:FormalOrganization;
     org:subOrganizationOf bank-id:a-organization.
 
 bank-id:20130101000000 a bank-org:xsdDateTimeInstant;
-    time:inXSDDateTimeStamp "2013-01-01T00:00:00.000Z"^^xsd:dateTimeStamp.
+    time:inXSDDateTimeStamp "2013-01-01T00:00:00.000Z"^^xsd:dateTime.
 bank-id:20131231000000 a bank-org:xsdDateTimeInstant;
-    time:inXSDDateTimeStamp "2013-12-31T00:00:00.000Z"^^xsd:dateTimeStamp.
+    time:inXSDDateTimeStamp "2013-12-31T00:00:00.000Z"^^xsd:dateTime.
 
 bank-id:4041234-staff-membership-during a bank-org:MembershipDuration;
     time:hasBeginning bank-id:20130101000000;
@@ -47,5 +47,5 @@ bank-id:4041234-a a bank-org:BankEmployeeOrganizationalEntityMembership;
 bank-id:a-org-employee-count a bank-org:BankNumberOfEmployeesInOrg;
     org:organization bank-id:a-organization;
     bank-org:bankOrganizationEmployeeCount 2;
-    time:inXSDDateTimeStamp "2013-01-01T00:00:00.000Z"^^xsd:dateTimeStamp.
+    time:inXSDDateTimeStamp "2013-01-01T00:00:00.000Z"^^xsd:dateTime.
     

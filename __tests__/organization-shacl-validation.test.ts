@@ -2,7 +2,7 @@ import SHACLValidator from 'rdf-validate-shacl';
 import { loadN3DataSetfromFile, loadN3DataSetfromString } from '../src/utils/loadN3DataSet';
 import factory from 'rdf-ext';
 import { Employee } from "../src/models/eom/Employee";
-import { BankOrgRdfDataGenerator } from "../src/rdf-generators/BankOrgRdfDataGenerator";
+import { BankOrgRdfDataGenerator } from "../src/rdf/generators/BankOrgRdfDataGenerator";
 
 describe("Stupid Test That should pass!", () => {
   test("Validate Static organization example against organization shape", async () => {
