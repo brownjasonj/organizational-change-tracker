@@ -3,15 +3,15 @@ import { IRdfGraphDB } from "./IRdfGraphDB";
 import { EmployeeDto } from "../models/dto/EmployeeDto";
 import { Employee } from "../models/eom/Employee";
 import { employeeDtoToEmployee } from "../models/mappers/EmployeeMapper";
-import organizationaRdfGenerator from "../rdf/OrganizationRdfGenerator";
 import { processFileStreamAsJson } from "../utils/processFileStreamAsJson";
+import { BankOrgRdfDataGenerator } from "../rdf/generators/BankOrgRdfDataGenerator";
 
 const persistEmployeeDtoFileData = async (graphDB: IRdfGraphDB, filePath: string) => {
     const retryList: Employee[] = [];
     processFileStreamAsJson(filePath, (data: any) => {
         const employeeDto: EmployeeDto = data as EmployeeDto;
         const employeeRecord: Employee = employeeDtoToEmployee(employeeDto);
-        organizationaRdfGenerator(employeeRecord)
+        BankOrgRdfDataGenerator(employeeRecord)
         .then((result) => {
             graphDB.turtleUpdate(result)
                 .then((res) => {
@@ -30,11 +30,11 @@ const persistEmployeeDtoFileData = async (graphDB: IRdfGraphDB, filePath: string
         while (retryList.length > 0) {
             console.log('retrying...');
             const employeeRecord: Employee = retryList.pop()!;
-            organizationaRdfGenerator(employeeRecord)
+            BankOrgRdfDataGenerator(employeeRecord)
             .then((result) => {
                 graphDB.turtleUpdate(result)
                     .then((res) => {
-                    console.log(xml2json(res))
+                    console.log(res)
                     })
                 .catch((err) => {
                     console.log(err);
