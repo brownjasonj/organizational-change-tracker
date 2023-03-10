@@ -1,6 +1,9 @@
 import cors from 'cors';
 import Express from 'express';
+import http from 'http';
+import https from 'https';
 import morgan from 'morgan';
+import fs from 'fs';
 import { OpenAPIBackend, Request } from 'openapi-backend';
 import * as swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
@@ -74,6 +77,15 @@ app.use(morgan('combined'));
 // use as express middleware to pick-up requests and send to the openapi-backend handler.
 app.use((req, res) => api.handleRequest(req as Request, req, res));
 
+var privateKey  = fs.readFileSync('/Users/jason/tmp/sslcert/key.pem', 'utf8');
+var certificate = fs.readFileSync('/Users/jason/tmp/sslcert/cert.pem', 'utf8');
+
+var credentials = {key: privateKey, cert: certificate};
+
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
 // start server
-app.listen(9000, () => console.info('api listening at http://localhost:9000'));
+httpServer.listen(8080, () => console.info('api listening at http://localhost:8080'));
+httpsServer.listen(8443, () => console.info('api listening at https://localhost:8443'));
 

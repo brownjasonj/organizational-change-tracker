@@ -3,7 +3,9 @@ info:
   title: API Title
   version: '1.0'
 servers:
-  - url: http://localhost:9000
+  - url: http://localhost:8080
+    description: locally hosted server for local development purposes
+  - url: https://localhost:8443
     description: locally hosted server for local development purposes
 paths:
   /test:

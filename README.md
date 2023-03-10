@@ -121,3 +121,18 @@ and to list which namespaces neo4j has, run this:
 This project was initally created with the basic set up for a typescript node project using 
 the instructions from (https://khalilstemmler.com/blogs/typescript/node-starter-project/)
 
+
+<h1> HTTPS Certificate Set-up</h2>
+To enable support for HTTPS you'll need to set up server certificates and then point to them from the index.ts file.
+
+<code>
+openssl genrsa -out key.pem
+</code>
+
+<code>
+openssl req -new -key key.pem -out csr.pem
+</code>
+
+<code>
+openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
+</code>
