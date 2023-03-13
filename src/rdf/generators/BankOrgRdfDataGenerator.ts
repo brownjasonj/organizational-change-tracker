@@ -151,11 +151,11 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
         triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), corpTitleMembershipTimeIntervalNode),
     ]);
 
-    const corpTitleStartDate: string = dateIdGenerator(new Date(employee.employmentStartDate));
-    const corpTitleEndDate: string = dateIdGenerator(new Date(employee.employmentEndDate));
-    const corpTitleMembershipTimeIntervalStartDateName: string = (idNS.prefix + corpTitleStartDate).toLocaleLowerCase();
+    const corpTitleStartDateId: string = dateIdGenerator(new Date(employee.departmentStartDate));
+    const corpTitleEndDateId: string = dateIdGenerator(new Date(employee.departmentEndDate));
+    const corpTitleMembershipTimeIntervalStartDateName: string = (idNS.prefix + corpTitleStartDateId).toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalStartDateNode = namedNode(corpTitleMembershipTimeIntervalStartDateName);
-    const corpTitleMembershipTimeIntervalEndDateName: string = (idNS.prefix + corpTitleEndDate).toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalEndDateName: string = (idNS.prefix + corpTitleEndDateId).toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalEndDateNode = namedNode(corpTitleMembershipTimeIntervalEndDateName);
 
 
