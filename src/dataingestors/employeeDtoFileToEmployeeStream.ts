@@ -16,7 +16,7 @@ import { StreamDataIngestionStatusUpdater } from './StreamDataIngestionStatusUpd
 const employeeDtoFileToEmployeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
     const parser = JSONStream.parse('*');
-    const streamThrottle = new StreamThrottle(50);
+    const streamThrottle = new StreamThrottle(20);
 
      pipeline(
          stream,
