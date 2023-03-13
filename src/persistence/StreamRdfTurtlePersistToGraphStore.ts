@@ -6,7 +6,7 @@ import { StreamThrottle } from "../dataingestors/StreamThrottle";
 
 class StreamRdfTurtlePersistToGraphStore extends PassThrough {
     private MAX_RETRIES = 5;
-    private TIME_OUT_MS = 200;
+    private TIME_OUT_MS = 20;
     private msgCount = 0;
     private graphDB: IRdfGraphDB;
     private msgsQueued = 1;
