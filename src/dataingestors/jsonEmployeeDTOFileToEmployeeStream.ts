@@ -1,22 +1,22 @@
 import * as fs from 'fs';
 import JSONStream from 'jsonstream';
 import { Employee } from '../models/eom/Employee';
-import { StreamTransformEmployeeToRdf } from './StreamTransformEmployeeToRdf';
-import { StreamTransformEmployeeDtoToEmployee } from './StreamTransformEmployeeDtoToEmployee';
 import { StreamRdfTurtlePersistToGraphStore } from '../persistence/StreamRdfTurtlePersistToGraphStore';
-import { StreamRdfBankOrgValidation } from './StreamRdfBankOrgValidation';
 import DatasetExt from 'rdf-ext/lib/Dataset';
 import { pipeline } from 'stream';
-import { StreamThrottle } from './StreamThrottle';
 import { GraphPersistenceFactory } from '../persistence/GraphPersistenceFactory';
 import { DataIngestionStreamStatus } from './DataIngestionStreamsFactory';
-import { StreamDataIngestionStatusUpdater } from './StreamDataIngestionStatusUpdater';
+import { StreamDataIngestionStatusUpdater } from './streamstages/StreamDataIngestionStatusUpdater';
+import { StreamThrottle } from './streamstages/StreamThrottle';
+import { StreamTransformEmployeeDtoToEmployee } from './streamstages/StreamTransformEmployeeDtoToEmployee';
+import { StreamTransformEmployeeToRdf } from './streamstages/StreamTransformEmployeeToRdf';
+import { ConfigurationManager } from '../ConfigurationManager';
 
 
-const employeeDtoFileToEmployeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus) => {
+const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
     const parser = JSONStream.parse('*');
-    const streamThrottle = new StreamThrottle(20);
+    const streamThrottle = new StreamThrottle(ConfigurationManager.getInstance().getConfiguration().getStreamTrottleTimeoutMs());
 
      pipeline(
          stream,
@@ -38,4 +38,4 @@ const employeeDtoFileToEmployeStream = (filePath: string, organizationSchema: Da
      );
 }
 
-export { employeeDtoFileToEmployeStream }
+export { jsonEmployeeDTOFileToEmployeeStream }

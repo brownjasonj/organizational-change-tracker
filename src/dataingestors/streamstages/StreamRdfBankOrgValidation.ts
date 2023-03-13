@@ -1,8 +1,8 @@
 import { PassThrough } from "stream";
-import { loadN3DataSetfromFile, loadN3DataSetfromString, syncLoadN3DataSetfromFile } from "../utils/loadN3DataSet";
 import SHACLValidator from "rdf-validate-shacl";
 import factory from "rdf-ext";
 import DatasetExt from "rdf-ext/lib/Dataset";
+import { loadN3DataSetfromString } from "../../utils/loadN3DataSet";
 
 
 class StreamRdfBankOrgValidation extends PassThrough {

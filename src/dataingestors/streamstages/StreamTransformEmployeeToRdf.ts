@@ -1,6 +1,6 @@
 import { PassThrough, Transform } from "stream";
-import { Employee } from "../models/eom/Employee";
-import { BankOrgRdfDataGenerator } from "../rdf/generators/BankOrgRdfDataGenerator";
+import { Employee } from "../../models/eom/Employee";
+import { BankOrgRdfDataGenerator } from "../../rdf/generators/BankOrgRdfDataGenerator";
 
 class StreamTransformEmployeeToRdf extends Transform {
     constructor() {

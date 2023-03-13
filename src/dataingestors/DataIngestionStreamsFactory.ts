@@ -1,4 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
+import { StreamDataIngestorType } from './StreamDataIngestorType';
+import { jsonEmployeeDTOFileToEmployeeStream } from './jsonEmployeeDTOFileToEmployeeStream';
+import { csvEmployeeDTOFileToEmployeeStream } from './csvEmployeeDtoFileToEmployeeStream';
+import { ConfigurationManager } from '../ConfigurationManager';
 
 enum StreamStatus {
     processing = 'processing',
@@ -22,7 +26,7 @@ class DataIngestionStreamStatus {
         this.entriesProcessed = 0;
         this.status = StreamStatus.processing;
         this.error = null;
-        this.resourceLocation = `http://localhost:9000/operations/load/${this.requestId}`;
+        this.resourceLocation = `http://localhost:${ConfigurationManager.getInstance().getConfiguration().getHttpPort()}/operations/load/${this.requestId}`;
     }
 
     public updateStatus(status: StreamStatus, error: string | null) {
@@ -53,6 +57,10 @@ class DataIngestionStreamStatus {
 class DataIngestionStreamsFactory {
     static streams: Map<string, DataIngestionStreamStatus> = new Map<string, DataIngestionStreamStatus>();
 
+    static getFileExtension(filePath: string) : string {
+        return filePath.substring(filePath.lastIndexOf(".") + 1);
+    }
+
     static createStreamStatus(): DataIngestionStreamStatus {
         const streamStatus = new DataIngestionStreamStatus();
         this.streams.set(streamStatus.requestId, streamStatus);
@@ -61,6 +69,19 @@ class DataIngestionStreamsFactory {
 
     static getStreamStatus(requestId: string): DataIngestionStreamStatus | undefined {
         return this.streams.get(requestId);
+    }
+
+    static getSreamDataIngestor(filePath: string): StreamDataIngestorType {
+        switch(DataIngestionStreamsFactory.getFileExtension(filePath)) {
+            case 'csv':
+                return csvEmployeeDTOFileToEmployeeStream;
+            case 'json':
+                return jsonEmployeeDTOFileToEmployeeStream;
+            case 'xlsx':
+            case 'xslb':
+            default:
+                throw new Error(`Unsupported file type: ${DataIngestionStreamsFactory.getFileExtension(filePath)}`);
+        }
     }
 }
 

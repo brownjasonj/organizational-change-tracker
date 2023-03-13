@@ -1,7 +1,7 @@
 import { PassThrough, Transform } from "stream";
-import { EmployeeDto } from "../models/dto/EmployeeDto";
-import { employeeDtoToEmployee } from "../models/mappers/EmployeeMapper";
-import { Employee } from "../models/eom/Employee";
+import { EmployeeDto } from "../../models/dto/EmployeeDto";
+import { Employee } from "../../models/eom/Employee";
+import { employeeDtoToEmployee } from "../../models/mappers/EmployeeMapper";
 
 
 class StreamTransformEmployeeDtoToEmployee extends Transform {
@@ -10,6 +10,7 @@ class StreamTransformEmployeeDtoToEmployee extends Transform {
     }
 
     _write(data: EmployeeDto, encoding: string, callback: Function) {
+        console.log(data);
         const employeeRecord: Employee = employeeDtoToEmployee(data);
         this.push(employeeRecord);
         callback();

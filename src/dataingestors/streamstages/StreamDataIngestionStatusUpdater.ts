@@ -1,5 +1,5 @@
 import { Writable } from "stream";
-import { DataIngestionStreamStatus } from "./DataIngestionStreamsFactory";
+import { DataIngestionStreamStatus } from "../DataIngestionStreamsFactory";
 
 
 class StreamDataIngestionStatusUpdater extends Writable {

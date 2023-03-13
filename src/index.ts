@@ -20,6 +20,7 @@ import { employeeDepartmentHistoryHandler } from './handlers/employeeDepartmentH
 import fileUpload from 'express-fileupload';
 import { operationsLoadStatusHandler } from './handlers/operationsLoadStatusHandler';
 import { addEmployeesHandler } from './handlers/addEmployessHandler';
+import { Configuration, ConfigurationManager } from './ConfigurationManager';
 
 const app = Express();
 // enable file uploads
@@ -77,15 +78,22 @@ app.use(morgan('combined'));
 // use as express middleware to pick-up requests and send to the openapi-backend handler.
 app.use((req, res) => api.handleRequest(req as Request, req, res));
 
-var privateKey  = fs.readFileSync('/Users/jason/tmp/sslcert/key.pem', 'utf8');
-var certificate = fs.readFileSync('/Users/jason/tmp/sslcert/cert.pem', 'utf8');
+process.argv.forEach(function (val, index, array) {
+    console.log(index + ': ' + val);
+});
 
-var credentials = {key: privateKey, cert: certificate};
+const configuration: Configuration = ConfigurationManager.getInstance().getConfiguration();
+
+if (configuration.isHttpsEnabled()) {
+    var privateKey  = fs.readFileSync(configuration.getHttpsKeyPath(), 'utf8');
+    var certificate = fs.readFileSync(configuration.getHttpsCertPath(), 'utf8');
+    var credentials = {key: privateKey, cert: certificate};
+    var httpsServer = https.createServer(credentials, app);
+    httpsServer.listen(configuration.getHttpsPort(), () => console.info(`api listening at https://localhost:${configuration.getHttpsPort()}`));
+}
 
 var httpServer = http.createServer(app);
-var httpsServer = https.createServer(credentials, app);
 
 // start server
-httpServer.listen(8080, () => console.info('api listening at http://localhost:8080'));
-httpsServer.listen(8443, () => console.info('api listening at https://localhost:8443'));
+httpServer.listen(configuration.getHttpPort(), () => console.info(`api listening at http://localhost:${configuration.getHttpPort()}`));
 

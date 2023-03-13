@@ -6,7 +6,7 @@ import { Employee } from "../models/eom/Employee";
 import { UploadedFile } from "express-fileupload";
 import { loadN3DataSetfromFile } from "../utils/loadN3DataSet";
 import { DataIngestionStreamsFactory } from "../dataingestors/DataIngestionStreamsFactory";
-import { employeeDtoFileToEmployeStream } from "../dataingestors/employeeDtoFileToEmployeeStream";
+import { StreamDataIngestorType } from "../dataingestors/StreamDataIngestorType";
 
 const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
 
@@ -37,7 +37,8 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
             // create a new stream status object
             const dataIngestionStreamStatus = DataIngestionStreamsFactory.createStreamStatus();
 
-            employeeDtoFileToEmployeStream(filePath, shapes, dataIngestionStreamStatus);
+            const streamDataIngestor: StreamDataIngestorType = DataIngestionStreamsFactory.getSreamDataIngestor(filePath);
+            streamDataIngestor(filePath, shapes, dataIngestionStreamStatus);
             response.status(202).json({'Operation-Location': `${dataIngestionStreamStatus.getOperationLocation()}`});
         }
    }

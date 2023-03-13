@@ -1,7 +1,7 @@
 import { PassThrough, Writable } from "stream";
 import { IRdfGraphDB } from "./IRdfGraphDB";
 import { GraphPersistenceFactory } from "./GraphPersistenceFactory";
-import { StreamThrottle } from "../dataingestors/StreamThrottle";
+import { StreamThrottle } from "../dataingestors/streamstages/StreamThrottle";
 
 
 class StreamRdfTurtlePersistToGraphStore extends PassThrough {
