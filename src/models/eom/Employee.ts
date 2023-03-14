@@ -30,12 +30,13 @@ class Employee {
         this.departmentStartDate = departmentStartDate;
         this.departmentEndDate = departmentEndDate;
         this.employmentStartDate = employmentStartDate;
-        if (employmentEndDate == this.magicDate) {
-            this.employmentEndDate = new Date();
-        }
-        else {
-            this.employmentEndDate = employmentEndDate;
-        }
+        this.employmentEndDate = employmentEndDate;
+        // if (employmentEndDate == this.magicDate) {
+        //     this.employmentEndDate = new Date();
+        // }
+        // else {
+        //     this.employmentEndDate = employmentEndDate;
+        // }
     }
 }
 
