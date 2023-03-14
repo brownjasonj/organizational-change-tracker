@@ -168,12 +168,12 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
 
     writer.addQuads([
         triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
-        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.employmentStartDate.toISOString(), namedNode("xsd:dateTime"))),
+        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.departmentStartDate.toISOString(), namedNode("xsd:dateTime"))),
     ]);
 
     writer.addQuads([
         triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
-        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.employmentEndDate.toISOString(), namedNode("xsd:dateTime"))),
+        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.departmentEndDate.toISOString(), namedNode("xsd:dateTime"))),
     ]);
 
     // writer.end((error, result) => console.log(result));
