@@ -21,6 +21,8 @@ import fileUpload from 'express-fileupload';
 import { operationsLoadStatusHandler } from './handlers/operationsLoadStatusHandler';
 import { addEmployeesHandler } from './handlers/addEmployessHandler';
 import { Configuration, ConfigurationManager } from './ConfigurationManager';
+import { employeeJoinersByDepartment } from './handlers/employeeJoinersByDepartment';
+import { employeeLeaversByDepartment } from './handlers/employeeLeaversByDepartment';
 
 const app = Express();
 // enable file uploads
@@ -58,6 +60,8 @@ api.register('addemployeeGet', addEmployeeRecordHandler);
 api.register('addemployeesPost', addEmployeesHandler);
 api.register('employeeDepartmentHistory', employeeDepartmentHistoryHandler);
 api.register('employeeRoleHistory', employeeRoleHistoryHandler);
+api.register('departmentJoiners', employeeJoinersByDepartment);
+api.register('departmentLeavers', employeeLeaversByDepartment);
 api.register('employee-count-by-department-code', employeeCountByDepartmentCodeHandler);
 api.register('department-codes', departmentCodesHandler);
 api.register('departmentHistory', departmentHistoryHandler);

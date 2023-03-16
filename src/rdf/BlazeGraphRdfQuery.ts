@@ -7,3 +7,5 @@ class BlazeGraphRdfQuery extends RdfCompliantBackend {
         super(new BlazeGraphDB(new BlazeGraphDBOptions({})));
     }
 }
+
+export { BlazeGraphRdfQuery }

@@ -1,13 +1,16 @@
-import { DepartmentTimeEpoc } from "../models/eom/DepartmentTimeEpoc";
 import { Employee } from "../models/eom/Employee";
+import { DepartmentTimeSeries } from "../models/eom/DepartmentTimeSeries";
+import { EmployeeLeaverJoiner } from "../models/eom/EmployeeLeaverJoiner";
 
 interface IOrganizationRdfQuery {
     createBankOrgRdfDataGenerator(employee:Employee): Promise<string>;
     getDepartmentCodes(asOfDate: Date): string;
-    getDepartmentHistory(departmentCode: string, startDate: Date, endDate: Date): Promise<DepartmentTimeEpoc>;
+    getDepartmentHistory(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentTimeSeries>;
     getEmployeeCountByDepartmentCode(departmentCode: string, asOf: string): string;
     getEmployeeDepartmentHistory(): string;
     sparqlRoleHistoryQuery(employeeId: string): string;
+    getDepartmentJoiners(departmentCode: string, startDate: Date, endDate: Date): Promise<EmployeeLeaverJoiner[]>;
+    getDepartmentLeavers(departmentCode: string, startDate: Date, endDate: Date): Promise<EmployeeLeaverJoiner[]>
 }
 
 export { IOrganizationRdfQuery }

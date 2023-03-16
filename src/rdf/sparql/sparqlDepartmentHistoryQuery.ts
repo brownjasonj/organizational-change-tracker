@@ -1,7 +1,7 @@
-import { DepartmentTimeEpoc } from "../../models/eom/DepartmentTimeEpoc";
+import { EmployeeCountByDepartmentTimeEpoc } from "../../models/eom/EmployeeCountByDepartmentTimeEpoc";
 import { IRdfGraphDB, SparqlQueryResultType } from "../../persistence/IRdfGraphDB";
 
-const sparqlDepartmentHistoryQuery = (graphdb: IRdfGraphDB,  departmentCode: string, startDate: Date, endDate: Date): Promise<DepartmentTimeEpoc> => {
+const sparqlDepartmentHistoryQuery = (graphdb: IRdfGraphDB,  departmentCode: string, startDate: Date, endDate: Date): Promise<EmployeeCountByDepartmentTimeEpoc> => {
     const sparqlQuery = `prefix org: <http://www.w3.org/ns/org#>
     prefix time: <http://www.w3.org/2006/time#>
     prefix xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -31,9 +31,9 @@ const sparqlDepartmentHistoryQuery = (graphdb: IRdfGraphDB,  departmentCode: str
         .then((result) => {
             console.log(result);
             if (result.results.bindings.length > 0)
-                resolve(new DepartmentTimeEpoc(departmentCode, startDate, result.results.bindings[0].count.value));
+                resolve(new EmployeeCountByDepartmentTimeEpoc(departmentCode, startDate, result.results.bindings[0].count.value));
             else 
-                resolve(new DepartmentTimeEpoc(departmentCode, startDate, 0));
+                resolve(new EmployeeCountByDepartmentTimeEpoc(departmentCode, startDate, 0));
         })
         .catch((error) => {
             console.log(error);

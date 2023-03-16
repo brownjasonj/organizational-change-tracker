@@ -4,16 +4,13 @@ import { IRdfGraphDB, SparqlQueryResultType } from "../../persistence/IRdfGraphD
 
 
 const sparqlEmployeeDepartmentHistoryQuery = (graphdb: IRdfGraphDB) => {
-    const sparqlQuery = 
-    `prefix bank-org: <http://example.org/bank-org#>
+    const sparqlQuery = `prefix bank-org: <http://example.org/bank-org#>
     prefix bank-id: <http://example.org/bank-id#>
-    prefix csorg: <http://example.org/org#>
-    prefix foaf: <http://xmlns.com/foaf/0.1#>
     prefix org: <http://www.w3.org/ns/org#>
     prefix time: <http://www.w3.org/2006/time#>
     prefix interval: <http://example.org/interval#>
-    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>   
-    prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
+    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
     
     select distinct ?pid ?department ?startDate ?endDate
     where {

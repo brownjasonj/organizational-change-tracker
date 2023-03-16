@@ -1,11 +1,11 @@
-import { DepartmentTimeEpoc } from "./DepartmentTimeEpoc";
+import { EmployeeCountByDepartmentTimeEpoc } from "./EmployeeCountByDepartmentTimeEpoc";
 
 class DepartmentTimeSeries {
     departmentName: string;
     startDate: Date;
     endDate: Date;
     dateStep: number;
-    timeseries: DepartmentTimeEpoc[];
+    timeseries: EmployeeCountByDepartmentTimeEpoc[];
 
     constructor(departmentName: string, startDate: Date, endDate: Date, dateStep: number) {
         this.departmentName = departmentName;
@@ -15,7 +15,7 @@ class DepartmentTimeSeries {
         this.timeseries = [];
     }
 
-    addPoint(point: DepartmentTimeEpoc): void {
+    addPoint(point: EmployeeCountByDepartmentTimeEpoc): void {
         if (point)
             this.timeseries.push(point);
     }
