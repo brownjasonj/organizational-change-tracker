@@ -23,6 +23,7 @@ import { addEmployeesHandler } from './handlers/addEmployessHandler';
 import { Configuration, ConfigurationManager } from './ConfigurationManager';
 import { employeeJoinersByDepartment } from './handlers/employeeJoinersByDepartment';
 import { employeeLeaversByDepartment } from './handlers/employeeLeaversByDepartment';
+import { departmentHistoryWithJoinersLeaversHandler } from './handlers/departmentHistoryWithJoinersLeaversHandler';
 
 const app = Express();
 // enable file uploads
@@ -60,6 +61,7 @@ api.register('addemployeeGet', addEmployeeRecordHandler);
 api.register('addemployeesPost', addEmployeesHandler);
 api.register('employeeDepartmentHistory', employeeDepartmentHistoryHandler);
 api.register('employeeRoleHistory', employeeRoleHistoryHandler);
+api.register('departmentHistoryWithJoinersLeaver', departmentHistoryWithJoinersLeaversHandler);
 api.register('departmentJoiners', employeeJoinersByDepartment);
 api.register('departmentLeavers', employeeLeaversByDepartment);
 api.register('employee-count-by-department-code', employeeCountByDepartmentCodeHandler);

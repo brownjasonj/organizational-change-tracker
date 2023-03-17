@@ -143,6 +143,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/departmentHistory"
+  /department-history-with-joinersleavers:
+    get:
+      description: get the history evolution of a department showing change is size over time and movement of people in and out
+      operationId: "departmentHistoryWithJoinersLeaver"
+      parameters:
+        - in: query
+          name: departmentCode
+          schema:
+            type: string
+          required: true
+          description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
+        - in: query
+          name: startDate
+          schema:
+            type: string
+          required: true
+          description: The starting point for the history
+        - in: query
+          name: endDate
+          schema:
+            type: string
+          required: false
+          description: The ending point for the history, if not provided it is assume to be the date of the call ("today")
+        - in: query
+          name: dateStep
+          schema:
+            $ref: "#/components/schemas/dateStep"
+          required: false
+          description: this is the date granularity step between sample points of the history
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/departmentHistory"
   /department-joiners:
     get:
       description: get list of employees that joined a department in a particular period

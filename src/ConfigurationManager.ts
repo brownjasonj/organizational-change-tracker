@@ -7,7 +7,7 @@ class Configuration {
     private streamTrottleTimeout: number;
 
     constructor() {
-        this.enableHttps = true;
+        this.enableHttps = false;
         this.httpsPort = 8443;
         this.httpPort = 8080;
         this.httpsKeyPath = '/Users/jason/tmp/sslcert/key.pem';
