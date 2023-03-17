@@ -3,8 +3,8 @@ import { EmployeeDepartmentEpocs } from "../../models/eom/EmployeeDepartmentEpoc
 import { IRdfGraphDB, SparqlQueryResultType } from "../../persistence/IRdfGraphDB";
 
 
-const sparqlEmployeeDepartmentHistoryQuery = (graphdb: IRdfGraphDB) => {
-    const sparqlQuery = `prefix bank-org: <http://example.org/bank-org#>
+const sparqlEmployeeDepartmentHistoryQuery = (): string => {
+    return `prefix bank-org: <http://example.org/bank-org#>
     prefix bank-id: <http://example.org/bank-id#>
     prefix org: <http://www.w3.org/ns/org#>
     prefix time: <http://www.w3.org/2006/time#>
@@ -32,32 +32,6 @@ const sparqlEmployeeDepartmentHistoryQuery = (graphdb: IRdfGraphDB) => {
          } 
         }
     }`;
-    return new Promise((resolve, reject) => {
-        const employeeDepartmentEpocs = new Map<string, EmployeeDepartmentEpocs>();
-        graphdb.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
-        .then((result) => {
-            console.log(result);
-            result.results.bindings.forEach((binding: any) => {
-                const employeeId = binding.pid.value;
-                const department = binding.department.value;
-                const startDate = new Date(binding.startDate.value.split("^^")[0]).toUTCString();
-                const endDate = new Date(binding.endDate.value.split("^^")[0]).toUTCString();
-                const epoc = new EmployeeDepartmentEpoc(employeeId, department, startDate, endDate);
-                if (employeeDepartmentEpocs.has(employeeId)) {
-                    employeeDepartmentEpocs.get(employeeId)!.addEpoc(epoc);
-                } else {
-                    const employeeDepartmentEpoc = new EmployeeDepartmentEpocs(employeeId);
-                    employeeDepartmentEpoc.addEpoc(epoc);
-                    employeeDepartmentEpocs.set(employeeId, employeeDepartmentEpoc);
-                }
-            });
-            return resolve(Array.from(employeeDepartmentEpocs, ([name, value]) => value));
-        })
-        .catch((error: any) => {
-            console.log(error);
-            return reject(error);
-        });
-    });
 }
 
-export { sparqlEmployeeDepartmentHistoryQuery, EmployeeDepartmentEpoc, EmployeeDepartmentEpocs }
+export { sparqlEmployeeDepartmentHistoryQuery }

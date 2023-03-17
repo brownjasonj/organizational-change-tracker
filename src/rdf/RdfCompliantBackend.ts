@@ -7,6 +7,9 @@ import { sparqlDepartmentHistoryQuery } from "./sparql/sparqlDepartmentHistoryQu
 import { sparqlJoinersQueryByDepartment } from "./sparql/sparqlDepartmentJoinersQuery";
 import { EmployeeLeaverJoiner, EmployeeLeaverJoinerType } from "../models/eom/EmployeeLeaverJoiner";
 import { sparqlLeaversQueryByDepartment } from "./sparql/sparqlDepartmentLeaversQuery";
+import { sparqlEmployeeDepartmentHistoryQuery } from "./sparql/sparqlEmployeeDepartmentHistoryQuery";
+import { EmployeeDepartmentEpoc } from "../models/eom/EmployeeDepartmentEpoc";
+import { EmployeeDepartmentEpocs } from "../models/eom/EmployeeDepartmentEpocs";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
@@ -107,8 +110,34 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
-    getEmployeeDepartmentHistory(): string {
-        throw new Error("Method not implemented.");
+    getEmployeeDepartmentHistory(): Promise<EmployeeDepartmentEpocs[]> {
+        return new Promise((resolve, reject) => {
+            const sparqlQuery = sparqlEmployeeDepartmentHistoryQuery();
+            const employeeDepartmentEpocs = new Map<string, EmployeeDepartmentEpocs>();
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                console.log(result);
+                result.results.bindings.forEach((binding: any) => {
+                    const employeeId = binding.pid.value;
+                    const department = binding.department.value;
+                    const startDate = new Date(binding.startDate.value.split("^^")[0]).toUTCString();
+                    const endDate = new Date(binding.endDate.value.split("^^")[0]).toUTCString();
+                    const epoc = new EmployeeDepartmentEpoc(employeeId, department, startDate, endDate);
+                    if (employeeDepartmentEpocs.has(employeeId)) {
+                        employeeDepartmentEpocs.get(employeeId)!.addEpoc(epoc);
+                    } else {
+                        const employeeDepartmentEpoc = new EmployeeDepartmentEpocs(employeeId);
+                        employeeDepartmentEpoc.addEpoc(epoc);
+                        employeeDepartmentEpocs.set(employeeId, employeeDepartmentEpoc);
+                    }
+                });
+                return resolve(Array.from(employeeDepartmentEpocs, ([name, value]) => value));
+            })
+            .catch((error: any) => {
+                console.log(error);
+                return reject(error);
+            });
+        });
     }
     
     sparqlRoleHistoryQuery(employeeId: string): string {
