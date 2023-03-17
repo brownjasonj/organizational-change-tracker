@@ -8,7 +8,7 @@ const graphdb: IRdfGraphDB = GraphPersistenceFactory.getGraphDB();
 
 const departmentCodesHandler = async (context: Context, request: Request, response: Response) => {
     if (context.request.query.asOf) {
-        const sparqlQuery = sparqlDepartmentCodesQuery(context.request.query.asOf as string);
+        const sparqlQuery = sparqlDepartmentCodesQuery(new Date(context.request.query.asOf as string))
         if (context.request.headers.accept === 'application/json') {
             console.log('sparqlQuery: ' + sparqlQuery);
             try {

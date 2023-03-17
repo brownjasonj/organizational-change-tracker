@@ -1,4 +1,4 @@
-const sparqlDepartmentCodesQuery = (asOf: string) => {
+const sparqlDepartmentCodesQuery = (asOfDate: Date): string => {
     return `prefix org: <http://www.w3.org/ns/org#>
     prefix time: <http://www.w3.org/2006/time#>
     prefix interval: <http://example.org/interval#>
@@ -15,8 +15,8 @@ const sparqlDepartmentCodesQuery = (asOf: string) => {
         ?start time:inXSDDateTimeStamp ?date1.
         ?end time:inXSDDateTimeStamp ?date2.
         filter (
-        ?date1 <= "${asOf}"^^xsd:dateTime
-        && ?date2 >= "${asOf}"^^xsd:dateTime).
+        ?date1 <= "${asOfDate.toISOString()}"^^xsd:dateTime
+        && ?date2 >= "${asOfDate.toISOString()}"^^xsd:dateTime).
     }`;
 }
 

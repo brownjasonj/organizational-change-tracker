@@ -10,7 +10,7 @@ const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
 const employeeCountByDepartmentCodeHandler = async (context: Context, request: Request, response: Response) => {
     if (context.request.query.departmentCode
         && context.request.query.asOf) {
-        const sparqlQuery = sparqlEmployeeCountByDepartmentCodeQuery2(context.request.query.departmentCode as string, context.request.query.asOf as string);
+        const sparqlQuery = sparqlEmployeeCountByDepartmentCodeQuery2(context.request.query.departmentCode as string, new Date(context.request.query.asOf as string));
         try {
             const data = await graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON);
             response.json(data)

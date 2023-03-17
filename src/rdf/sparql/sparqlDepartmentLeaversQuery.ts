@@ -3,7 +3,7 @@
 
 */
 
-const sparqlDepartmentLeaversQuery = (startPeriod: string, endPeriod: string) => {
+const sparqlDepartmentLeaversQuery = (startPeriod: Date, endPeriod: Date) => {
     return `prefix bank-org: <http://example.org/bank-org#>
     prefix bank-id: <http://example.org/bank-id#>
     prefix org: <http://www.w3.org/ns/org#>
@@ -21,8 +21,8 @@ const sparqlDepartmentLeaversQuery = (startPeriod: string, endPeriod: string) =>
       ?member org:memberDuring ?interval.			# determine when the member was a member of the organization
       ?interval time:hasEnd ?end.
       ?end time:inXSDDateTimeStamp ?endDate.
-      filter(?endDate >= "${startPeriod}T00:00:00Z"^^xsd:dateTime
-            && ?endDate <= "${endPeriod}T00:00:00Z"^^xsd:dateTime).
+      filter(?endDate >= "${startPeriod.toISOString()}"^^xsd:dateTime
+            && ?endDate <= "${endPeriod.toISOString()}"^^xsd:dateTime).
     }`;
 }
 

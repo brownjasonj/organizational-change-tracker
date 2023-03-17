@@ -1,13 +1,11 @@
-const sparqlEmployeeCountByDepartmentCodeQuery = (departmentCode: string, asOf: string) => {
-    return `prefix : <http://example.org/id#>
-    prefix csorg: <http://example.org/org#>
-    prefix foaf: <http://xmlns.com/foaf/0.1#>
+const sparqlEmployeeCountByDepartmentCodeQuery = (departmentCode: string, asOfDate: Date) => {
+    return `prefix bank-org: <http://example.org/bank-org#>
+    prefix bank-id: <http://example.org/bank-id#>
     prefix org: <http://www.w3.org/ns/org#>
     prefix time: <http://www.w3.org/2006/time#>
-    prefix pid: <http://example.org/pid#>
     prefix interval: <http://example.org/interval#>
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>
+    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
     
     SELECT  ?name
             (count(distinct ?member) as ?count)
@@ -19,18 +17,18 @@ const sparqlEmployeeCountByDepartmentCodeQuery = (departmentCode: string, asOf: 
         ?member org:memberDuring ?interval.         # determine when the member was a member of the organization
         ?interval time:hasBeginning ?start.
         ?interval time:hasEnd ?end.
-        ?start time:inXSDDateTime ?date1.
-        ?end time:inXSDDateTime ?date2.
+        ?start time:inXSDDateTimeStamp ?date1.
+        ?end time:inXSDDateTimeStamp ?date2.
         filter (
-            ?date1 <= "${asOf}"
-            && ?date2 >= "${asOf}").
+            ?date1 <= "${asOfDate.toISOString()}"^^xsd:dateTime
+            && ?date2 >= "${asOfDate.toISOString()}"^^xsd:dateTime).
     }
     GROUP BY ?name ?count
     `;
 }
 
 
-const sparqlEmployeeCountByDepartmentCodeQuery2 = (departmentCode: string, asOf: string) => {
+const sparqlEmployeeCountByDepartmentCodeQuery2 = (departmentCode: string, asOfDate: Date) => {
     return `prefix : <http://example.org/bank-org#>
     prefix id: <http://example.org/bank-id#>
     PREFIX org: <http://www.w3.org/ns/org#>
@@ -53,9 +51,9 @@ const sparqlEmployeeCountByDepartmentCodeQuery2 = (departmentCode: string, asOf:
                 select distinct ?employeememberduring
                 where {
                     ?beginning time:inXSDDateTimeStamp ?startDateTime.
-                    filter(?startDateTime <= "${asOf}T00:00:00Z"^^xsd:dateTime).
+                    filter(?startDateTime <= "${asOfDate.toISOString()}"^^xsd:dateTime).
                     ?end time:inXSDDateTimeStamp ?endDateTime.
-                    filter(?endDateTime >= "${asOf}T23:59:59Z"^^xsd:dateTime).
+                    filter(?endDateTime >= "${new Date(asOfDate.getFullYear(), asOfDate.getMonth(), asOfDate.getDate(), 23, 59, 59).toISOString()}"^^xsd:dateTime).
                     ?employeememberduring time:hasBeginning ?beginning.
                     ?employeememberduring time:hasEnd ?end.
                 }
