@@ -30,8 +30,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
             for(var currentDate: Date = startDate; currentDate <= endDate; currentDate = new Date(currentDate.getTime() + stepTime)) {
                 try {
                     console.log(`Calling getSparqlQuery for ${departmentCode} on ${currentDate}`);
-                    const result:EmployeeCountByDepartmentTimeEpoc = await sparqlDepartmentHistoryQuery(this.graphDB, departmentCode, currentDate,
-                        new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59));
+                    const result:EmployeeCountByDepartmentTimeEpoc = await this.getEmployeeCountByDepartmentCode(departmentCode, currentDate);
                     const previousPeriod = new Date(currentDate.getTime() - stepTime);
                     const joiners: EmployeeLeaverJoiner[] = await this.getDepartmentJoiners(departmentCode, previousPeriod, new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59));
                     const leavers: EmployeeLeaverJoiner[] = await this.getDepartmentLeavers(departmentCode, previousPeriod, new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59));
@@ -89,8 +88,23 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
-    getEmployeeCountByDepartmentCode(departmentCode: string, asOf: string): string {
-        throw new Error("Method not implemented.");
+    getEmployeeCountByDepartmentCode(departmentCode: string, asOfDate: Date): Promise<EmployeeCountByDepartmentTimeEpoc> {
+        const sparqlQuery = sparqlDepartmentHistoryQuery(departmentCode, asOfDate, new Date(asOfDate.getFullYear(), asOfDate.getMonth(), asOfDate.getDate(), 23, 59, 59))
+        console.log(sparqlQuery);
+        return new Promise((resolve, reject) => {
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                console.log(result);
+                if (result.results.bindings.length > 0)
+                    resolve(new EmployeeCountByDepartmentTimeEpoc(departmentCode, asOfDate, result.results.bindings[0].count.value));
+                else 
+                    resolve(new EmployeeCountByDepartmentTimeEpoc(departmentCode, asOfDate, 0));
+            })
+            .catch((error) => {
+                console.log(error);
+                return reject(error);
+            });
+        });
     }
 
     getEmployeeDepartmentHistory(): string {

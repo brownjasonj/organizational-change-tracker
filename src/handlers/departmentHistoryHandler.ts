@@ -4,8 +4,10 @@ import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory"
 import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
 import { sparqlDepartmentHistoryQuery } from "../rdf/sparql/sparqlDepartmentHistoryQuery";
 import { DepartmentTimeSeries } from "../models/eom/DepartmentTimeSeries";
+import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
+import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
 
-const graphdb: IRdfGraphDB = GraphPersistenceFactory.getGraphDB();
+const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getOrganizationRdfGraph();
 
 const getDateStep = (dateStep: string): number => {
     switch (dateStep) {
@@ -49,25 +51,20 @@ const departmentHistoryHandler = async (context: Context, request: Request, resp
 
         console.log(`departmentCode: ${departmentCode}`);
 
-        const timeseries: DepartmentTimeSeries = new DepartmentTimeSeries(departmentCode, startDate, endDate, dateStep);
-        
-        for(var currentDate: Date = startDate; currentDate <= endDate; currentDate = new Date(currentDate.getTime() + 1000*60*60*24 * dateStep)) {
-            try {
-                console.log(`Calling getSparqlQuery for ${departmentCode} on ${currentDate}`);
-                const result = await sparqlDepartmentHistoryQuery(graphdb, departmentCode, currentDate,
-                    new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59));
-                console.log(result);
-                timeseries.addPoint(result);
-            }
-            catch (error) {
-                console.log(error);
-                response.status(500).send(error);
-            }
+        try {
+            const timeseries: DepartmentTimeSeries = await rdfOrganization.getDepartmentHistory(departmentCode, startDate, endDate, dateStep);
+            response.json(timeseries);
+            return;
         }
-        response.json(timeseries);
-        return;            
+        catch (err) {
+            console.log(err);
+            response.status(500).json(err);
+            return;
+        }
     }
-    response.status(400).send("Missing required parameters");
+    else {
+        response.status(400).send("Missing required parameters");
+    }
 }
 
 export { departmentHistoryHandler }
