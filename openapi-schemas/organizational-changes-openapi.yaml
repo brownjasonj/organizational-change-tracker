@@ -74,6 +74,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/employee"
+                # $ref: "http://127.0.0.1:8000/bank-organization/BankNumberOfEmployeesInOrg"
         '500':
           description: Internal error, most likely caused by a failure to connect to storage.
         '400':

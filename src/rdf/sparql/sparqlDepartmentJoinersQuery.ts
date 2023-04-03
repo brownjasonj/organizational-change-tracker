@@ -55,7 +55,7 @@ const sparqlJoinersQueryByDepartment = (departmentCode: string, startDate: Date,
                 }
             group by ?member ?startingDate
         }
-    }`
+    }`;
 };
 
 export { sparqlDepartmentJoinersQuery, sparqlJoinersQueryByDepartment }

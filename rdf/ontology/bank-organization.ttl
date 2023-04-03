@@ -1,5 +1,4 @@
-@prefix bank-org: <http://example.org/bank-org#>.
-@prefix bank-id: <http://example.org/bank-id#>.
+@prefix bank-org: <http://127.0.0.1:8000/bank-organization/>.
 @prefix sh: <http://www.w3.org/ns/shacl#>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
@@ -13,22 +12,22 @@
 # Bank Specific Properties, over and above the Organization vocabulary
 #
 ############################################################################################################
-bank-id:id a rdf:Property, sh:PropertyShape;
+bank-org:id a rdf:Property, sh:PropertyShape;
     rdfs:range xsd:string;
     rdfs:label "Employee ID"@en;
     rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
-    sh:path bank-id:id;
+    sh:path bank-org:id;
     sh:datatype xsd:string;
     sh:minCount 1;
     sh:maxCount 1;
     sh:minLength 7;
     sh:maxLength 7.
 
-bank-id:pid a rdf:Property, sh:PropertyShape;
+bank-org:pid a rdf:Property, sh:PropertyShape;
     rdfs:range xsd:string;
     rdfs:label "Employee ID"@en;
     rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
-    sh:path bank-id:pid;
+    sh:path bank-org:pid;
     sh:datatype xsd:string;
     sh:minCount 1;
     sh:maxCount 1;
@@ -81,8 +80,8 @@ bank-org:BankEmployee a rdfs:Class, sh:NodeShape;
                     relating to the Bank such as an employee identifier, a corporate title, and organization."""@en;
     sh:targetClass bank-org:BankEmployee;
     sh:nodeKind sh:IRI;
-    sh:property bank-id:id,
-                bank-id:pid;
+    sh:property bank-org:id,
+                bank-org:pid;
     sh:property [
         sh:path foaf:firstName;
         sh:datatype xsd:string;

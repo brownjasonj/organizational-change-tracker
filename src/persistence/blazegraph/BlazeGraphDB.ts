@@ -11,29 +11,54 @@ const defaultOptions = {
 };
 
 class BlazeGraphDBOptions {
-    host: string;
-    port: number;
-    namespace: string;
-    blazename: string;
+    private host: string;
+    private port: string;
+    private namespace: string;
+    private blazename: string;
+    private url: string;
     
     constructor(options: any) {
         this.host = options.host || defaultOptions.host;
         this.port = options.port || defaultOptions.port;
         this.namespace = options.namespace || defaultOptions.namespace;
         this.blazename = options.blazename || defaultOptions.blazename;
+        if (this.port == '') {
+            this.url = `http://${this.host}:${this.port}/${this.blazename}/${this.namespace}`;
+        }
+        else {
+            this.url = `http://${this.host}/${this.blazename}/${this.namespace}`;
+        }
     }
+
+    getHost(): string {
+        return this.host;
+    }
+
+    getPort(): string {
+        return this.port;
+    }
+
+    getNamespace(): string {
+        return this.namespace;
+    }
+
+    getBlazename(): string {
+        return this.blazename;
+    }
+
+    getUrl(): string {
+        return this.url;
+    }
+
 }
 
 
 class BlazeGraphDB implements IRdfGraphDB {
     private options: BlazeGraphDBOptions;
-    private url: string;
     private axios: any;
-
       
     constructor(options: BlazeGraphDBOptions) {
         this.options = options;
-        this.url = `http://${this.options.host}:${this.options.port}/${this.options.blazename}/${this.options.namespace}`;
         this.axios = axios.create({
             //60 sec timeout
             timeout: 1000 * 60 * 10,
@@ -51,7 +76,7 @@ class BlazeGraphDB implements IRdfGraphDB {
     }
 
     async sparqlQuery(query: string, resultType: SparqlQueryResultType): Promise<any> {
-        const url = `${this.url}?query=${encodeURIComponent(query)}`;
+        const url = `${this.options.getUrl()}?query=${encodeURIComponent(query)}`;
         return new Promise((resolve, reject) => {
             this.axios({
                 method: 'get',
@@ -71,7 +96,7 @@ class BlazeGraphDB implements IRdfGraphDB {
         return new Promise((resolve, reject) => {
             this.axios({
                 method: 'post',
-                url: `${this.url}`,
+                url: `${this.options.getUrl()}`,
                 headers: {
                     'Content-Type': 'application/x-turtle',
                     'Accept': 'application/json'
