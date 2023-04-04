@@ -4,13 +4,15 @@ import https from "https";
 import { IRdfGraphDB, SparqlQueryResultType } from "../IRdfGraphDB";
 
 const defaultOptions = {
+    protocol: 'http',
     host: 'localhost',
-    port: 9999,
+    port: '9999',
     namespace: 'sparql',
     blazename: 'blazegraph', // it was 'blazegraph' before
 };
 
 class BlazeGraphDBOptions {
+    private protocol: string;
     private host: string;
     private port: string;
     private namespace: string;
@@ -18,15 +20,16 @@ class BlazeGraphDBOptions {
     private url: string;
     
     constructor(options: any) {
+        this.protocol = options.protocol || defaultOptions.protocol;
         this.host = options.host || defaultOptions.host;
         this.port = options.port || defaultOptions.port;
         this.namespace = options.namespace || defaultOptions.namespace;
         this.blazename = options.blazename || defaultOptions.blazename;
-        if (this.port == '') {
-            this.url = `http://${this.host}:${this.port}/${this.blazename}/${this.namespace}`;
+        if (this.port != '') {
+            this.url = `${this.protocol}://${this.host}:${this.port}/${this.blazename}/${this.namespace}`;
         }
         else {
-            this.url = `http://${this.host}/${this.blazename}/${this.namespace}`;
+            this.url = `${this.protocol}://${this.host}/${this.blazename}/${this.namespace}`;
         }
     }
 
@@ -47,6 +50,7 @@ class BlazeGraphDBOptions {
     }
 
     getUrl(): string {
+        console.log("BlazeGraphDBOptions.getUrl() = " + this.url);
         return this.url;
     }
 
@@ -109,6 +113,23 @@ class BlazeGraphDB implements IRdfGraphDB {
             });
         });
     }
+
+    async deleteAllTriple(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.axios({
+                method: 'delete',
+                url: `${this.options.getUrl()}`,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then((response: { data: unknown; }) => {
+                resolve(response.data);
+            }).catch((error: any) => {
+                reject(error);
+            });
+        });
+     }
+
 }
 
 export { BlazeGraphDBOptions, BlazeGraphDB }

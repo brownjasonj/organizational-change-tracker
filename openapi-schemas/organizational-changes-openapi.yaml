@@ -248,7 +248,6 @@ paths:
       responses:
         '200':
           description: OK
-
   /department-codes:
     get:
       description: get a list of department codes as of a given date
@@ -295,7 +294,6 @@ paths:
       responses:
         '202':
           description: Request to upload file has been succesfully.   Response contains operational url to poll for upload status.
-
   /operations/load/{requestid}:
     get:
       description: Pollable end-point to check the status of the load
@@ -313,7 +311,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/addEmployeeLoadStatus"
-
+  /operations/delete:
+    get:
+      description: "Operational function to delete all triples from the graph database"
+      operationId: "operationsDeleteTriples"
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal error.
 components:
   schemas:
     employee:

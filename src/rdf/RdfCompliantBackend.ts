@@ -22,6 +22,10 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         throw new Error("Method not implemented.");
     }
 
+    deleteAllTriple(): Promise<any> {
+        return this.graphDB.deleteAllTriple();
+    }
+
     getDepartmentCodes(asOfDate: Date): string {
         throw new Error("Method not implemented.");
     }

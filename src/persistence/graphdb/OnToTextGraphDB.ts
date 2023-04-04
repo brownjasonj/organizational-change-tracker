@@ -55,6 +55,18 @@ class OnToTextGraphDB implements IRdfGraphDB {
             });
         });
     }
+
+    async deleteAllTriple(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.rdfRespositoryClient.clear(GRAPHDB_CONTEXT_TEST)
+            .then((result: any) => {
+                resolve(result);
+            }).catch((err: any) => {
+                reject(err);
+            });
+        });
+    }
+
 }
 
 export { OnToTextGraphDB }

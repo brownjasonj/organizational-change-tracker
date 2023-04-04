@@ -14,6 +14,7 @@ interface IRdfGraphUpdateResponse {
 interface IRdfGraphDB {
     sparqlQuery: (query: string, resultType: SparqlQueryResultType) => Promise<any>;
     turtleUpdate: (turtle: string) => Promise<IRdfGraphUpdateResponse>;
+    deleteAllTriple: () => Promise<any>;
 }
 
 export { SparqlQueryResultType, IRdfGraphDB }

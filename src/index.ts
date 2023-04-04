@@ -24,6 +24,7 @@ import { Configuration, ConfigurationManager } from './ConfigurationManager';
 import { employeeJoinersByDepartment } from './handlers/employeeJoinersByDepartment';
 import { employeeLeaversByDepartment } from './handlers/employeeLeaversByDepartment';
 import { departmentHistoryWithJoinersLeaversHandler } from './handlers/departmentHistoryWithJoinersLeaversHandler';
+import { operationsDeleteTriplesHandler } from './handlers/operationsDeleteHandler';
 
 const app = Express();
 // enable file uploads
@@ -69,6 +70,7 @@ api.register('department-codes', departmentCodesHandler);
 api.register('departmentHistory', departmentHistoryHandler);
 api.register('upload', addEmployeesHandler);
 api.register('operationsLoadingStatus', operationsLoadStatusHandler);
+api.register('operationsDeleteTriples', operationsDeleteTriplesHandler);
 
 // register mock handlers
 //api.mockResponseForOperation('test');

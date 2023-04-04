@@ -6,6 +6,7 @@ import { EmployeeDepartmentEpocs } from "../models/eom/EmployeeDepartmentEpocs";
 
 interface IOrganizationRdfQuery {
     createBankOrgRdfDataGenerator(employee:Employee): Promise<string>;
+    deleteAllTriple(): Promise<any>;
     getDepartmentCodes(asOfDate: Date): string;
     getDepartmentHistory(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentTimeSeries>;
     getEmployeeCountByDepartmentCode(departmentCode: string, asOfDate: Date): Promise<EmployeeCountByDepartmentTimeEpoc>;
