@@ -1,4 +1,9 @@
+
+
+const defaultPath = '../config/application-config.json';
+
 class Configuration {
+    private static instance: Configuration;
     private httpsPort: number;
     private httpPort: number;
     private httpsKeyPath: string;
@@ -6,7 +11,7 @@ class Configuration {
     private enableHttps: boolean;
     private streamTrottleTimeout: number;
 
-    constructor() {
+    constructor(configfFile?: string) {
         this.enableHttps = false;
         this.httpsPort = 8443;
         this.httpPort = 8080;

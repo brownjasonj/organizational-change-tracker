@@ -12,7 +12,7 @@ const notImplementedHandler = (context: Context, request: Request, response: Res
     }
 };
 
-export default notImplementedHandler;
+export { notImplementedHandler };
 
 
 /*

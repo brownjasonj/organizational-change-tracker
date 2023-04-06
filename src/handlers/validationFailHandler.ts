@@ -5,4 +5,4 @@ const validationFailHandler = (context: Context, request: Request, response: Res
         response.status(400).json({ err: context.validation.errors });
     };
 
-export default validationFailHandler;
+export { validationFailHandler };

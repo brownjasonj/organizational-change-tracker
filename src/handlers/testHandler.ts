@@ -25,4 +25,4 @@ const testHandler = async (context: Context, request: Request, response: Respons
         response.json({ message: 'hello world' });
     };
 
-export default testHandler;
+export { testHandler };

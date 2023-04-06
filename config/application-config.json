@@ -1,0 +1,30 @@
+{
+    "httpEnabled": true,
+    "httpsEnabled": true,
+    "httpsPort": 443,
+    "httpPort": 80,
+    "httpsKeyPath": "/etc/letsencrypt/live/yourdomain.com/privkey.pem",
+    "httpsCertPath": "/etc/letsencrypt/live/yourdomain.com/fullchain.pem",
+    "enableHttps": true,
+    "streamTrottleTimeout": 1000,
+    "graphdb": [
+        {
+            "name": "blazegraph-http",
+            "type": "blazegraph",
+            "protocol": "http",
+            "host": "localhost",
+            "port": 9999,
+            "namespace": "sparql",
+            "blazename": "blazegraph"
+        },
+        {
+            "name": "blazegraph-https",
+            "type": "blazegraph",
+            "protocol": "https",
+            "host": "localhost",
+            "port": 9999,
+            "namespace": "sparql",
+            "blazename": "blazegraph"
+        }
+    ]
+}

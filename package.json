@@ -7,8 +7,8 @@
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/.bin/jest --detectOpenHandles --coverage",
     "start:dev": "npx nodemon",
-    "build": "rimraf ./build && tsc",
-    "start": "npm run build && node --max-old-space-size=8192 build/index.js"
+    "build": "rimraf ./build && tsc && ts-add-js-extension add --dir ./build",
+    "start": "npm run build && node --max-old-space-size=8192 ./build/index.js"
   },
   "keywords": [],
   "author": "",
@@ -32,10 +32,12 @@
     "@types/uuid": "^9.0.0",
     "@types/xml-js": "^1.0.0",
     "@types/yamljs": "^0.2.31",
+    "@types/yargs": "^17.0.24",
     "jest": "^29.3.1",
     "nodemon": "^2.0.20",
     "rimraf": "^3.0.2",
     "supertest": "^6.3.3",
+    "ts-add-js-extension": "^1.3.3",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
@@ -68,6 +70,7 @@
     "uuid": "^9.0.0",
     "xlstream": "^2.5.3",
     "xml-js": "^1.6.11",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "yargs": "^17.7.1"
   }
 }

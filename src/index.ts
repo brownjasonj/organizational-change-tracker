@@ -7,11 +7,6 @@ import fs from 'fs';
 import { OpenAPIBackend, Request } from 'openapi-backend';
 import * as swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import {addEmployeeRecordHandler} from './handlers/addEmployeeRecordHandler';
-import notFoundHandler from './handlers/notFoundHandler';
-import notImplementedHandler from './handlers/notImplementedHandler';
-import testHandler from './handlers/testHandler';
-import validationFailHandler from './handlers/validationFailHandler';
 import { employeeCountByDepartmentCodeHandler } from './handlers/employeeCountByDepartmentCodeHandler';
 import { departmentCodesHandler } from './handlers/departmentCodesHandler';
 import { departmentHistoryHandler } from './handlers/departmentHistoryHandler';
@@ -25,6 +20,12 @@ import { employeeJoinersByDepartment } from './handlers/employeeJoinersByDepartm
 import { employeeLeaversByDepartment } from './handlers/employeeLeaversByDepartment';
 import { departmentHistoryWithJoinersLeaversHandler } from './handlers/departmentHistoryWithJoinersLeaversHandler';
 import { operationsDeleteTriplesHandler } from './handlers/operationsDeleteHandler';
+import { addEmployeeRecordHandler } from './handlers/addEmployeeRecordHandler';
+import { validationFailHandler } from './handlers/validationFailHandler';
+import { notFoundHandler } from './handlers/notFoundHandler';
+import { notImplementedHandler } from './handlers/notImplementedHandler';
+import { testHandler } from './handlers/testHandler';
+import yargs from 'yargs';
 
 const app = Express();
 // enable file uploads
@@ -86,9 +87,11 @@ app.use(morgan('combined'));
 // use as express middleware to pick-up requests and send to the openapi-backend handler.
 app.use((req, res) => api.handleRequest(req as Request, req, res));
 
-process.argv.forEach(function (val, index, array) {
-    console.log(index + ': ' + val);
-});
+const argv = yargs(process.argv.slice(2)).options({
+    config: { type: 'string', default: '../config/application-config.json' }
+  }).parseSync();
+
+console.log('config file: ', argv.config);
 
 const configuration: Configuration = ConfigurationManager.getInstance().getConfiguration();
 
