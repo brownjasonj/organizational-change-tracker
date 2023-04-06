@@ -2,6 +2,44 @@
 
 const defaultPath = '../config/application-config.json';
 
+class FrontEndHttpsConfiguration {
+    port: number;
+    httpsKeyPath: string;
+    httpsCertPath: string;
+
+    constructor(port: number, httpsKeyPath: string, httpsCertPath: string) {
+        this.port = port;
+        this.httpsKeyPath = httpsKeyPath;
+        this.httpsCertPath = httpsCertPath;
+    }
+}
+
+class FrontEndHttpConfiguration {
+    port: number;
+
+    constructor(port: number) {
+        this.port = port;
+    }
+}
+class FrontEndConfiguration {
+    hostname: string;
+    enableHttps: boolean;
+    enableHttp: boolean;
+    https: FrontEndHttpsConfiguration;
+    http: FrontEndHttpConfiguration;
+    streamTrottleTimeoutMs: number;
+
+    constructor(hostname: string, enableHttps: boolean, enableHttp: boolean, https: FrontEndHttpsConfiguration, http: FrontEndHttpConfiguration, streamTrottleTimeoutMs: number) {
+        this.hostname = hostname;
+        this.enableHttps = enableHttps;
+        this.enableHttp = enableHttp;
+        this.https = https;
+        this.http = http;
+        this.streamTrottleTimeoutMs = streamTrottleTimeoutMs;
+    }
+
+}
+
 class Configuration {
     private static instance: Configuration;
     private httpsPort: number;

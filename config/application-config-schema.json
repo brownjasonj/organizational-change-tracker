@@ -1,0 +1,168 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "frontend": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string"
+          },
+          "enableHttps": {
+            "type": "boolean"
+          },
+          "enableHttp": {
+            "type": "boolean"
+          },
+          "https": {
+            "type": "object",
+            "properties": {
+              "port": {
+                "type": "integer"
+              },
+              "httpsKeyPath": {
+                "type": "string"
+              },
+              "httpsCertPath": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "port",
+              "httpsKeyPath",
+              "httpsCertPath"
+            ]
+          },
+          "http": {
+            "type": "object",
+            "properties": {
+              "port": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "port"
+            ]
+          },
+          "streamTrottleTimeout": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "hostname",
+          "enableHttps",
+          "enableHttp",
+          "https",
+          "http",
+          "streamTrottleTimeout"
+        ]
+      },
+      "backend": {
+        "type": "object",
+        "properties": {
+          "http": {
+            "type": "object"
+          },
+          "https": {
+            "type": "object",
+            "properties": {
+              "proxy": {
+                "type": "boolean"
+              },
+              "rejectUnauthorized": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "proxy",
+              "rejectUnauthorized"
+            ]
+          },
+          "graphdb": {
+            "type": "array",
+            "items": [
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "protocol": {
+                    "type": "string"
+                  },
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "integer"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  },
+                  "blazename": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "type",
+                  "protocol",
+                  "host",
+                  "port",
+                  "namespace",
+                  "blazename"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "protocol": {
+                    "type": "string"
+                  },
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "integer"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  },
+                  "blazename": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "type",
+                  "protocol",
+                  "host",
+                  "port",
+                  "namespace",
+                  "blazename"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "http",
+          "https",
+          "graphdb"
+        ]
+      }
+    },
+    "required": [
+      "frontend",
+      "backend"
+    ]
+  }
