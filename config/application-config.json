@@ -15,8 +15,12 @@
     },
     "backend": {
         "http": {
+            "keepAlive": true,
+            "keepAliveMsecs": 1000
         },
         "https": {
+            "keepAlive": true,
+            "keepAliveMsecs": 1000,
             "proxy": false,
             "rejectUnauthorized": false
         },

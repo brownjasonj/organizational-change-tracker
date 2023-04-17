@@ -6,8 +6,19 @@ import { UploadedFile } from "express-fileupload";
 import { loadN3DataSetfromFile } from "../utils/loadN3DataSet";
 import { DataIngestionStreamsFactory } from "../dataingestors/DataIngestionStreamsFactory";
 import { StreamDataIngestorType } from "../dataingestors/StreamDataIngestorType";
+import { ConfigurationManager } from "../ConfigurationManager";
+import { FrontEndHttpConfiguration } from "../models/eom/configuration/FrontEndConfiguration";
 
 const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
+
+
+
+
+const getResourceLocation = (requestId: string) =>  {
+    const frontEndConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration();
+    const resourceLocation = `http://${frontEndConfiguration.getHostname()}:${frontEndConfiguration.getHttpConfiguration().getPort()}/operations/load/${requestId}`;
+    return resourceLocation;
+};
 
 const addEmployeesHandler =  async (context: Context, request: Request, response: Response) => {
     if (!request.files) {
@@ -37,7 +48,7 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
     
                 const streamDataIngestor: StreamDataIngestorType = DataIngestionStreamsFactory.getSreamDataIngestor(filePath);
                 streamDataIngestor(filePath, shapes, dataIngestionStreamStatus);
-                response.status(202).json({'Operation-Location': `${dataIngestionStreamStatus.getOperationLocation()}`});
+                response.status(202).json({'Operation-Location': `${getResourceLocation(dataIngestionStreamStatus.getRequestId())}`});
                 return;
             }
             catch (error) {

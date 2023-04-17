@@ -13,7 +13,7 @@ import { pipeline } from 'stream';
 
 const csvEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
-    const streamThrottle = new StreamThrottle(ConfigurationManager.getInstance().getConfiguration().getStreamTrottleTimeoutMs());
+    const streamThrottle = new StreamThrottle(ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs());
     const csvParser = csv();
 
     console.log("csvEmployeeDTOFileToEmployeeStream");

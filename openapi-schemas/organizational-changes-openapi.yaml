@@ -320,6 +320,16 @@ paths:
           description: OK
         '500':
           description: Internal error.
+  /operations/configuration:
+    get:
+      description: "Operational function to get the configuration being used by the application"
+      operationId: "operationsGetConfiguration"
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal error.
+
 components:
   schemas:
     employee:

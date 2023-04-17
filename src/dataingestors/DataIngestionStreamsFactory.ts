@@ -17,7 +17,6 @@ class DataIngestionStreamStatus {
     public entriesProcessed: number;
     public status: StreamStatus;
     public error: string | null;
-    private resourceLocation: string;
 
     constructor() {
         this.requestId = uuidv4().toString();
@@ -26,7 +25,6 @@ class DataIngestionStreamStatus {
         this.entriesProcessed = 0;
         this.status = StreamStatus.processing;
         this.error = null;
-        this.resourceLocation = `http://localhost:${ConfigurationManager.getInstance().getConfiguration().getHttpPort()}/operations/load/${this.requestId}`;
     }
 
     public updateStatus(status: StreamStatus, error: string | null) {
@@ -49,8 +47,8 @@ class DataIngestionStreamStatus {
         this.error = error;
     }
 
-    public getOperationLocation(): string {
-        return this.resourceLocation;
+    public getRequestId(): string {
+        return this.requestId;
     }
 }
 

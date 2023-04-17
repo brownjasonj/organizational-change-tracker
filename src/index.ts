@@ -15,7 +15,7 @@ import { employeeDepartmentHistoryHandler } from './handlers/employeeDepartmentH
 import fileUpload from 'express-fileupload';
 import { operationsLoadStatusHandler } from './handlers/operationsLoadStatusHandler';
 import { addEmployeesHandler } from './handlers/addEmployessHandler';
-import { Configuration, ConfigurationManager } from './ConfigurationManager';
+import { ConfigurationManager } from './ConfigurationManager';
 import { employeeJoinersByDepartment } from './handlers/employeeJoinersByDepartment';
 import { employeeLeaversByDepartment } from './handlers/employeeLeaversByDepartment';
 import { departmentHistoryWithJoinersLeaversHandler } from './handlers/departmentHistoryWithJoinersLeaversHandler';
@@ -26,6 +26,9 @@ import { notFoundHandler } from './handlers/notFoundHandler';
 import { notImplementedHandler } from './handlers/notImplementedHandler';
 import { testHandler } from './handlers/testHandler';
 import yargs from 'yargs';
+import { operationsGetConfiguration } from './handlers/operationsGetConfiguration';
+import { ApplicationConfiguration } from './models/eom/configuration/ApplicationConfiguration';
+import { FrontEndConfiguration } from './models/eom/configuration/FrontEndConfiguration';
 
 const app = Express();
 // enable file uploads
@@ -72,6 +75,7 @@ api.register('departmentHistory', departmentHistoryHandler);
 api.register('upload', addEmployeesHandler);
 api.register('operationsLoadingStatus', operationsLoadStatusHandler);
 api.register('operationsDeleteTriples', operationsDeleteTriplesHandler);
+api.register('operationsGetConfiguration', operationsGetConfiguration);
 
 // register mock handlers
 //api.mockResponseForOperation('test');
@@ -88,23 +92,37 @@ app.use(morgan('combined'));
 app.use((req, res) => api.handleRequest(req as Request, req, res));
 
 const argv = yargs(process.argv.slice(2)).options({
-    config: { type: 'string', default: '../config/application-config.json' }
+    config: { type: 'string'}
   }).parseSync();
 
 console.log('config file: ', argv.config);
 
-const configuration: Configuration = ConfigurationManager.getInstance().getConfiguration();
+const applicationConfiguration: ApplicationConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration();
 
-if (configuration.isHttpsEnabled()) {
-    var privateKey  = fs.readFileSync(configuration.getHttpsKeyPath(), 'utf8');
-    var certificate = fs.readFileSync(configuration.getHttpsCertPath(), 'utf8');
-    var credentials = {key: privateKey, cert: certificate};
-    var httpsServer = https.createServer(credentials, app);
-    httpsServer.listen(configuration.getHttpsPort(), () => console.info(`api listening at https://localhost:${configuration.getHttpsPort()}`));
+const frontEndConfiguration: FrontEndConfiguration = applicationConfiguration.getFrontEndConfiguration();
+
+if (frontEndConfiguration.isHttpsEnabled()) {
+    const frontEndHttpsConfiguration = frontEndConfiguration.getHttpsConfiguration();
+    if (frontEndHttpsConfiguration != null) {
+        const privateKey  = fs.readFileSync(frontEndHttpsConfiguration.getHttpsKeyPath(), 'utf8');
+        const certificate = fs.readFileSync(frontEndHttpsConfiguration.getHttpsCertPath(), 'utf8');
+        const credentials = {key: privateKey, cert: certificate};
+        const httpsServer = https.createServer(credentials, app);
+        httpsServer.listen(frontEndHttpsConfiguration.getPort(), () => console.info(`api listening at https://${frontEndConfiguration.getHostname()}:${frontEndHttpsConfiguration.getPort()}`));
+    }
+    else {
+        console.error(`https configuration is not defined`);
+    }
 }
 
-var httpServer = http.createServer(app);
-
-// start server
-httpServer.listen(configuration.getHttpPort(), () => console.info(`api listening at http://localhost:${configuration.getHttpPort()}`));
+if (frontEndConfiguration.isHttpEnabled()) {
+    const frontEndHttpConfiguration = frontEndConfiguration.getHttpConfiguration();
+    if (frontEndHttpConfiguration != null) {
+        const httpServer = http.createServer(app);
+        httpServer.listen(frontEndHttpConfiguration.getPort(), () => console.info(`api listening at http://${frontEndConfiguration.getHostname()}:${frontEndHttpConfiguration.getPort()}`));
+    }
+    else {
+        console.error(`http configuration is not defined`);
+    }
+}
 

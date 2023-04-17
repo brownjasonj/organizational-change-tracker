@@ -16,7 +16,7 @@ import { ConfigurationManager } from '../ConfigurationManager';
 const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
     const parser = JSONStream.parse('*');
-    const streamThrottle = new StreamThrottle(ConfigurationManager.getInstance().getConfiguration().getStreamTrottleTimeoutMs());
+    const streamThrottle = new StreamThrottle(ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs());
 
      pipeline(
          stream,
