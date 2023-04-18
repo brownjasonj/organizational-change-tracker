@@ -1,3 +1,5 @@
+import { Type } from "class-transformer";
+
 const defaultHostname = 'localhost';
 const defaultEnableHttps = false;
 const defaultEnableHttp = true;
@@ -40,16 +42,18 @@ class FrontEndConfiguration {
     hostname: string;
     enableHttps: boolean;
     enableHttp: boolean;
-    httpsConfiguration: FrontEndHttpsConfiguration | null;
-    httpConfiguration: FrontEndHttpConfiguration;
+    @Type(() => FrontEndHttpsConfiguration)
+    https: FrontEndHttpsConfiguration | null;
+    @Type(() => FrontEndHttpConfiguration)
+    http: FrontEndHttpConfiguration;
     streamTrottleTimeoutMs: number;
 
     constructor() {
         this.hostname = defaultHostname;
         this.enableHttps = defaultEnableHttps;
         this.enableHttp = defaultEnableHttp;
-        this.httpsConfiguration = null;
-        this.httpConfiguration = new FrontEndHttpConfiguration(defaultHttpPort);
+        this.https = null;
+        this.http = new FrontEndHttpConfiguration(defaultHttpPort);
         this.streamTrottleTimeoutMs = defaultStreamTrottleTimeoutMs;
     }
 
@@ -66,11 +70,11 @@ class FrontEndConfiguration {
     }
 
     public getHttpsConfiguration(): FrontEndHttpsConfiguration | null {
-        return this.httpsConfiguration;
+        return this.https;
     }
 
     public getHttpConfiguration(): FrontEndHttpConfiguration {
-        return this.httpConfiguration;
+        return this.http;
     }
 
     public getStreamTrottleTimeoutMs(): number {

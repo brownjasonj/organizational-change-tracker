@@ -25,7 +25,7 @@ const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchem
          new StreamTransformEmployeeDtoToEmployee(),
          new StreamTransformEmployeeToRdf(),
 //         new StreamRdfBankOrgValidation(organizationSchema),
-         new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getGraphDB()),
+         new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB()),
          new StreamDataIngestionStatusUpdater(dataIngestionStatus),
 //         (err) => {
 //             if (err) {

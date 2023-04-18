@@ -2,43 +2,17 @@ import axios from "axios";
 import http from "http";
 import https from "https";
 import { IRdfGraphDB, SparqlQueryResultType } from "../IRdfGraphDB";
+import { BackEndConfiguration, BackEndDBConfiguration } from "../../models/eom/configuration/BackEndConfiguration";
 
-const defaultOptions = {
-    protocol: 'http',
-    host: 'localhost',
-    port: '9999',
-    namespace: 'sparql',
-    blazename: 'blazegraph', // it was 'blazegraph' before
-};
 
-class BlazeGraphDBOptions {
-    private protocol: string;
-    private host: string;
-    private port: string;
+class BlazeGraphDBOptions extends BackEndDBConfiguration {
     private namespace: string;
     private blazename: string;
-    private url: string;
     
-    constructor(options: any) {
-        this.protocol = options.protocol || defaultOptions.protocol;
-        this.host = options.host || defaultOptions.host;
-        this.port = options.port || defaultOptions.port;
-        this.namespace = options.namespace || defaultOptions.namespace;
-        this.blazename = options.blazename || defaultOptions.blazename;
-        if (this.port != '') {
-            this.url = `${this.protocol}://${this.host}:${this.port}/${this.blazename}/${this.namespace}`;
-        }
-        else {
-            this.url = `${this.protocol}://${this.host}/${this.blazename}/${this.namespace}`;
-        }
-    }
-
-    getHost(): string {
-        return this.host;
-    }
-
-    getPort(): string {
-        return this.port;
+    constructor() {
+        super();
+        this.namespace = 'fred';
+        this.blazename = 'blazegraph';
     }
 
     getNamespace(): string {
@@ -50,26 +24,42 @@ class BlazeGraphDBOptions {
     }
 
     getUrl(): string {
-        console.log("BlazeGraphDBOptions.getUrl() = " + this.url);
-        return this.url;
+        var url: string;
+        if (this.port != -1) {
+            url = `${this.protocol}://${this.host}:${this.port}/${this.blazename}/${this.namespace}`;
+        }
+        else {
+            url = `${this.protocol}://${this.host}/${this.blazename}/${this.namespace}`;
+        }
+        console.log("BlazeGraphDBOptions.getUrl() = " + url);
+        return url;
     }
 
 }
 
-
 class BlazeGraphDB implements IRdfGraphDB {
     private options: BlazeGraphDBOptions;
+    private bdc: BackEndConfiguration;
     private axios: any;
       
-    constructor(options: BlazeGraphDBOptions) {
+    constructor(bdc: BackEndConfiguration, options: BlazeGraphDBOptions) {
+        console.log(`GraphdDB options : ${JSON.stringify(options)}`);
         this.options = options;
+        this.bdc = bdc;
         this.axios = axios.create({
             //60 sec timeout
             timeout: 1000 * 60 * 10,
           
             //keepAlive pools and reuses TCP connections, so it's faster
-            httpAgent: new http.Agent({ keepAlive: true, keepAliveMsecs: 1000 * 60 }),
-            httpsAgent: new https.Agent({ keepAlive: true, keepAliveMsecs: 1000 * 60 }),
+            httpAgent: new http.Agent({ 
+                    keepAlive: this.bdc.getHttpConfiguration().keepAlive,
+                    keepAliveMsecs: this.bdc.getHttpConfiguration().keepAliveMsecs * 60 
+                }),
+            httpsAgent: new https.Agent({
+                keepAlive: this.bdc.getHttpsConfiguration().keepAlive,
+                keepAliveMsecs: this.bdc.getHttpsConfiguration().keepAliveMsecs * 60,
+                rejectUnauthorized: this.bdc.getHttpsConfiguration().rejectUnauthorized,
+            }),
             
             //follow up to 10 HTTP 3xx redirects
             maxRedirects: 10,
@@ -87,7 +77,9 @@ class BlazeGraphDB implements IRdfGraphDB {
                 url: url,
                 headers: {
                     'Accept': resultType
-                }
+                },
+                protocol: this.options.getProtocol(),
+                proxy: this.options.getProtocol() === 'https' ? this.bdc.getHttpsConfiguration().proxy : this.bdc.getHttpConfiguration().proxy
             }).then((response: { data: any; }) => {
                 resolve(response.data);
             }).catch((error: any) => {
@@ -105,6 +97,8 @@ class BlazeGraphDB implements IRdfGraphDB {
                     'Content-Type': 'application/x-turtle',
                     'Accept': 'application/json'
                 },
+                protocol: this.options.getProtocol(),
+                proxy: this.options.getProtocol() === 'https' ? this.bdc.getHttpsConfiguration().proxy : this.bdc.getHttpConfiguration().proxy,
                 data: turtle
             }).then((response: { data: unknown; }) => {
                 resolve(response.data);

@@ -24,7 +24,7 @@ const csvEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema
         new StreamTransformEmployeeDtoToEmployee(),
         new StreamTransformEmployeeToRdf(),
 //         new StreamRdfBankOrgValidation(organizationSchema),
-        new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getGraphDB()),
+        new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB()),
         new StreamDataIngestionStatusUpdater(dataIngestionStatus),
         (err: any) => console.log('end', err)
     );

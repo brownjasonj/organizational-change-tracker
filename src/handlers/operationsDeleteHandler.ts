@@ -5,7 +5,7 @@ import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
 
 
 const operationsDeleteTriplesHandler = async (context: Context, request: Request, response: Response) => {
-    const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getOrganizationRdfGraph();
+    const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
     try {
         const result = await rdfOrganization.deleteAllTriple();
         response.json({result: result});

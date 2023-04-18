@@ -1,15 +1,14 @@
-import { ApplicationConfiguration } from "./models/eom/configuration/ApplicationConfiguration";
-import { ApplicationConfigurationMapper } from "./models/mappers/ApplicationConfigurationMapper";
+import { ApplicationConfiguration, defaultApplicationConfiguration } from "./models/eom/configuration/ApplicationConfiguration";
+import { ApplicationConfigurationMapperSync } from "./models/mappers/ApplicationConfigurationMapper";
 
 
-const defaultPath = './config/application-config.json';
 
 class ConfigurationManager {
     private static instance: ConfigurationManager;
     private applicationConfiguration: ApplicationConfiguration;
 
-    constructor(configFile?: string) {
-        this.applicationConfiguration = ApplicationConfigurationMapper(configFile || defaultPath);
+    constructor() {
+        this.applicationConfiguration = defaultApplicationConfiguration;
     }
 
     public static getInstance(): ConfigurationManager {
@@ -20,6 +19,12 @@ class ConfigurationManager {
     }
 
     public getApplicationConfiguration(): ApplicationConfiguration {
+        return this.applicationConfiguration;
+    }
+
+    public setApplicationConfigurationFromFile(configFile: string): ApplicationConfiguration {
+        this.applicationConfiguration = ApplicationConfigurationMapperSync(configFile);
+        console.log(`Application Configuration: ${JSON.stringify(this.applicationConfiguration)}`);
         return this.applicationConfiguration;
     }
 }

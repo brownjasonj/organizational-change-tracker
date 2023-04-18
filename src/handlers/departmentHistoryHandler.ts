@@ -7,7 +7,6 @@ import { DepartmentTimeSeries } from "../models/eom/DepartmentTimeSeries";
 import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
 import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
 
-const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getOrganizationRdfGraph();
 
 const getDateStep = (dateStep: string): number => {
     switch (dateStep) {
@@ -51,6 +50,7 @@ const departmentHistoryHandler = async (context: Context, request: Request, resp
 
         console.log(`departmentCode: ${departmentCode}`);
 
+        const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
         try {
             const timeseries: DepartmentTimeSeries = await rdfOrganization.getDepartmentHistory(departmentCode, startDate, endDate, dateStep);
             response.json(timeseries);

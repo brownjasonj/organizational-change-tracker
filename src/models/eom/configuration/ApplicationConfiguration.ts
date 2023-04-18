@@ -1,21 +1,24 @@
+import { Type } from "class-transformer";
 import { BackEndConfiguration } from "./BackEndConfiguration";
 import { FrontEndConfiguration } from "./FrontEndConfiguration";
 
 class ApplicationConfiguration {
-    private frontEndConfigutation: FrontEndConfiguration;
-    private backEndConfiguration: BackEndConfiguration;
+    @Type(() => FrontEndConfiguration)
+    frontend: FrontEndConfiguration;
+    @Type(() => BackEndConfiguration)
+    backend: BackEndConfiguration;
 
     constructor(frontend: FrontEndConfiguration, backend: BackEndConfiguration) {
-        this.frontEndConfigutation = frontend;
-        this.backEndConfiguration = backend;
+        this.frontend = frontend;
+        this.backend = backend;
     }
 
     public getFrontEndConfiguration(): FrontEndConfiguration {
-        return this.frontEndConfigutation;
+        return this.frontend;
     }
 
     public getBackEndConfiguration(): BackEndConfiguration {
-        return this.backEndConfiguration;
+        return this.backend;
     }
 }
 

@@ -7,11 +7,10 @@ import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
 import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
 
 const employeeLeaversByDepartment = async (context: Context, request: Request, response: Response) => {
-    const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getOrganizationRdfGraph();
     if (context.request.query.startDate
         && context.request.query.endDate
         && context.request.query.departmentCode) {
-        
+        const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
         try {
             const result = await rdfOrganization.getDepartmentLeavers(context.request.query.departmentCode as string,
                 new Date(context.request.query.startDate as string),

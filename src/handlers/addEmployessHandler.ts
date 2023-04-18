@@ -9,11 +9,6 @@ import { StreamDataIngestorType } from "../dataingestors/StreamDataIngestorType"
 import { ConfigurationManager } from "../ConfigurationManager";
 import { FrontEndHttpConfiguration } from "../models/eom/configuration/FrontEndConfiguration";
 
-const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
-
-
-
-
 const getResourceLocation = (requestId: string) =>  {
     const frontEndConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration();
     const resourceLocation = `http://${frontEndConfiguration.getHostname()}:${frontEndConfiguration.getHttpConfiguration().getPort()}/operations/load/${requestId}`;

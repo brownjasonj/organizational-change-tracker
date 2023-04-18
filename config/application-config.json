@@ -1,7 +1,7 @@
 {
     "frontend": {
         "hostname": "localhost",
-        "enableHttps": true,
+        "enableHttps": false,
         "enableHttp": true,
         "https": {
             "port": 443,
@@ -9,22 +9,27 @@
             "httpsCertPath": "/etc/letsencrypt/live/yourdomain.com/fullchain.pem"
         },
         "http": {
-            "port": 80
+            "port": 8080
         },
         "streamTrottleTimeout": 1000
     },
     "backend": {
         "http": {
             "keepAlive": true,
-            "keepAliveMsecs": 1000
+            "keepAliveMsecs": 1000,
+            "proxy": false,
+            "rejectUnauthorized": false
         },
         "https": {
             "keepAlive": true,
             "keepAliveMsecs": 1000,
             "proxy": false,
-            "rejectUnauthorized": false
+            "rejectUnauthorized": false,
+            "keyPath": "/etc/letsencrypt/live/yourdomain.com/privkey.pem",
+            "certPath": "/etc/letsencrypt/live/yourdomain.com/fullchain.pem"
         },
-        "graphdb": [
+        "graphdb": "blazegraph-http",
+        "graphdbconfigs": [
             {
                 "name": "blazegraph-http",
                 "type": "blazegraph",

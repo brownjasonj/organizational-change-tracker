@@ -8,11 +8,8 @@ import { IRdfGraphDB } from "../persistence/IRdfGraphDB";
 import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 
 
-
-const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
-
 const addEmployeeRecordHandler = async (context: Context, request: Request, response: Response) => {
-
+    const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getInstance().getGraphDB();
     const employeeRecord : Employee = new Employee("4041234", "A041234", "John", "Hawkins", "A", "Staff",
                                                             new Date("2012-01-01"),
                                                             new Date("2012-12-31"),

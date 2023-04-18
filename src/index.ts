@@ -7,6 +7,7 @@ import fs from 'fs';
 import { OpenAPIBackend, Request } from 'openapi-backend';
 import * as swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import 'reflect-metadata';
 import { employeeCountByDepartmentCodeHandler } from './handlers/employeeCountByDepartmentCodeHandler';
 import { departmentCodesHandler } from './handlers/departmentCodesHandler';
 import { departmentHistoryHandler } from './handlers/departmentHistoryHandler';
@@ -91,12 +92,20 @@ app.use(morgan('combined'));
 // use as express middleware to pick-up requests and send to the openapi-backend handler.
 app.use((req, res) => api.handleRequest(req as Request, req, res));
 
+// process the arg list passed to the node application
 const argv = yargs(process.argv.slice(2)).options({
-    config: { type: 'string'}
+    config: { type: 'string'}                           // --config <path to config file> 
   }).parseSync();
 
+// write the config file to the console
 console.log('config file: ', argv.config);
 
+// if a config file path has been passed in then load the config file
+if (argv.config) {
+    ConfigurationManager.getInstance().setApplicationConfigurationFromFile(argv.config);
+}
+
+// get the application configuration
 const applicationConfiguration: ApplicationConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration();
 
 const frontEndConfiguration: FrontEndConfiguration = applicationConfiguration.getFrontEndConfiguration();

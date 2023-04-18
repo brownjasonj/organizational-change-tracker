@@ -2,13 +2,21 @@ import { IOrganizationRdfQuery } from './IOrganizationRdfQuery';
 import { BlazeGraphRdfQuery } from './BlazeGraphRdfQuery';
 
 class RdfGraphFactory {
-    static organizationRdfGraph: IOrganizationRdfQuery;
+    private static singleton: RdfGraphFactory;
+    private organizationRdfGraph: IOrganizationRdfQuery;
 
-    static {
-        this.organizationRdfGraph = new BlazeGraphRdfQuery();
+    private constructor(organizationRdfQuery: IOrganizationRdfQuery) {
+        this.organizationRdfGraph = organizationRdfQuery;
     }
 
-    static getOrganizationRdfGraph(): IOrganizationRdfQuery {
+    static getInstance(): RdfGraphFactory {
+        if (RdfGraphFactory.singleton == null) {
+            RdfGraphFactory.singleton = new RdfGraphFactory(new BlazeGraphRdfQuery());
+        }
+        return RdfGraphFactory.singleton;
+    }
+
+    getOrganizationRdfGraph(): IOrganizationRdfQuery {
         return this.organizationRdfGraph;
     }
 }

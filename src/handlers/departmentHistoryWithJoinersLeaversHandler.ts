@@ -22,8 +22,6 @@ const getDateStep = (dateStep: string): number => {
     }
 }
 
-const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getOrganizationRdfGraph();
-
 const departmentHistoryWithJoinersLeaversHandler = async (context: Context, request: Request, response: Response) => {
     if (context.request.query.departmentCode
         && context.request.query.startDate) {
@@ -50,6 +48,7 @@ const departmentHistoryWithJoinersLeaversHandler = async (context: Context, requ
         }
 
         console.log(`departmentCode: ${departmentCode}`);
+        const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
 
         try {
             const timeseries: DepartmentTimeSeries = await rdfOrganization.getDepartmentHistory(departmentCode, startDate, endDate, dateStep);
