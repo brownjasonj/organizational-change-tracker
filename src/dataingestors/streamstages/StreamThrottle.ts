@@ -1,15 +1,19 @@
+import { Logger } from "pino";
 import { PassThrough } from "stream";
 
 
 class StreamThrottle extends PassThrough {
     private delay: number;
-    constructor(time: number) {
+    private logger: Logger;
+
+    constructor(time: number, logger: Logger) {
         super({ objectMode: true });
         this.delay = time;
+        this.logger = logger;
     }
 
     updateTimeout(time: number) {
-        console.log(`Updating timeout to: ${time}ms`);
+        this.logger.info(`Updating timeout to: ${time}ms`);
         this.delay = time;
     }
 

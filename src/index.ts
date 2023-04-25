@@ -30,6 +30,10 @@ import yargs from 'yargs';
 import { operationsGetConfiguration } from './handlers/operationsGetConfiguration';
 import { ApplicationConfiguration } from './models/eom/configuration/ApplicationConfiguration';
 import { FrontEndConfiguration } from './models/eom/configuration/FrontEndConfiguration';
+import PinoHttp from 'pino-http';
+import { consoleLogger } from './logging/consoleLogger';
+
+  
 
 const app = Express();
 // enable file uploads
@@ -88,6 +92,7 @@ api.init();
 
 // logging
 app.use(morgan('combined'));
+// app.use(PinoHttp);
 
 // use as express middleware to pick-up requests and send to the openapi-backend handler.
 app.use((req, res) => api.handleRequest(req as Request, req, res));
@@ -98,12 +103,13 @@ const argv = yargs(process.argv.slice(2)).options({
   }).parseSync();
 
 // write the config file to the console
-console.log('config file: ', argv.config);
+consoleLogger.info(`Loading configuration file: ${argv.config}`);
 
 // if a config file path has been passed in then load the config file
 if (argv.config) {
     ConfigurationManager.getInstance().setApplicationConfigurationFromFile(argv.config);
 }
+
 
 // get the application configuration
 const applicationConfiguration: ApplicationConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration();
@@ -117,10 +123,10 @@ if (frontEndConfiguration.isHttpsEnabled()) {
         const certificate = fs.readFileSync(frontEndHttpsConfiguration.getHttpsCertPath(), 'utf8');
         const credentials = {key: privateKey, cert: certificate};
         const httpsServer = https.createServer(credentials, app);
-        httpsServer.listen(frontEndHttpsConfiguration.getPort(), () => console.info(`api listening at https://${frontEndConfiguration.getHostname()}:${frontEndHttpsConfiguration.getPort()}`));
+        httpsServer.listen(frontEndHttpsConfiguration.getPort(), () => consoleLogger.info(`api listening at https://${frontEndConfiguration.getHostname()}:${frontEndHttpsConfiguration.getPort()}`));
     }
     else {
-        console.error(`https configuration is not defined`);
+        consoleLogger.error(`https configuration is not defined`);
     }
 }
 
@@ -128,10 +134,10 @@ if (frontEndConfiguration.isHttpEnabled()) {
     const frontEndHttpConfiguration = frontEndConfiguration.getHttpConfiguration();
     if (frontEndHttpConfiguration != null) {
         const httpServer = http.createServer(app);
-        httpServer.listen(frontEndHttpConfiguration.getPort(), () => console.info(`api listening at http://${frontEndConfiguration.getHostname()}:${frontEndHttpConfiguration.getPort()}`));
+        httpServer.listen(frontEndHttpConfiguration.getPort(), () => consoleLogger.info(`api listening at http://${frontEndConfiguration.getHostname()}:${frontEndHttpConfiguration.getPort()}`));
     }
     else {
-        console.error(`http configuration is not defined`);
+        consoleLogger.error(`http configuration is not defined`);
     }
 }
 

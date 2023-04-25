@@ -3,6 +3,7 @@ import http from "http";
 import https from "https";
 import { IRdfGraphDB, SparqlQueryResultType } from "../IRdfGraphDB";
 import { BackEndConfiguration, BackEndDBConfiguration } from "../../models/eom/configuration/BackEndConfiguration";
+import { consoleLogger } from "../../logging/consoleLogger";
 
 
 class BlazeGraphDBOptions extends BackEndDBConfiguration {
@@ -31,7 +32,7 @@ class BlazeGraphDBOptions extends BackEndDBConfiguration {
         else {
             url = `${this.protocol}://${this.host}/${this.blazename}/${this.namespace}`;
         }
-        console.log("BlazeGraphDBOptions.getUrl() = " + url);
+        consoleLogger.info("BlazeGraphDBOptions.getUrl() = " + url);
         return url;
     }
 
@@ -43,7 +44,7 @@ class BlazeGraphDB implements IRdfGraphDB {
     private axios: any;
       
     constructor(bdc: BackEndConfiguration, options: BlazeGraphDBOptions) {
-        console.log(`GraphdDB options : ${JSON.stringify(options)}`);
+        consoleLogger.info(`GraphdDB options : ${JSON.stringify(options)}`);
         this.options = options;
         this.bdc = bdc;
         this.axios = axios.create({

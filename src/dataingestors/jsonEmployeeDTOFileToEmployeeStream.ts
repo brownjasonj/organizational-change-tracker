@@ -11,22 +11,24 @@ import { StreamThrottle } from './streamstages/StreamThrottle';
 import { StreamTransformEmployeeDtoToEmployee } from './streamstages/StreamTransformEmployeeDtoToEmployee';
 import { StreamTransformEmployeeToRdf } from './streamstages/StreamTransformEmployeeToRdf';
 import { ConfigurationManager } from '../ConfigurationManager';
+import { consoleLogger } from '../logging/consoleLogger';
+import { Logger } from 'pino';
 
 
-const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus) => {
+const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus, logger: Logger) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
     const parser = JSONStream.parse('*');
-    const streamThrottle = new StreamThrottle(ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs());
+    const streamThrottle = new StreamThrottle(ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs(), logger);
 
      pipeline(
          stream,
          parser,
          streamThrottle,
-         new StreamTransformEmployeeDtoToEmployee(),
-         new StreamTransformEmployeeToRdf(),
+         new StreamTransformEmployeeDtoToEmployee(logger),
+         new StreamTransformEmployeeToRdf(logger),
 //         new StreamRdfBankOrgValidation(organizationSchema),
-         new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB()),
-         new StreamDataIngestionStatusUpdater(dataIngestionStatus),
+         new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger),
+         new StreamDataIngestionStatusUpdater(dataIngestionStatus, logger),
 //         (err) => {
 //             if (err) {
 //               console.error('Pipeline failed', err);
@@ -34,7 +36,7 @@ const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchem
 //               console.log('Pipeline succeeded');
 //             }
 //         }
-        err => console.log('end', err)
+        err => consoleLogger.error('end', err)
      );
 }
 

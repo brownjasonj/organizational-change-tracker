@@ -4,6 +4,7 @@ import { BackEndConfiguration, BackEndDBConfiguration } from "../models/eom/conf
 import { IRdfGraphDB } from "./IRdfGraphDB";
 import { BlazeGraphDB, BlazeGraphDBOptions } from "./blazegraph/BlazeGraphDB";
 import { OnToTextGraphDB } from "./graphdb/OnToTextGraphDB";
+import { consoleLogger } from "../logging/consoleLogger";
 
 class GraphPersistenceFactory {
     private static singleton: GraphPersistenceFactory;
@@ -15,11 +16,11 @@ class GraphPersistenceFactory {
 
     public static getInstance(): GraphPersistenceFactory {
         if (GraphPersistenceFactory.singleton == null) {
-            console.log("GraphPersistenceFactory is NULL")
+            consoleLogger.info("GraphPersistenceFactory is NULL")
             const bec = ConfigurationManager.getInstance().getApplicationConfiguration().getBackEndConfiguration();
-            console.log(bec);
+            consoleLogger.info(bec);
             const bedbc:BackEndDBConfiguration = bec.getGraphDBConfiguration(bec.getGraphDB())! as BackEndDBConfiguration;
-            console.log(bedbc);
+            consoleLogger.info(bedbc);
             switch(bedbc.getType()) {
                 case "blazegraph":
                 default:

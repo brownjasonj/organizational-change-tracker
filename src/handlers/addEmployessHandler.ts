@@ -8,6 +8,7 @@ import { DataIngestionStreamsFactory } from "../dataingestors/DataIngestionStrea
 import { StreamDataIngestorType } from "../dataingestors/StreamDataIngestorType";
 import { ConfigurationManager } from "../ConfigurationManager";
 import { FrontEndHttpConfiguration } from "../models/eom/configuration/FrontEndConfiguration";
+import { createDataIngestionLogger } from "../logging/dataIngestionLogger";
 
 const getResourceLocation = (requestId: string) =>  {
     const frontEndConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration();
@@ -40,9 +41,10 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
     
                 // create a new stream status object
                 const dataIngestionStreamStatus = DataIngestionStreamsFactory.createStreamStatus();
+                const dataIngestionLogger = createDataIngestionLogger(ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration(), `${dataIngestionStreamStatus.getRequestId()}.json`);
     
                 const streamDataIngestor: StreamDataIngestorType = DataIngestionStreamsFactory.getSreamDataIngestor(filePath);
-                streamDataIngestor(filePath, shapes, dataIngestionStreamStatus);
+                streamDataIngestor(filePath, shapes, dataIngestionStreamStatus, dataIngestionLogger);
                 response.status(202).json({'Operation-Location': `${getResourceLocation(dataIngestionStreamStatus.getRequestId())}`});
                 return;
             }

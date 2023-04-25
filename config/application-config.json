@@ -49,5 +49,10 @@
                 "blazename": "blazegraph"
             }
         ]
+    },
+    "logging": {
+        "dataIngestionLogging": true,
+        "dataIngestionLoggingLevel": "info",
+        "dataIngestionLoggingPath": "./logs/dataIngestion/"
     }
 }

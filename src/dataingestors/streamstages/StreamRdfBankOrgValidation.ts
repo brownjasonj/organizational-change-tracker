@@ -3,37 +3,41 @@ import SHACLValidator from "rdf-validate-shacl";
 import factory from "rdf-ext";
 import DatasetExt from "rdf-ext/lib/Dataset";
 import { loadN3DataSetfromString } from "../../utils/loadN3DataSet";
+import { Logger } from "pino";
 
 
 class StreamRdfBankOrgValidation extends PassThrough {
     private organizationSchema: DatasetExt;
     private validator: SHACLValidator;
-    constructor(organizationSchema: DatasetExt) {
+    private logger: Logger;
+    
+    constructor(organizationSchema: DatasetExt, logger: Logger) {
         super({ objectMode: true });
         this.organizationSchema = organizationSchema;
         this.validator = new SHACLValidator(this.organizationSchema, { factory });
+        this.logger = logger;
     }
 
     _write(data: string, encoding: string, callback: Function) {
-        console.log("Validating the following data: ");
+        this.logger.info("Validating the following data: ");
         loadN3DataSetfromString(data)
         .then((dataN3: DatasetExt) => {
-            console.log("Data loaded into N3 dataset:");
+            this.logger.info("Data loaded into N3 dataset:");
             const report = this.validator.validate(dataN3);
             if (report.conforms) {
-                console.log("Validation passed for the following data: ");
+                this.logger.info("Validation passed for the following data: ");
                 this.push(data);
             }
             else {
-                console.log("Validation failed for the following data: ");
-                console.log(data);
-                console.log("Validation report: ");
-                console.log(report);
+                this.logger.error("Validation failed for the following data: ");
+                this.logger.error(data);
+                this.logger.error("Validation report: ");
+                this.logger.error(report);
             }
             callback();
         })
         .catch((error: any) => {
-            console.log(error);
+            this.logger.error(error);
             callback();
         });
     }

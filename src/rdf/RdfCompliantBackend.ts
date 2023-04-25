@@ -10,6 +10,7 @@ import { sparqlLeaversQueryByDepartment } from "./sparql/sparqlDepartmentLeavers
 import { sparqlEmployeeDepartmentHistoryQuery } from "./sparql/sparqlEmployeeDepartmentHistoryQuery";
 import { EmployeeDepartmentEpoc } from "../models/eom/EmployeeDepartmentEpoc";
 import { EmployeeDepartmentEpocs } from "../models/eom/EmployeeDepartmentEpocs";
+import { consoleLogger } from "../logging/consoleLogger";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
@@ -39,8 +40,20 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                     console.log(`Calling getSparqlQuery for ${departmentCode} on ${currentDate}`);
                     const result:EmployeeCountByDepartmentTimeEpoc = await this.getEmployeeCountByDepartmentCode(departmentCode, currentDate);
                     const previousPeriod = new Date(currentDate.getTime() - stepTime);
-                    const joiners: EmployeeLeaverJoiner[] = await this.getDepartmentJoiners(departmentCode, previousPeriod, new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59));
-                    const leavers: EmployeeLeaverJoiner[] = await this.getDepartmentLeavers(departmentCode, previousPeriod, new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59));
+                    var joiners: EmployeeLeaverJoiner[] = await this.getDepartmentJoiners(departmentCode, previousPeriod, new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59));
+                    var leavers: EmployeeLeaverJoiner[] = await this.getDepartmentLeavers(departmentCode, previousPeriod, new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59));
+
+                    // check the Joiners/Leavers list.  It is possible that the original data has entires with an employee having and end date
+                    // and start date on the same day.  This will cause the joiner/leaver to be counted twice.  So we need to remove them.
+                    for(var joiner of joiners) {
+                        for(var leaver of leavers) {
+                            if(joiner.pid == leaver.pid) {
+                                consoleLogger.info(`Removing joiner/leaver ${joiner.pid} from joiner/leaver list.  Joiner: ${joiner.date} Leaver: ${leaver.date}`);
+                                joiners = joiners.filter((j) => j.pid != joiner.pid);
+                                leavers = leavers.filter((l) => l.pid != leaver.pid);
+                            }
+                        }
+                    }
                     result.joiners = joiners;
                     result.leavers = leavers;
                     console.log(result);

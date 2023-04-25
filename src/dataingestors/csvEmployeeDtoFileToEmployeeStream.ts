@@ -10,23 +10,25 @@ import { StreamRdfTurtlePersistToGraphStore } from "../persistence/StreamRdfTurt
 import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 import { StreamDataIngestionStatusUpdater } from "./streamstages/StreamDataIngestionStatusUpdater";
 import { pipeline } from 'stream';
+import { consoleLogger } from "../logging/consoleLogger";
+import { Logger } from "pino";
 
-const csvEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus) => {
+const csvEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus, logger: Logger) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
-    const streamThrottle = new StreamThrottle(ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs());
+    const streamThrottle = new StreamThrottle(ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs(), logger);
     const csvParser = csv();
 
-    console.log("csvEmployeeDTOFileToEmployeeStream");
+    consoleLogger.info("csvEmployeeDTOFileToEmployeeStream");
     pipeline(
         stream,
         csvParser,
         streamThrottle,
-        new StreamTransformEmployeeDtoToEmployee(),
-        new StreamTransformEmployeeToRdf(),
+        new StreamTransformEmployeeDtoToEmployee(logger),
+        new StreamTransformEmployeeToRdf(logger),
 //         new StreamRdfBankOrgValidation(organizationSchema),
-        new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB()),
-        new StreamDataIngestionStatusUpdater(dataIngestionStatus),
-        (err: any) => console.log('end', err)
+        new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger),
+        new StreamDataIngestionStatusUpdater(dataIngestionStatus, logger),
+        (err: any) => consoleLogger.error('end', err)
     );
 }
 

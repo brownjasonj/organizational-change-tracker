@@ -2,6 +2,7 @@ import { PassThrough, Writable } from "stream";
 import { IRdfGraphDB } from "./IRdfGraphDB";
 import { GraphPersistenceFactory } from "./GraphPersistenceFactory";
 import { StreamThrottle } from "../dataingestors/streamstages/StreamThrottle";
+import { Logger } from "pino";
 
 
 class StreamRdfTurtlePersistToGraphStore extends PassThrough {
@@ -11,17 +12,19 @@ class StreamRdfTurtlePersistToGraphStore extends PassThrough {
     private graphDB: IRdfGraphDB;
     private msgsQueued = 1;
     private streamThrottle: StreamThrottle;
+    private logger: Logger;
     
-    constructor(streamThrottle: StreamThrottle, graphDB: IRdfGraphDB) {
+    constructor(streamThrottle: StreamThrottle, graphDB: IRdfGraphDB, logger: Logger) {
         super({ objectMode: true });
         this.graphDB = graphDB;
         this.streamThrottle = streamThrottle;
+        this.logger = logger;
     }
 
     trywrite(data: string, msg: number, retries: number, next: Function) {
         this.graphDB.turtleUpdate(data)
         .then((res) => {
-            console.log(`Message ${msg} persisted`);
+            this.logger.info(`Message ${msg} persisted`);
             console.log(res);
             this.msgsQueued--;
             this.streamThrottle.updateTimeout(this.TIME_OUT_MS * this.msgsQueued);
@@ -30,13 +33,13 @@ class StreamRdfTurtlePersistToGraphStore extends PassThrough {
         })
         .catch((err) => {
             if (retries < this.MAX_RETRIES) {
-                console.log(`Error: ${err.message}.  Trying Again ${msg} after ${this.TIME_OUT_MS * this.msgsQueued} ms`);
+                this.logger.error(`Error: ${err.message}.  Trying Again ${msg} after ${this.TIME_OUT_MS * this.msgsQueued} ms`);
                 setTimeout(() => {
                     this.trywrite(data, msg, retries + 1, next);
                 }, 1000);   
             }
             else {
-                console.log(`Error: ${err.message}.  Giving up processing after ${this.MAX_RETRIES} retries}`);
+                this.logger.error(`Error: ${err.message}.  Giving up processing after ${this.MAX_RETRIES} retries}`);
                 this.msgsQueued--;
                 this.streamThrottle.updateTimeout(this.TIME_OUT_MS * this.msgsQueued);
                 next();
@@ -46,7 +49,7 @@ class StreamRdfTurtlePersistToGraphStore extends PassThrough {
 
 
     _write(data: string, encoding: string, next: Function) {
-        console.log(`>>> Persisting the following: ${this.msgCount}`);
+        this.logger.info(`>>> Persisting the following: ${this.msgCount}`);
         this.msgsQueued++;
         this.streamThrottle.updateTimeout(this.TIME_OUT_MS * this.msgsQueued);
         setTimeout(() => {

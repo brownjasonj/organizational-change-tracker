@@ -1,3 +1,4 @@
+import { consoleLogger } from "./logging/consoleLogger";
 import { ApplicationConfiguration, defaultApplicationConfiguration } from "./models/eom/configuration/ApplicationConfiguration";
 import { ApplicationConfigurationMapperSync } from "./models/mappers/ApplicationConfigurationMapper";
 
@@ -24,7 +25,7 @@ class ConfigurationManager {
 
     public setApplicationConfigurationFromFile(configFile: string): ApplicationConfiguration {
         this.applicationConfiguration = ApplicationConfigurationMapperSync(configFile);
-        console.log(`Application Configuration: ${JSON.stringify(this.applicationConfiguration)}`);
+        consoleLogger.info(`Application Configuration: ${JSON.stringify(this.applicationConfiguration)}`);
         return this.applicationConfiguration;
     }
 }
