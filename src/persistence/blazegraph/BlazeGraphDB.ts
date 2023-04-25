@@ -32,7 +32,6 @@ class BlazeGraphDBOptions extends BackEndDBConfiguration {
         else {
             url = `${this.protocol}://${this.host}/${this.blazename}/${this.namespace}`;
         }
-        consoleLogger.info("BlazeGraphDBOptions.getUrl() = " + url);
         return url;
     }
 

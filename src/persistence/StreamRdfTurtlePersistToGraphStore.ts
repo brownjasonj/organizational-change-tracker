@@ -25,7 +25,7 @@ class StreamRdfTurtlePersistToGraphStore extends PassThrough {
         this.graphDB.turtleUpdate(data)
         .then((res) => {
             this.logger.info(`Message ${msg} persisted`);
-            console.log(res);
+            this.logger.info(res);
             this.msgsQueued--;
             this.streamThrottle.updateTimeout(this.TIME_OUT_MS * this.msgsQueued);
             this.push(data)

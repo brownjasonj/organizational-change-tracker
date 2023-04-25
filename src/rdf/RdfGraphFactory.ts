@@ -1,5 +1,8 @@
 import { IOrganizationRdfQuery } from './IOrganizationRdfQuery';
 import { BlazeGraphRdfQuery } from './BlazeGraphRdfQuery';
+import { ConfigurationManager } from '../ConfigurationManager';
+import { Logger } from 'pino';
+import { createSparqlQueryLogger } from '../logging/createSparqlQueryLogger';
 
 class RdfGraphFactory {
     private static singleton: RdfGraphFactory;
@@ -11,7 +14,8 @@ class RdfGraphFactory {
 
     static getInstance(): RdfGraphFactory {
         if (RdfGraphFactory.singleton == null) {
-            RdfGraphFactory.singleton = new RdfGraphFactory(new BlazeGraphRdfQuery());
+            const logger: Logger = createSparqlQueryLogger(ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration());
+            RdfGraphFactory.singleton = new RdfGraphFactory(new BlazeGraphRdfQuery(logger));
         }
         return RdfGraphFactory.singleton;
     }

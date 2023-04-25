@@ -5,10 +5,17 @@ class LoggingConfiguration {
     dataIngestionLogging: boolean;
     dataIngestionLoggingLevel: string;
     dataIngestionLoggingPath: string;
+    queryLogging: boolean;
+    queryLoggingLevel: string;
+    queryLoggingPath: string;
+
     constructor() {
         this.dataIngestionLogging = false;
         this.dataIngestionLoggingLevel = 'info';
         this.dataIngestionLoggingPath = './logs/dataIngestion/';
+        this.queryLogging = false;
+        this.queryLoggingLevel = 'info';
+        this.queryLoggingPath = './logs/queries/';
     }
 
     static getInstance(): LoggingConfiguration {
@@ -28,6 +35,18 @@ class LoggingConfiguration {
 
     getDataIngestionLoggingPath(): string {
         return this.dataIngestionLoggingPath;
+    }
+
+    getQueryLogging(): boolean {
+        return this.queryLogging;
+    }
+
+    getQueryLoggingLevel(): string {
+        return this.queryLoggingLevel;
+    }
+
+    getQueryLoggingPath(): string {
+        return this.queryLoggingPath;
     }
 }
 

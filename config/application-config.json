@@ -53,6 +53,9 @@
     "logging": {
         "dataIngestionLogging": true,
         "dataIngestionLoggingLevel": "info",
-        "dataIngestionLoggingPath": "./logs/dataIngestion/"
+        "dataIngestionLoggingPath": "./logs/dataIngestion/",
+        "queryLogging": true,
+        "queryLoggingLevel": "info",
+        "queryLoggingPath": "./logs/query/"
     }
 }
