@@ -103,7 +103,7 @@ const argv = yargs(process.argv.slice(2)).options({
   }).parseSync();
 
 // write the config file to the console
-consoleLogger.info(`Loading configuration file: ${argv.config}`);
+consoleLogger.info(`Loading csonfiguration file: ${argv.config}`);
 
 // if a config file path has been passed in then load the config file
 if (argv.config) {
