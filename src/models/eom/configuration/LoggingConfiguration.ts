@@ -5,6 +5,7 @@ class LoggingConfiguration {
     dataIngestionLogging: boolean;
     dataIngestionLoggingLevel: string;
     dataIngestionLoggingPath: string;
+    dataIngestionDeadLetterPath: string;
     queryLogging: boolean;
     queryLoggingLevel: string;
     queryLoggingPath: string;
@@ -13,6 +14,7 @@ class LoggingConfiguration {
         this.dataIngestionLogging = false;
         this.dataIngestionLoggingLevel = 'info';
         this.dataIngestionLoggingPath = './logs/dataIngestion/';
+        this.dataIngestionDeadLetterPath = './logs/dataIngestion/deadLetter/';
         this.queryLogging = false;
         this.queryLoggingLevel = 'info';
         this.queryLoggingPath = './logs/queries/';
@@ -35,6 +37,10 @@ class LoggingConfiguration {
 
     getDataIngestionLoggingPath(): string {
         return this.dataIngestionLoggingPath;
+    }
+
+    getDataIngestionDeadLetterPath(): string {
+        return this.dataIngestionDeadLetterPath;
     }
 
     getQueryLogging(): boolean {

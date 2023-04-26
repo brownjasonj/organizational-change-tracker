@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import JSONStream from 'jsonstream';
 import { Employee } from '../models/eom/Employee';
-import { StreamRdfTurtlePersistToGraphStore } from '../persistence/StreamRdfTurtlePersistToGraphStore';
+import { StreamRdfTurtlePersistToGraphStore } from './streamstages/StreamRdfTurtlePersistToGraphStore';
 import DatasetExt from 'rdf-ext/lib/Dataset';
 import { pipeline } from 'stream';
 import { GraphPersistenceFactory } from '../persistence/GraphPersistenceFactory';
@@ -15,10 +15,15 @@ import { consoleLogger } from '../logging/consoleLogger';
 import { Logger } from 'pino';
 
 
-const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus, logger: Logger) => {
+const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus, throttleTimeoutMs: number, logger: Logger, failedDataSavePath: string) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
     const parser = JSONStream.parse('*');
-    const streamThrottle = new StreamThrottle(ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs(), logger);
+    const streamThrottle = new StreamThrottle(throttleTimeoutMs, logger);
+
+    // check if the failedDataSavePath exists, if not create it
+    if (!fs.existsSync(`${failedDataSavePath}/ttls`)) {
+        fs.mkdirSync(`${failedDataSavePath}/ttls`, { recursive: true });
+    }
 
      pipeline(
          stream,
@@ -27,7 +32,7 @@ const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchem
          new StreamTransformEmployeeDtoToEmployee(logger),
          new StreamTransformEmployeeToRdf(logger),
 //         new StreamRdfBankOrgValidation(organizationSchema),
-         new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger),
+         new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger, `${failedDataSavePath}/ttls`),
          new StreamDataIngestionStatusUpdater(dataIngestionStatus, logger),
 //         (err) => {
 //             if (err) {

@@ -35,7 +35,7 @@
                 "type": "blazegraph",
                 "protocol": "http",
                 "host": "localhost",
-                "port": 9999,
+                "port": 19999,
                 "namespace": "sparql",
                 "blazename": "blazegraph"
             },
@@ -54,6 +54,7 @@
         "dataIngestionLogging": true,
         "dataIngestionLoggingLevel": "info",
         "dataIngestionLoggingPath": "./logs/dataIngestion/",
+        "dataIngestionDeadLetterPath": "./logs/dataIngestion/deadLetter/",
         "queryLogging": true,
         "queryLoggingLevel": "info",
         "queryLoggingPath": "./logs/query/"

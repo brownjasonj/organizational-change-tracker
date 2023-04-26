@@ -1,8 +1,10 @@
+import * as fs from 'fs';
 import { PassThrough, Writable } from "stream";
-import { IRdfGraphDB } from "./IRdfGraphDB";
-import { GraphPersistenceFactory } from "./GraphPersistenceFactory";
-import { StreamThrottle } from "../dataingestors/streamstages/StreamThrottle";
+import { IRdfGraphDB } from "../../persistence/IRdfGraphDB";
+import { GraphPersistenceFactory } from "../../persistence/GraphPersistenceFactory";
+import { StreamThrottle } from "./StreamThrottle";
 import { Logger } from "pino";
+import { randomUUID } from 'crypto';
 
 
 class StreamRdfTurtlePersistToGraphStore extends PassThrough {
@@ -13,12 +15,14 @@ class StreamRdfTurtlePersistToGraphStore extends PassThrough {
     private msgsQueued = 1;
     private streamThrottle: StreamThrottle;
     private logger: Logger;
+    private failedDataSavePath: string;
     
-    constructor(streamThrottle: StreamThrottle, graphDB: IRdfGraphDB, logger: Logger) {
+    constructor(streamThrottle: StreamThrottle, graphDB: IRdfGraphDB, logger: Logger, failedDataSavePath: string) {
         super({ objectMode: true });
         this.graphDB = graphDB;
         this.streamThrottle = streamThrottle;
         this.logger = logger;
+        this.failedDataSavePath = failedDataSavePath;
     }
 
     trywrite(data: string, msg: number, retries: number, next: Function) {
@@ -39,9 +43,12 @@ class StreamRdfTurtlePersistToGraphStore extends PassThrough {
                 }, 1000);   
             }
             else {
+                // the write failed too many times, so we give up
                 this.logger.error(`Error: ${err.message}.  Giving up processing after ${this.MAX_RETRIES} retries}`);
+                // save the message to a file for later processing
                 this.msgsQueued--;
                 this.streamThrottle.updateTimeout(this.TIME_OUT_MS * this.msgsQueued);
+                fs.writeFileSync(`${this.failedDataSavePath}/${randomUUID().toString()}.ttl`, data);
                 next();
             }
         });

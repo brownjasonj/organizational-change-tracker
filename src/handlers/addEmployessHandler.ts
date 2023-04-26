@@ -41,10 +41,19 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
     
                 // create a new stream status object
                 const dataIngestionStreamStatus = DataIngestionStreamsFactory.createStreamStatus();
+                const loggingConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration();
                 const dataIngestionLogger = createDataIngestionLogger(ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration(), `${dataIngestionStreamStatus.getRequestId()}.json`);
-    
+                const streamThrottleTimoutMs = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs();
+                var failedDataSavePath;
+                if (loggingConfiguration.getDataIngestionDeadLetterPath() === '') {
+                    failedDataSavePath = './tmp/${dataIngestionStreamStatus.getRequestId()}/';
+                }
+                else {
+                    failedDataSavePath = `${loggingConfiguration.getDataIngestionDeadLetterPath()}/${dataIngestionStreamStatus.getRequestId()}`;
+                }
+
                 const streamDataIngestor: StreamDataIngestorType = DataIngestionStreamsFactory.getSreamDataIngestor(filePath);
-                streamDataIngestor(filePath, shapes, dataIngestionStreamStatus, dataIngestionLogger);
+                streamDataIngestor(filePath, shapes, dataIngestionStreamStatus, streamThrottleTimoutMs, dataIngestionLogger, failedDataSavePath);
                 response.status(202).json({'Operation-Location': `${getResourceLocation(dataIngestionStreamStatus.getRequestId())}`});
                 return;
             }
