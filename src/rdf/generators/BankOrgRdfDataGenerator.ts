@@ -1,12 +1,12 @@
 import { write } from "fs";
 import { Writer, DataFactory, NamedNode, Quad } from "n3";
 import { DateTime } from "neo4j-driver-core";
-import { CorporateRole } from "../../models/eom/CorporateRole";
 
 const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
 
 import { Employee } from "../../models/eom/Employee";
 import { dateIdGenerator } from "../../utils/dateIdGenerator";
+import { CorporateTitle } from "../../models/eom/CorporateTitle";
 
 type rdfNameSpace = {
     prefix: string,
@@ -112,23 +112,23 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     var corporateTitleNode: NamedNode;
     var jobTitleName;
     switch (employee.jobTitle) {
-        case CorporateRole.Staff:
+        case CorporateTitle.Staff:
             corporateTitleNode = staffRoleNode;
             jobTitleName = "Staff";
             break;
-        case CorporateRole.AVP:
+        case CorporateTitle.AVP:
             corporateTitleNode = avpRoleNode;
             jobTitleName = "AVP";
             break;
-        case CorporateRole.VP:
+        case CorporateTitle.VP:
             jobTitleName = "VP";
             corporateTitleNode = vpRoleNode;
             break;
-        case CorporateRole.DIR:
+        case CorporateTitle.DIR:
             jobTitleName = "DIR";
             corporateTitleNode = dirRoleNode;
             break;
-        case CorporateRole.MDR:
+        case CorporateTitle.MDR:
             jobTitleName = "MDR";
             corporateTitleNode = mdrRoleNode;
             break;

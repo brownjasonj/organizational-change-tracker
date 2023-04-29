@@ -12,6 +12,7 @@ import { StreamDataIngestionStatusUpdater } from "./streamstages/StreamDataInges
 import { pipeline } from 'stream';
 import { consoleLogger } from "../logging/consoleLogger";
 import { Logger } from "pino";
+import { StreamRdfBankOrgValidation } from "./streamstages/StreamRdfBankOrgValidation";
 
 const csvEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus, throttleTimeoutMs: number, logger: Logger, failedDataSavePath: string) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
@@ -31,7 +32,7 @@ const csvEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema
         streamThrottle,
         new StreamTransformEmployeeDtoToEmployee(logger),
         new StreamTransformEmployeeToRdf(logger),
-//         new StreamRdfBankOrgValidation(organizationSchema),
+        new StreamRdfBankOrgValidation(organizationSchema, logger),
         new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger, `${failedDataSavePath}/ttls`),
         new StreamDataIngestionStatusUpdater(dataIngestionStatus, logger),
         (err: any) => consoleLogger.error('end', err)

@@ -1,8 +1,5 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
-import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
-import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
-import { sparqlDepartmentHistoryQuery } from "../rdf/sparql/sparqlDepartmentHistoryQuery";
 import { DepartmentTimeSeries } from "../models/eom/DepartmentTimeSeries";
 import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
 import { RdfGraphFactory } from "../rdf/RdfGraphFactory";

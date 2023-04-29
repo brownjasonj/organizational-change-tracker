@@ -13,6 +13,7 @@ import { StreamTransformEmployeeToRdf } from './streamstages/StreamTransformEmpl
 import { ConfigurationManager } from '../ConfigurationManager';
 import { consoleLogger } from '../logging/consoleLogger';
 import { Logger } from 'pino';
+import { StreamRdfBankOrgValidation } from './streamstages/StreamRdfBankOrgValidation';
 
 
 const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus, throttleTimeoutMs: number, logger: Logger, failedDataSavePath: string) => {
@@ -31,7 +32,7 @@ const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchem
          streamThrottle,
          new StreamTransformEmployeeDtoToEmployee(logger),
          new StreamTransformEmployeeToRdf(logger),
-//         new StreamRdfBankOrgValidation(organizationSchema),
+         new StreamRdfBankOrgValidation(organizationSchema, logger),
          new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger, `${failedDataSavePath}/ttls`),
          new StreamDataIngestionStatusUpdater(dataIngestionStatus, logger),
 //         (err) => {

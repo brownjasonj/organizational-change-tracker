@@ -105,6 +105,6 @@
     "esm": true,
     "experimentalSpecifierResolution": "node",
   },
-  "include": ["src/**/*.ts", "src/utils/pinoPipelineTransport.js"],
+  "include": ["src/**/*.ts", "src/logging/pinoPipelineTransport.js"],
   "exclude": ["build", "coverage"]
 }

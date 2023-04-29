@@ -1,0 +1,20 @@
+FROM node:10
+
+WORKDIR /usr
+
+# Get the latest version of the code from git
+RUN git clone git@github.com:brownjasonj/organizational-change-tracker.git
+RUN cd organizational-change-tracker
+
+# install the necessary packages
+RUN npm install --only=production
+
+# build the application for production
+RUN npm run build
+RUN cd build
+
+# run the application
+RUN node ./index.js --config config/application-config.json
+EXPOSE 8080
+
+CMD ["node","run","index.js"]

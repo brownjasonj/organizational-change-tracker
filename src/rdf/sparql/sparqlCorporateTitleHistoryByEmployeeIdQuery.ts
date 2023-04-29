@@ -1,4 +1,4 @@
-const sparqlRoleHistoryQuery = (employeeId: string) => {
+const sparqlCorporateTitleHistoryByEmployeeIdQuery = (employeeId: string) => {
     return `prefix bank-org: <http://example.org/bank-org#>
     prefix bank-id: <http://example.org/bank-id#>
     prefix org: <http://www.w3.org/ns/org#>
@@ -11,7 +11,7 @@ const sparqlRoleHistoryQuery = (employeeId: string) => {
 	where {
         ?employee rdf:type bank-org:BankEmployee.
 		?corpTitleMembership org:member ?employee.
-        ?employee bank-id:id "${employeeId}".
+        ?employee bank-id:pid "${employeeId}".
         ?corpTitleMembership bank-org:BankCorporateTitle ?corpTitle.
         {
             optional {
@@ -29,4 +29,4 @@ const sparqlRoleHistoryQuery = (employeeId: string) => {
     }`;
 }
 
-export { sparqlRoleHistoryQuery }
+export { sparqlCorporateTitleHistoryByEmployeeIdQuery }

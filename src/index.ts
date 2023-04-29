@@ -11,7 +11,7 @@ import 'reflect-metadata';
 import { employeeCountByDepartmentCodeHandler } from './handlers/employeeCountByDepartmentCodeHandler';
 import { departmentCodesHandler } from './handlers/departmentCodesHandler';
 import { departmentHistoryHandler } from './handlers/departmentHistoryHandler';
-import { employeeRoleHistoryHandler } from './handlers/employeeRoleHistoryHandler';
+import { employeeRoleHistoryByEmployeeIdHandler } from './handlers/employeeRoleHistoryByEmployeeIdHandler';
 import { employeeDepartmentHistoryHandler } from './handlers/employeeDepartmentHistoryHandler';
 import fileUpload from 'express-fileupload';
 import { operationsLoadStatusHandler } from './handlers/operationsLoadStatusHandler';
@@ -32,6 +32,7 @@ import { ApplicationConfiguration } from './models/eom/configuration/Application
 import { FrontEndConfiguration } from './models/eom/configuration/FrontEndConfiguration';
 import PinoHttp from 'pino-http';
 import { consoleLogger } from './logging/consoleLogger';
+import { employeeDepartmentHistoryByEmployeeIdHandler } from './handlers/employeeDepartmentHistoryByEmployeeIdHandler';
 
   
 
@@ -70,7 +71,8 @@ api.register('test', testHandler);
 api.register('addemployeeGet', addEmployeeRecordHandler);
 api.register('addemployeesPost', addEmployeesHandler);
 api.register('employeeDepartmentHistory', employeeDepartmentHistoryHandler);
-api.register('employeeRoleHistory', employeeRoleHistoryHandler);
+api.register('employeeDepartmentHistoryByEmployeeId', employeeDepartmentHistoryByEmployeeIdHandler);
+api.register('employeeRoleHistoryByEmployeeId', employeeRoleHistoryByEmployeeIdHandler);
 api.register('departmentHistoryWithJoinersLeaver', departmentHistoryWithJoinersLeaversHandler);
 api.register('departmentJoiners', employeeJoinersByDepartment);
 api.register('departmentLeavers', employeeLeaversByDepartment);

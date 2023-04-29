@@ -10,8 +10,11 @@ import { sparqlLeaversQueryByDepartment } from "./sparql/sparqlDepartmentLeavers
 import { sparqlEmployeeDepartmentHistoryQuery } from "./sparql/sparqlEmployeeDepartmentHistoryQuery";
 import { EmployeeDepartmentEpoc } from "../models/eom/EmployeeDepartmentEpoc";
 import { EmployeeDepartmentEpocs } from "../models/eom/EmployeeDepartmentEpocs";
-import { consoleLogger } from "../logging/consoleLogger";
 import { Logger } from "pino";
+import { sparqlCorporateTitleHistoryByEmployeeIdQuery } from "./sparql/sparqlCorporateTitleHistoryByEmployeeIdQuery";
+import { sparqlEmployeeDepartmentHistoryQueryByEmployeeId } from "./sparql/sparqlEmployeeDepartmentHistoryByEmployeeIdQuery";
+import { EmployeeCorporateTitleEpocs } from "../models/eom/EmployeeCorporateTitleEpocs";
+import { EmployeeCorporateTitleEpoc } from "../models/eom/EmployeeCorporateTitleEpoc";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
@@ -31,7 +34,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         return this.graphDB.deleteAllTriple();
     }
 
-    getDepartmentCodes(asOfDate: Date): string {
+    getDepartmentCodes(asOfDate: Date): Promise<string> {
         this.logger.error("getDepartmentCodes not implemented.");
         throw new Error("Method not implemented.");
     }
@@ -167,9 +170,51 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
     
-    sparqlRoleHistoryQuery(employeeId: string): string {
-        this.logger.error("sparqlRoleHistoryQuery not implemented.");
-        throw new Error("Method not implemented.");
+    getEmployeeDepartmentHistoryByEmployeeId(employeeId: string): Promise<EmployeeDepartmentEpocs> {
+        return new Promise<EmployeeDepartmentEpocs>((resolve, reject) => {
+            const sparqlQuery = sparqlEmployeeDepartmentHistoryQueryByEmployeeId(employeeId);
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                const employeeDepartmentEpocs = new EmployeeDepartmentEpocs(employeeId);
+                this.logger.info(result);
+                result.results.bindings.forEach((binding: any) => {
+                    const department = binding.department.value;
+                    const startDate = new Date(binding.startDate.value.split("^^")[0]).toUTCString();
+                    const endDate = new Date(binding.endDate.value.split("^^")[0]).toUTCString();
+                    const epoc = new EmployeeDepartmentEpoc(employeeId, department, startDate, endDate);
+                    employeeDepartmentEpocs.addEpoc(epoc);
+                });
+                return resolve(employeeDepartmentEpocs);
+            })
+            .catch((error: any) => {
+                this.logger.error(error);
+                return reject(error);
+            });
+        });
+    }
+
+    getEmployeeCorporateTitleHistoryByEmployeeId(employeeId: string): Promise<EmployeeCorporateTitleEpocs> {
+        return new Promise<EmployeeCorporateTitleEpocs>((resolve, reject) => {
+            const sparqlQuery = sparqlCorporateTitleHistoryByEmployeeIdQuery(employeeId);
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                const employeeCorporateTitleEpocs = new EmployeeCorporateTitleEpocs(employeeId);
+                this.logger.info(result);
+                result.results.bindings.forEach((binding: any) => {
+                    const corporateTitle = binding.corpTitle.value;
+                    const startDate = new Date(binding.startDate.value.split("^^")[0]).toUTCString();
+                    const endDate = new Date(binding.endDate.value.split("^^")[0]).toUTCString();
+                    const epoc = new EmployeeCorporateTitleEpoc(employeeId, corporateTitle, startDate, endDate);
+                    employeeCorporateTitleEpocs.addEpoc(epoc);
+                });
+                return resolve(employeeCorporateTitleEpocs);
+            })
+            .catch((error) => {
+                this.logger.error(error);
+                return reject(error);
+            });
+        });
+
     }
 }
 

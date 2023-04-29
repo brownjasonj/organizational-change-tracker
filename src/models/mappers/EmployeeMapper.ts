@@ -1,5 +1,4 @@
 import { EmployeeDto } from "../dto/EmployeeDto";
-import { CorporateRole } from "../eom/CorporateRole";
 import { Employee } from "../eom/Employee";
 
 const employeeDtoToEmployee = (employeeDto: EmployeeDto): Employee => {

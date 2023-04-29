@@ -81,7 +81,7 @@ paths:
           description: Poorly formed request, most commonly related to the query parameters.
   /employee-department-history:
     get:
-      description: get the history of which department an employee has gone through.
+      description: get the history of which department an employee has gone through.  for all employees.
       operationId: "employeeDepartmentHistory"
       responses:
         '200':
@@ -90,10 +90,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/employeeDepartmentEpocs"
-  /employee-role-history:
+  /employee-department-history-by-employeeid:
+    get:
+      description: get the history of which department an employee has gone through.
+      operationId: "employeeDepartmentHistoryByEmployeeId"
+      parameters:
+        - in: query
+          name: employeeId
+          schema:
+            type: string
+          required: true
+          description: Employees Id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/employeeDepartmentEpocs"
+  /employee-role-history-by-employeeid:
     get:
       description: get the history of which role an employee has gone through.
-      operationId: "employeeRoleHistory"
+      operationId: "employeeRoleHistoryByEmployeeId"
       parameters:
         - in: query
           name: employeeId

@@ -1,4 +1,4 @@
-enum CorporateRole {
+enum CorporateTitle {
     None = "",
     Staff = "Staff",
     AVP = "Assistant Vice President",
@@ -7,4 +7,4 @@ enum CorporateRole {
     MDR = "Managing Director"
 }
 
-export { CorporateRole }
+export { CorporateTitle }
