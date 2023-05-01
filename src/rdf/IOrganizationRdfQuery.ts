@@ -1,16 +1,18 @@
 import { Employee } from "../models/eom/Employee";
-import { DepartmentTimeSeries } from "../models/eom/DepartmentTimeSeries";
 import { EmployeeLeaverJoiner } from "../models/eom/EmployeeLeaverJoiner";
-import { EmployeeCountByDepartmentTimeEpoc } from "../models/eom/EmployeeCountByDepartmentTimeEpoc";
 import { EmployeeDepartmentEpocs } from "../models/eom/EmployeeDepartmentEpocs";
 import { EmployeeCorporateTitleEpocs } from "../models/eom/EmployeeCorporateTitleEpocs";
+import { DepartmentEmployeeCountTimeEpoc } from "../models/eom/DepartmentEmployeeCountTimeEpoc";
+import { DepartmentEmployeeCountTimeSeries } from "../models/eom/DepartmentEmployeeCountTimeSeries";
+import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
 
 interface IOrganizationRdfQuery {
     createBankOrgRdfDataGenerator(employee:Employee): Promise<string>;
     deleteAllTriple(): Promise<any>;
     getDepartmentCodes(asOfDate: Date): Promise<string>;
-    getDepartmentHistory(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentTimeSeries>;
-    getEmployeeCountByDepartmentCode(departmentCode: string, asOfDate: Date): Promise<EmployeeCountByDepartmentTimeEpoc>;
+    getDepartmentEmployeeHistoryWithJoinersAndLeavers(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentEmployeeCountWithJoinersLeaversTimeSeries>;
+    getDepartmentEmployeeCountHistory(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentEmployeeCountTimeSeries>;
+    getEmployeeCountByDepartmentAsOf(departmentCode: string, asOfDate: Date): Promise<DepartmentEmployeeCountTimeEpoc>;
     getEmployeeDepartmentHistory(): Promise<EmployeeDepartmentEpocs[]>;
     getEmployeeDepartmentHistoryByEmployeeId(employeeId: string): Promise<EmployeeDepartmentEpocs>;
     getEmployeeCorporateTitleHistoryByEmployeeId(employeeId: string): Promise<EmployeeCorporateTitleEpocs>;

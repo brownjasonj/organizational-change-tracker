@@ -4,17 +4,18 @@ import { Context, Request } from "openapi-backend";
 import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
 import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 import { sparqlEmployeeCountByDepartmentCodeQuery2 } from "../rdf/sparql/sparqlEmployeeCountByDepartmentCode";
+import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
+import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
 
 
 
 const employeeCountByDepartmentCodeHandler = async (context: Context, request: Request, response: Response) => {
     if (context.request.query.departmentCode
         && context.request.query.asOf) {
-        const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getInstance().getGraphDB();
-        const sparqlQuery = sparqlEmployeeCountByDepartmentCodeQuery2(context.request.query.departmentCode as string, new Date(context.request.query.asOf as string));
+        const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
         try {
-            const data = await graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON);
-            response.json(data)
+            const result = await rdfOrganization.getEmployeeCountByDepartmentAsOf(context.request.query.departmentCode as string, new Date(context.request.query.asOf as string));
+            response.json(result);
             return;
         }
         catch (err) {

@@ -15,6 +15,11 @@ import { sparqlCorporateTitleHistoryByEmployeeIdQuery } from "./sparql/sparqlCor
 import { sparqlEmployeeDepartmentHistoryQueryByEmployeeId } from "./sparql/sparqlEmployeeDepartmentHistoryByEmployeeIdQuery";
 import { EmployeeCorporateTitleEpocs } from "../models/eom/EmployeeCorporateTitleEpocs";
 import { EmployeeCorporateTitleEpoc } from "../models/eom/EmployeeCorporateTitleEpoc";
+import { DepartmentEmployeeCountTimeEpoc } from "../models/eom/DepartmentEmployeeCountTimeEpoc";
+import { DepartmentEmployeeCountTimeSeries } from "../models/eom/DepartmentEmployeeCountTimeSeries";
+import { DepartmentEmployeeCountWithJoinersLeaversEpoc } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeEpoc";
+import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
+import { Calendar } from "../utils/Calendar";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
@@ -39,32 +44,16 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         throw new Error("Method not implemented.");
     }
 
-    getDepartmentHistory(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentTimeSeries> {
-        this.logger.info(`getDepartmentHistory(${departmentCode}, ${startDate}, ${endDate}, ${dateStep}).`);
-        return new Promise<DepartmentTimeSeries>(async (resolve, reject) => {
-            const timeseries: DepartmentTimeSeries = new DepartmentTimeSeries(departmentCode, startDate, endDate, dateStep);
+
+    getDepartmentEmployeeCountHistory(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentEmployeeCountTimeSeries> {
+        this.logger.info(`getDepartmentEmployeeCountHistory(${departmentCode}, ${startDate}, ${endDate}, ${dateStep}).`);
+        return new Promise<DepartmentEmployeeCountTimeSeries>(async (resolve, reject) => {
+            const timeseries: DepartmentEmployeeCountTimeSeries = new DepartmentEmployeeCountTimeSeries(departmentCode, startDate, endDate, dateStep);
             const stepTime = (1000*60*60*24 * dateStep);
             for(var currentDate: Date = startDate; currentDate <= endDate; currentDate = new Date(currentDate.getTime() + stepTime)) {
                 try {
                     this.logger.info(`Calling getSparqlQuery for ${departmentCode} on ${currentDate}`);
-                    const result:EmployeeCountByDepartmentTimeEpoc = await this.getEmployeeCountByDepartmentCode(departmentCode, currentDate);
-                    const previousPeriod = new Date(currentDate.getTime() - stepTime);
-                    var joiners: EmployeeLeaverJoiner[] = await this.getDepartmentJoiners(departmentCode, previousPeriod, new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59));
-                    var leavers: EmployeeLeaverJoiner[] = await this.getDepartmentLeavers(departmentCode, previousPeriod, new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59));
-
-                    // check the Joiners/Leavers list.  It is possible that the original data has entires with an employee having and end date
-                    // and start date on the same day.  This will cause the joiner/leaver to be counted twice.  So we need to remove them.
-                    for(var joiner of joiners) {
-                        for(var leaver of leavers) {
-                            if(joiner.pid == leaver.pid) {
-                                this.logger.info(`Removing joiner/leaver ${joiner.pid} from joiner/leaver list.  Joiner: ${joiner.date} Leaver: ${leaver.date}`);
-                                joiners = joiners.filter((j) => j.pid != joiner.pid);
-                                leavers = leavers.filter((l) => l.pid != leaver.pid);
-                            }
-                        }
-                    }
-                    result.joiners = joiners;
-                    result.leavers = leavers;
+                    const result:DepartmentEmployeeCountTimeEpoc = await this.getEmployeeCountByDepartmentAsOf(departmentCode, currentDate);
                     this.logger.info(result);
                     timeseries.addPoint(result);
                 }
@@ -77,10 +66,66 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
+    getDepartmentEmployeeHistoryWithJoinersAndLeavers(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentEmployeeCountWithJoinersLeaversTimeSeries> {
+        this.logger.info(`getDepartmentHistory(${departmentCode}, ${startDate}, ${endDate}, ${dateStep}).`);
+        return new Promise<DepartmentEmployeeCountWithJoinersLeaversTimeSeries>(async (resolve, reject) => {
+            const timeseries: DepartmentEmployeeCountWithJoinersLeaversTimeSeries = new DepartmentEmployeeCountWithJoinersLeaversTimeSeries(departmentCode, startDate, endDate, dateStep);
+            // const stepTime = (1000*60*60*24 * dateStep);
+
+            var startPeriod = Calendar.getStartOfDay(startDate);
+            var endPeriod = Calendar.getEndOfNextDay(startPeriod, dateStep);
+            this.logger.info(`startPeriod: ${startPeriod} endPeriod: ${endPeriod}`);
+            // The end period is the defined as the last minute of the day
+            var employeeCountForStartPeriod:DepartmentEmployeeCountTimeEpoc = await this.getEmployeeCountByDepartmentAsOf(departmentCode, startPeriod);
+            while(endPeriod <= endDate) {
+                try {
+                    // get employee counts for start and end period
+                    this.logger.info(`Calling getSparqlQuery for ${departmentCode} on ${startPeriod}`);
+                    const employeeCountForEndPeriod: DepartmentEmployeeCountTimeEpoc = await this.getEmployeeCountByDepartmentAsOf(departmentCode, endPeriod);
+                    var joiners: EmployeeLeaverJoiner[] = await this.getDepartmentJoiners(departmentCode, startPeriod, endPeriod);
+                    var leavers: EmployeeLeaverJoiner[] = await this.getDepartmentLeavers(departmentCode, startPeriod, endPeriod);
+
+                    // check the Joiners/Leavers list.  It is possible that the original data has entires with an employee having and end date
+                    // and start date on the same day.  This will cause the joiner/leaver to be counted twice.  So we need to remove them.
+                    for(var joiner of joiners) {
+                        for(var leaver of leavers) {
+                            if(joiner.pid == leaver.pid) {
+                                // if (Calendar.isSameDay(joiner.getDate(), leaver.getDate())) {
+                                    this.logger.info(`Removing joiner/leaver ${joiner.pid} from joiner/leaver list.  Joiner: ${joiner.date} Leaver: ${leaver.date}`);
+                                    joiners = joiners.filter((j) => j.pid != joiner.pid);
+                                    leavers = leavers.filter((l) => l.pid != leaver.pid);
+                                // }
+                            }
+                        }
+                    }
+
+                    const epoc = new DepartmentEmployeeCountWithJoinersLeaversEpoc(departmentCode, startPeriod, endPeriod);
+                    epoc.setEmployeeCountAtStart(employeeCountForStartPeriod.getEmployeeCount());
+                    epoc.setEmployeeCountAtEnd(employeeCountForEndPeriod.getEmployeeCount());
+                    epoc.addJoiners(joiners);
+                    epoc.addLeavers(leavers);
+                    this.logger.info(employeeCountForEndPeriod);
+                    timeseries.addPoint(epoc);
+
+                    startPeriod = Calendar.getStartOfNextDay(endPeriod);
+                    endPeriod= Calendar.getEndOfNextDay(startPeriod, dateStep);
+                    employeeCountForStartPeriod = employeeCountForEndPeriod;
+                }
+                catch (error) {
+                    this.logger.error(error);
+                    reject(error);
+                }
+            }
+            resolve(timeseries);
+        });
+    }
+
     getDepartmentJoiners(departmentCode: string, startDate: Date, endDate: Date): Promise<EmployeeLeaverJoiner[]> {
-        this.logger.info(`getDepartmentJoiners(${departmentCode}, ${startDate}, ${endDate}).`);
+        const startDay = Calendar.getStartOfDay(startDate);
+        const endDay = Calendar.getEndOfDay(endDate);
+        this.logger.info(`getDepartmentJoiners(${departmentCode}, ${startDay}, ${endDay}).`);
         return new Promise<EmployeeLeaverJoiner[]>(async (resolve, reject) => {
-            const sparqlQuery = sparqlJoinersQueryByDepartment(departmentCode, startDate, endDate);
+            const sparqlQuery = sparqlJoinersQueryByDepartment(departmentCode, startDay, endDay);
             var joinerSet: EmployeeLeaverJoiner[] = [];
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
@@ -99,9 +144,11 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     }
 
     getDepartmentLeavers(departmentCode: string, startDate: Date, endDate: Date): Promise<EmployeeLeaverJoiner[]> {
-        this.logger.info(`getDepartmentLeavers(${departmentCode}, ${startDate}, ${endDate}).`);
+        const startDay = Calendar.getStartOfDay(startDate);
+        const endDay = Calendar.getEndOfDay(endDate);
+        this.logger.info(`getDepartmentLeavers(${departmentCode}, ${startDay}, ${endDay}).`);
         return new Promise<EmployeeLeaverJoiner[]>(async (resolve, reject) => {
-            const sparqlQuery = sparqlLeaversQueryByDepartment(departmentCode, startDate, endDate);
+            const sparqlQuery = sparqlLeaversQueryByDepartment(departmentCode, startDay, endDay);
             var joinerSet: EmployeeLeaverJoiner[] = [];
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
@@ -119,18 +166,20 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
-    getEmployeeCountByDepartmentCode(departmentCode: string, asOfDate: Date): Promise<EmployeeCountByDepartmentTimeEpoc> {
-        const sparqlQuery = sparqlDepartmentHistoryQuery(departmentCode, asOfDate, new Date(asOfDate.getFullYear(), asOfDate.getMonth(), asOfDate.getDate(), 23, 59, 59));
-        this.logger.info(`getEmployeeCountByDepartmentCode(${departmentCode}, ${asOfDate}).`);
+    getEmployeeCountByDepartmentAsOf(departmentCode: string, asOfDate: Date): Promise<DepartmentEmployeeCountTimeEpoc> {
+        const startOfDay: Date = Calendar.getStartOfDay(asOfDate);
+        const endOfDay: Date = Calendar.getEndOfDay(asOfDate);
+        const sparqlQuery = sparqlDepartmentHistoryQuery(departmentCode, startOfDay, endOfDay);
+        this.logger.info(`getEmployeeCountByDepartmentCode(${departmentCode}, ${startOfDay}).`);
         this.logger.info(`Sparql Query: ${sparqlQuery}`);
         return new Promise((resolve, reject) => {
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 this.logger.info(result);
                 if (result.results.bindings.length > 0)
-                    resolve(new EmployeeCountByDepartmentTimeEpoc(departmentCode, asOfDate, result.results.bindings[0].count.value));
+                    resolve(new DepartmentEmployeeCountTimeEpoc(departmentCode, startOfDay, endOfDay, result.results.bindings[0].count.value));
                 else 
-                    resolve(new EmployeeCountByDepartmentTimeEpoc(departmentCode, asOfDate, 0));
+                    resolve(new DepartmentEmployeeCountTimeEpoc(departmentCode, startOfDay, endOfDay, 0));
             })
             .catch((error) => {
                 this.logger.error(error);

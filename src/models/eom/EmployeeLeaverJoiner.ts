@@ -16,6 +16,10 @@ class EmployeeLeaverJoiner {
         this.date = date;
         this.status = status;
     }
+
+    getDate(): Date {
+        return this.date;
+    }
 }
 
 export { EmployeeLeaverJoiner, EmployeeLeaverJoinerType }

@@ -1,11 +1,8 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
-import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
-import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
-import { sparqlDepartmentHistoryQuery } from "../rdf/sparql/sparqlDepartmentHistoryQuery";
-import { DepartmentTimeSeries } from "../models/eom/DepartmentTimeSeries";
 import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
 import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
+import { DepartmentEmployeeCountTimeSeries } from "../models/eom/DepartmentEmployeeCountTimeSeries";
 
 
 const getDateStep = (dateStep: string): number => {
@@ -52,7 +49,7 @@ const departmentHistoryHandler = async (context: Context, request: Request, resp
 
         const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
         try {
-            const timeseries: DepartmentTimeSeries = await rdfOrganization.getDepartmentHistory(departmentCode, startDate, endDate, dateStep);
+            const timeseries: DepartmentEmployeeCountTimeSeries = await rdfOrganization.getDepartmentEmployeeCountHistory(departmentCode, startDate, endDate, dateStep);
             response.json(timeseries);
             return;
         }

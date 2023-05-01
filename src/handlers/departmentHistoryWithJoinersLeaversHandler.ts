@@ -1,8 +1,8 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
-import { DepartmentTimeSeries } from "../models/eom/DepartmentTimeSeries";
 import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
 import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
+import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
 
 const getDateStep = (dateStep: string): number => {
     switch (dateStep) {
@@ -48,7 +48,7 @@ const departmentHistoryWithJoinersLeaversHandler = async (context: Context, requ
         const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
 
         try {
-            const timeseries: DepartmentTimeSeries = await rdfOrganization.getDepartmentHistory(departmentCode, startDate, endDate, dateStep);
+            const timeseries: DepartmentEmployeeCountWithJoinersLeaversTimeSeries = await rdfOrganization.getDepartmentEmployeeHistoryWithJoinersAndLeavers(departmentCode, startDate, endDate, dateStep);
             response.json(timeseries);
             return;
         }
