@@ -36,4 +36,10 @@ describe("Calendar Testing", () => {
         const endOfNextDay = Calendar.getEndOfNextDay(date, 1);
         expect(endOfNextDay.toISOString()).toBe("2012-01-14T23:59:59.000Z");
     });
+
+    test("Given two dates with different times, but same date, the isSameDay should return true", async () => {
+        const date1 = new Date("2012-01-13T14:30:59Z");
+        const date2 = new Date("2012-01-13T23:59:59Z");
+        expect(Calendar.isSameDay(date1, date2)).toBe(true);
+    });
 });
