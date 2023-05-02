@@ -37,9 +37,33 @@ describe("Calendar Testing", () => {
         expect(endOfNextDay.toISOString()).toBe("2012-01-14T23:59:59.000Z");
     });
 
+    test("Given a date 2012-01-31T14:30:59Z, getEndofNextDay should set day to end of the next day and time to 23:59:59 ", async () => {
+        const date = new Date("2012-01-31T14:30:59Z");
+        const endOfNextDay = Calendar.getEndOfNextDay(date, 2);
+        expect(endOfNextDay.toISOString()).toBe("2012-02-02T23:59:59.000Z");
+    });
+
     test("Given two dates with different times, but same date, the isSameDay should return true", async () => {
         const date1 = new Date("2012-01-13T14:30:59Z");
         const date2 = new Date("2012-01-13T23:59:59Z");
         expect(Calendar.isSameDay(date1, date2)).toBe(true);
+    });
+
+    test("Given two dates with one day apart, the isConsequtiveDay should return true", async () => {
+        const date1 = new Date("2011-04-01T21:59:59.000Z");
+        const date2 = new Date("2011-03-31T22:00:00.000Z");
+        expect(Calendar.isConsequtiveDay(date1, date2)).toBe(true);
+    });
+
+    test("Given two dates with one day apart, the isConsequtiveDay should return true", async () => {
+        const date1 = new Date("2011-03-31T22:00:00.000Z");
+        const date2 = new Date("2011-04-01T21:59:59.000Z");
+        expect(Calendar.isConsequtiveDay(date1, date2)).toBe(true);
+    });
+
+    test("Given two dates with one day apart, the isConsequtiveDay should return true", async () => {
+        const date1 = new Date("2012-01-13T14:30:59Z");
+        const date2 = new Date("2012-01-13T23:59:59Z");
+        expect(Calendar.isConsequtiveDay(date1, date2)).toBe(true);
     });
 });

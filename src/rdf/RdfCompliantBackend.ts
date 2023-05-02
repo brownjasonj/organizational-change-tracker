@@ -90,11 +90,11 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                     for(var joiner of joiners) {
                         for(var leaver of leavers) {
                             if(joiner.pid == leaver.pid) {
-                                // if (Calendar.isSameDay(joiner.getDate(), leaver.getDate())) {
+                                if (Calendar.isConsequtiveDay(joiner.getDate(), leaver.getDate())) {
                                     this.logger.info(`Removing joiner/leaver ${joiner.pid} from joiner/leaver list.  Joiner: ${joiner.date} Leaver: ${leaver.date}`);
                                     joiners = joiners.filter((j) => j.pid != joiner.pid);
                                     leavers = leavers.filter((l) => l.pid != leaver.pid);
-                                // }
+                                }
                             }
                         }
                     }
@@ -132,7 +132,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                 this.logger.info(result);
                 for(var joiner of result.results.bindings) {
                     this.logger.info(joiner);
-                    joinerSet.push(new EmployeeLeaverJoiner(joiner.pid.value, joiner.department.value, joiner.startingDate.value, EmployeeLeaverJoinerType.JOINER));
+                    joinerSet.push(new EmployeeLeaverJoiner(joiner.pid.value, joiner.department.value, new Date(joiner.startingDate.value as string), EmployeeLeaverJoinerType.JOINER));
                 }
                 resolve(joinerSet);
             })
@@ -155,7 +155,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                 this.logger.info(result);
                 for(var joiner of result.results.bindings) {
                     this.logger.info(joiner);
-                    joinerSet.push(new EmployeeLeaverJoiner(joiner.pid.value, joiner.department.value, joiner.endingDate.value, EmployeeLeaverJoinerType.LEAVER));
+                    joinerSet.push(new EmployeeLeaverJoiner(joiner.pid.value, joiner.department.value, new Date(joiner.endingDate.value as string), EmployeeLeaverJoinerType.LEAVER));
                 }
                 resolve(joinerSet);
             })

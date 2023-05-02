@@ -15,7 +15,7 @@ class StreamDataIngestionStatusUpdater extends Writable {
 
     _write(data: string, encoding: string, callback: Function) {
         this.logger.info(`>>> Persisting the following: ${data}`);
-        this.ingestionStatus.incrementEntriesProcessed()
+        this.ingestionStatus.incrementEntriesProcessed();
         callback();
     }
 

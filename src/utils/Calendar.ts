@@ -45,6 +45,12 @@ class Calendar {
                date1.getMonth() === date2.getMonth() &&
                date1.getFullYear() === date2.getFullYear());
     }
+
+    static isConsequtiveDay(date1: Date, date2: Date): boolean {
+        return this.isSameDay(date1, date2) 
+        || this.isSameDay(this.getEndOfNextDay(date1, 1), date2)
+        || this.isSameDay(this.getEndOfNextDay(date2, 1), date1);
+    }
 }
 
 export { Calendar }
