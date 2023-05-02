@@ -72,15 +72,15 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
             const timeseries: DepartmentEmployeeCountWithJoinersLeaversTimeSeries = new DepartmentEmployeeCountWithJoinersLeaversTimeSeries(departmentCode, startDate, endDate, dateStep);
             // const stepTime = (1000*60*60*24 * dateStep);
 
+            // start period is the start of the day of the given start date
             var startPeriod = Calendar.getStartOfDay(startDate);
             var endPeriod = Calendar.getEndOfNextDay(startPeriod, dateStep);
             this.logger.info(`startPeriod: ${startPeriod} endPeriod: ${endPeriod}`);
-            // The end period is the defined as the last minute of the day
+            // Get employee count for the start period
             var employeeCountForStartPeriod:DepartmentEmployeeCountTimeEpoc = await this.getEmployeeCountByDepartmentAsOf(departmentCode, startPeriod);
             while(endPeriod <= endDate) {
                 try {
                     // get employee counts for start and end period
-                    this.logger.info(`Calling getSparqlQuery for ${departmentCode} on ${startPeriod}`);
                     const employeeCountForEndPeriod: DepartmentEmployeeCountTimeEpoc = await this.getEmployeeCountByDepartmentAsOf(departmentCode, endPeriod);
                     var joiners: EmployeeLeaverJoiner[] = await this.getDepartmentJoiners(departmentCode, startPeriod, endPeriod);
                     var leavers: EmployeeLeaverJoiner[] = await this.getDepartmentLeavers(departmentCode, startPeriod, endPeriod);
