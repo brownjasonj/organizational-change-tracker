@@ -12,26 +12,19 @@ const sparqlEmployeeDepartmentHistoryQueryByEmployeeId = (employeeId: string): s
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     prefix xsd: <http://www.w3.org/2001/XMLSchema#>
     
-    select distinct ?department ?startDate ?endDate
+    select distinct ?department (min(?date1) as ?startDate) (max(?date2) as ?endDate)
     where {
-          ?employee bank-id:pid "${employeeId}".
-          ?member org:member ?employee.
-          ?member org:organization ?org.              # find all members of the organization
-          ?org org:name ?department.
-        {
-          optional {
-            select ?member (min(?date1) as ?startDate) (max(?date2) as ?endDate)
-            where {
-                  ?member org:memberDuring ?interval.			# determine when the member was a member of the organization
-                  ?interval time:hasBeginning ?start.
-                  ?interval time:hasEnd ?end.
-                  ?start time:inXSDDateTimeStamp ?date1.
-                    ?end time:inXSDDateTimeStamp ?date2.
-            }
-            group by ?member ?org ?startDate ?endDate
-         } 
-        }
-    }`;
+        ?employee bank-id:pid "${employeeId}".
+        ?member org:member ?employee.
+        ?member org:organization ?org.              # find all members of the organization
+        ?org org:name ?department.
+        ?member org:memberDuring ?interval.			# determine when the member was a member of the organization
+        ?interval time:hasBeginning ?start.
+        ?interval time:hasEnd ?end.
+        ?start time:inXSDDateTimeStamp ?date1.
+        ?end time:inXSDDateTimeStamp ?date2.
+    }
+    group by ?member ?department ?startDate ?endDate`;
 }
 
 export { sparqlEmployeeDepartmentHistoryQueryByEmployeeId }
