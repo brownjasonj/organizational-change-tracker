@@ -1,9 +1,5 @@
 import { Response } from "express";
-import { DateTime } from "neo4j-driver";
 import { Context, Request } from "openapi-backend";
-import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
-import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
-import { sparqlEmployeeCountByDepartmentCodeQuery2 } from "../rdf/sparql/sparqlEmployeeCountByDepartmentCode";
 import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
 import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
 

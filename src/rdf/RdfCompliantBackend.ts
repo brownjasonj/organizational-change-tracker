@@ -172,6 +172,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         const sparqlQuery = sparqlDepartmentHistoryQuery(departmentCode, startOfDay, endOfDay);
         this.logger.info(`getEmployeeCountByDepartmentCode(${departmentCode}, ${startOfDay}).`);
         this.logger.info(`Sparql Query: ${sparqlQuery}`);
+        console.log(sparqlQuery);
         return new Promise((resolve, reject) => {
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {

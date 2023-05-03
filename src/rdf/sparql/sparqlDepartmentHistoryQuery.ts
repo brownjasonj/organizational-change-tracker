@@ -1,26 +1,27 @@
+import { ConfigurationManager } from "../../ConfigurationManager";
 import { EmployeeCountByDepartmentTimeEpoc } from "../../models/eom/EmployeeCountByDepartmentTimeEpoc";
+import { RdfOntologyConfiguration } from "../../models/eom/configuration/RdfOntologyConfiguration";
 import { IRdfGraphDB, SparqlQueryResultType } from "../../persistence/IRdfGraphDB";
 
 const sparqlDepartmentHistoryQuery = (departmentCode: string, startDate: Date, endDate: Date): string => {
-    return`prefix org: <http://www.w3.org/ns/org#>
-    prefix time: <http://www.w3.org/2006/time#>
-    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-    
+    const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
+    return `${ontology.getSparqlPrefixes()}
+      
     SELECT  ?name
             (count(distinct ?member) as ?count)
     WHERE {
-        ?parentorg org:name "${departmentCode}".                   #find parent organization with given name for which you want to count employees
-        ?parentorg org:name ?name.
-        ?member org:organization ?org.              # find all members of the organization
-        ?org org:subOrganizationOf* ?parentorg.     # where the organization is a suborganization of the parent organization
-        ?member org:memberDuring ?interval.         # determine when the member was a member of the organization
-        ?interval time:hasBeginning ?start.
-        ?interval time:hasEnd ?end.
-        ?start time:inXSDDateTimeStamp ?date1.
-        ?end time:inXSDDateTimeStamp ?date2.
+        ?parentorg ${ontology.getOrgPrefix()}name "${departmentCode}".                   #find parent organization with given name for which you want to count employees
+        ?parentorg ${ontology.getOrgPrefix()}name ?name.
+        ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
+        ?org ${ontology.getOrgPrefix()}subOrganizationOf* ?parentorg.     # where the organization is a suborganization of the parent organization
+        ?member ${ontology.getOrgPrefix()}memberDuring ?interval.         # determine when the member was a member of the organization
+        ?interval ${ontology.getTimePrefix()}hasBeginning ?start.
+        ?interval ${ontology.getTimePrefix()}hasEnd ?end.
+        ?start ${ontology.getTimePrefix()}inXSDDateTimeStamp ?date1.
+        ?end ${ontology.getTimePrefix()}inXSDDateTimeStamp ?date2.
         filter (
-            ?date1 <= "${startDate.toISOString()}"^^xsd:dateTime
-            && ?date2 >= "${endDate.toISOString()}"^^xsd:dateTime).
+            ?date1 <= "${startDate.toISOString()}"^^${ontology.getXsdPrefix()}dateTime
+            && ?date2 >= "${endDate.toISOString()}"^^${ontology.getXsdPrefix()}dateTime).
     }
     GROUP BY ?name ?count
     `;

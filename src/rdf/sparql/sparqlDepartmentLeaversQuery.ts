@@ -3,55 +3,48 @@
 
 */
 
+import { ConfigurationManager } from "../../ConfigurationManager";
+import { RdfOntologyConfiguration } from "../../models/eom/configuration/RdfOntologyConfiguration";
+
 const sparqlDepartmentLeaversQuery = (startPeriod: Date, endPeriod: Date) => {
-    return `prefix bank-org: <http://example.org/bank-org#>
-    prefix bank-id: <http://example.org/bank-id#>
-    prefix org: <http://www.w3.org/ns/org#>
-    prefix time: <http://www.w3.org/2006/time#>
-    prefix interval: <http://example.org/interval#>
-    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+    const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
+    return `${ontology.getSparqlPrefixes()}
     
     select distinct ?pid ?department ?interval ?endDate
     where {
-      ?member org:organization ?org.              # find all members of the organization
-      ?member org:member ?employee.
-      ?employee bank-id:pid ?pid.
-      ?org org:name ?department.
-      ?member org:memberDuring ?interval.			# determine when the member was a member of the organization
-      ?interval time:hasEnd ?end.
-      ?end time:inXSDDateTimeStamp ?endDate.
-      filter(?endDate >= "${startPeriod.toISOString()}"^^xsd:dateTime
-            && ?endDate <= "${endPeriod.toISOString()}"^^xsd:dateTime).
+      ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
+      ?member ${ontology.getOrgPrefix()}member ?employee.
+      ?employee ${ontology.getBankIdPrefix()}pid ?pid.
+      ?org ${ontology.getOrgPrefix()}name ?department.
+      ?member ${ontology.getOrgPrefix()}memberDuring ?interval.			# determine when the member was a member of the organization
+      ?interval ${ontology.getTimePrefix()}hasEnd ?end.
+      ?end ${ontology.getTimePrefix()}inXSDDateTimeStamp ?endDate.
+      filter(?endDate >= "${startPeriod.toISOString()}"^^${ontology.getXsdPrefix()}dateTime
+            && ?endDate <= "${endPeriod.toISOString()}"^^${ontology.getXsdPrefix()}dateTime).
     }`;
 }
 
 const sparqlLeaversQueryByDepartment = (departmentCode: string, startPeriod: Date, endPeriod: Date) => {
-    return `prefix bank-org: <http://example.org/bank-org#>
-    prefix bank-id: <http://example.org/bank-id#>
-    prefix org: <http://www.w3.org/ns/org#>
-    prefix time: <http://www.w3.org/2006/time#>
-    prefix interval: <http://example.org/interval#>
-    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+    const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
+    return `${ontology.getSparqlPrefixes()}
     
     select distinct ?pid ?department ?endingDate
     where {
-        ?parentorg org:name "${departmentCode}".                   #find parent organization with given name for which you want to count employees
-        ?parentorg org:name ?name.
-        ?org org:subOrganizationOf* ?parentorg.
-        ?member org:organization ?org.              # find all members of the organization
-        ?member org:member ?employee.
-        ?employee bank-id:pid ?pid.
-        ?org org:name ?department.
+        ?parentorg ${ontology.getOrgPrefix()}name "${departmentCode}".                   #find parent organization with given name for which you want to count employees
+        ?parentorg ${ontology.getOrgPrefix()}name ?name.
+        ?org ${ontology.getOrgPrefix()}subOrganizationOf* ?parentorg.
+        ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
+        ?member ${ontology.getOrgPrefix()}member ?employee.
+        ?employee ${ontology.getBankIdPrefix()}pid ?pid.
+        ?org ${ontology.getOrgPrefix()}name ?department.
 	    {
             select ?member (min(?endDate) as ?endingDate)
             where {
-                ?member org:memberDuring ?interval.			# determine when the member was a member of the organization
-                ?interval time:hasEnd ?end.
-                ?end time:inXSDDateTimeStamp ?endDate.
-                filter(?endDate >= "${startPeriod.toISOString()}"^^xsd:dateTime
-                    && ?endDate <= "${endPeriod.toISOString()}"^^xsd:dateTime).
+                ?member ${ontology.getOrgPrefix()}memberDuring ?interval.			# determine when the member was a member of the organization
+                ?interval ${ontology.getTimePrefix()}hasEnd ?end.
+                ?end ${ontology.getTimePrefix()}inXSDDateTimeStamp ?endDate.
+                filter(?endDate >= "${startPeriod.toISOString()}"^^${ontology.getXsdPrefix()}dateTime
+                    && ?endDate <= "${endPeriod.toISOString()}"^^${ontology.getXsdPrefix()}dateTime).
             }
             group by ?member ?endingDate
         }

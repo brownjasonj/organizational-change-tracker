@@ -1,9 +1,7 @@
 import { Response } from "express";
 import { Context, Handler, Request } from "openapi-backend";
-import { EmployeeDto } from "../models/dto/EmployeeDto";
 import { Employee } from "../models/eom/Employee";
 import { BankOrgRdfDataGenerator } from "../rdf/generators/BankOrgRdfDataGenerator";
-import { persisteEmployeeDtoStringData } from "../persistence/persistEmployeeDtoStringData";
 import { IRdfGraphDB } from "../persistence/IRdfGraphDB";
 import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 
@@ -18,6 +16,7 @@ const addEmployeeRecordHandler = async (context: Context, request: Request, resp
 
     BankOrgRdfDataGenerator(employeeRecord)
     .then((result) => {
+        console.log(result);
         graphDB.turtleUpdate(result)
         .then((res) => {
             console.log(res)

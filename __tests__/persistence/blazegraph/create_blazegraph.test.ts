@@ -2,6 +2,8 @@ import { exec } from "child_process"
 import {v4 as uuidv4} from 'uuid';
 import { BlazeGraphDB,BlazeGraphDBOptions } from "../../../src/persistence/blazegraph/BlazeGraphDB";
 import { IRdfGraphDB, SparqlQueryResultType } from "../../../src/persistence/IRdfGraphDB";
+import { BackEndConfiguration, BackEndDBConfiguration } from "../../../src/models/eom/configuration/BackEndConfiguration";
+import { plainToClass } from "class-transformer";
 
 
 describe("create a new blazegraph DB", () => {
@@ -20,10 +22,22 @@ describe("create a new blazegraph DB", () => {
     });
 
     test("create a new blazegraph DB", async () => {
-        // To use the BlazeGraph, uncomment the following line and comment out the OnToTextGraphDB line
-        const graphdb: IRdfGraphDB = new BlazeGraphDB(new BlazeGraphDBOptions({port: 19999}));
+        const backEndConfiguration: BackEndConfiguration = new BackEndConfiguration();
+        const backendDB: BackEndDBConfiguration = new BackEndDBConfiguration();
 
-        const querey = `prefix bank-org: <http://example.org/bank-org#>
+        backendDB.name = "blazegraph-test-database";
+        backendDB.type = "blazegraph";
+        backendDB.protocol = "http";
+        backendDB.host = "localhost";
+        backendDB.port = 19999;
+
+        backEndConfiguration.graphdbconfigs.push(backendDB);
+        backEndConfiguration.graphdb = "blazegraph-test-database";
+
+         // To use the BlazeGraph, uncomment the following line and comment out the OnToTextGraphDB line
+        const graphdb: IRdfGraphDB = new BlazeGraphDB(backEndConfiguration, plainToClass(BlazeGraphDBOptions, backendDB))
+
+        const query = `prefix bank-org: <http://example.org/bank-org#>
     prefix bank-id: <http://example.org/bank-id#>
     prefix org: <http://www.w3.org/ns/org#>
     prefix time: <http://www.w3.org/2006/time#>
@@ -53,7 +67,7 @@ describe("create a new blazegraph DB", () => {
     }`;
 
         try {
-            const result = await graphdb.sparqlQuery(querey, SparqlQueryResultType.JSON);
+            const result = await graphdb.sparqlQuery(query, SparqlQueryResultType.JSON);
             console.log(result);
         }
         catch (err) {

@@ -7,76 +7,46 @@ const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
 import { Employee } from "../../models/eom/Employee";
 import { dateIdGenerator } from "../../utils/dateIdGenerator";
 import { CorporateTitle } from "../../models/eom/CorporateTitle";
-
-type rdfNameSpace = {
-    prefix: string,
-    path: string
-};
-
-const bankOrgfNS: rdfNameSpace = {prefix: "bank-org:", path: "http://example.org/bank-org#"};
-const idNS: rdfNameSpace = {prefix: "bank-id:", path: "http://example.org/bank-id#"};
-const pidNS: rdfNameSpace = {prefix: "bank-id:", path: "http://example.org/bank-is#"};
-const foafNS: rdfNameSpace = {prefix: "foaf:", path: "http://xmlns.com/foaf/0.1#"};
-const orgNS: rdfNameSpace = {prefix: "org:", path: "http://www.w3.org/ns/org#"};
-const timeNS: rdfNameSpace = {prefix: "time:", path: "http://www.w3.org/2006/time#"};
-const rdfNS: rdfNameSpace = {prefix: "rdf:", path: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"};
-const rdfsNS: rdfNameSpace = {prefix: "rdfs:", path: "http://www.w3.org/2000/01/rdf-schema#"};
-const xsdNS: rdfNameSpace = {prefix: "xsd:", path:  "http://www.w3.org/2001/XMLSchema#"};
-
-/*
-@prefix : <http://example.org/organization#>.
-@prefix sh: <http://www.w3.org/ns/shacl#>.
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
-@prefix rdfs: <http://www.w3.org/2001/XMLSchema#>.
-@prefix xsd: <http://www.w3.org/2000/01/rdf-schema#>.
-@prefix id: <http://example.org/id#>.
-@prefix foaf: <http://xmlns.com/foaf/0.1#>.
-@prefix org: <http://www.w3.org/ns/org#>.
-@prefix time: <http://www.w3.org/2006/time#>.
-*/
+import { ConfigurationManager } from "../../ConfigurationManager";
+import { RdfOntologyConfiguration } from "../../models/eom/configuration/RdfOntologyConfiguration";
+import { classToPlain } from "class-transformer";
 
 function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
-    const writer = new Writer({ prefixes: { 'bank-org': 'http://example.org/bank-org#',
-                                            'bank-id': 'http://example.org/bank-id#',
-                                            foaf: 'http://xmlns.com/foaf/0.1#',
-                                            org: 'http://www.w3.org/ns/org#',
-                                            time: 'http://www.w3.org/2006/time#',
-                                            rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                                            rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-                                            xsd: 'http://www.w3.org/2001/XMLSchema#'
-                                        }});
+    const rdfOntologyConfig: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
 
-    const staffRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'StaffTitle');
-    const avpRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'AVPTitle');
-    const vpRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'VPTitle');
-    const dirRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'DIRTitle');
-    const mdrRoleNode: NamedNode<string> = namedNode(bankOrgfNS.prefix + 'MDRTitle');
+    const writer = new Writer({ prefixes: classToPlain(rdfOntologyConfig.getPrefixes()) });
+
+    const staffRoleNode: NamedNode<string> = namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'StaffTitle');
+    const avpRoleNode: NamedNode<string> = namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'AVPTitle');
+    const vpRoleNode: NamedNode<string> = namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'VPTitle');
+    const dirRoleNode: NamedNode<string> = namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'DIRTitle');
+    const mdrRoleNode: NamedNode<string> = namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'MDRTitle');
 
 
-    const personNodeName: string = idNS.prefix + employee.employee_id;
+    const personNodeName: string = rdfOntologyConfig.getBankIdPrefix() + employee.employee_id;
     const personNode = namedNode(personNodeName.toLowerCase());
     writer.addQuads([
-        triple(personNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'BankEmployee')),
-        triple(personNode, namedNode(idNS.prefix + 'id'),literal(employee.employee_id)),
-        triple(personNode, namedNode(pidNS.prefix + 'pid'),literal(employee.system_id)),
-        triple(personNode, namedNode(foafNS.prefix + 'firstName'), literal(employee.firstName)),
-        triple(personNode, namedNode(foafNS.prefix + 'surname'), literal(employee.secondName))
+        triple(personNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'BankEmployee')),
+        triple(personNode, namedNode(rdfOntologyConfig.getBankIdPrefix() + 'id'),literal(employee.employee_id)),
+        triple(personNode, namedNode(rdfOntologyConfig.getBankIdPrefix() + 'pid'),literal(employee.system_id)),
+        triple(personNode, namedNode(rdfOntologyConfig.getFoafPrefix() + 'firstName'), literal(employee.firstName)),
+        triple(personNode, namedNode(rdfOntologyConfig.getFoafPrefix() + 'surname'), literal(employee.secondName))
     ]);
     
     const organizationNode = createSubOrganizations(employee.department, writer);
 
     // set up the membership and time interval
-    const organizationMembershipNodeName: string = (idNS.prefix + employee.employee_id + "-" + employee.department + "-membership").toLocaleLowerCase();
+    const organizationMembershipNodeName: string = (rdfOntologyConfig.getBankIdPrefix() + employee.employee_id + "-" + employee.department + "-membership").toLocaleLowerCase();
     const organizationMembershipNode = namedNode(organizationMembershipNodeName);
 
     const organizationMembershipTimeIntervalNodeName: string = (organizationMembershipNodeName + "-timeinterval").toLocaleLowerCase();
     const organizationMembershipTimeIntervalNode = namedNode(organizationMembershipTimeIntervalNodeName);
     
     writer.addQuads([
-        triple(organizationMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'BankEmployeeOrganizationalEntityMembership')),
-        triple(organizationMembershipNode, namedNode(orgNS.prefix + 'member'), personNode),
-        triple(organizationMembershipNode, namedNode(orgNS.prefix + 'organization'), organizationNode),
-        triple(organizationMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), organizationMembershipTimeIntervalNode),
+        triple(organizationMembershipNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'BankEmployeeOrganizationalEntityMembership')),
+        triple(organizationMembershipNode, namedNode(rdfOntologyConfig.getOrgPrefix() + 'member'), personNode),
+        triple(organizationMembershipNode, namedNode(rdfOntologyConfig.getOrgPrefix() + 'organization'), organizationNode),
+        triple(organizationMembershipNode, namedNode(rdfOntologyConfig.getOrgPrefix() + 'memberDuring'), organizationMembershipTimeIntervalNode),
     ]);
 
 
@@ -87,24 +57,24 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     const deparmentStartDateId: string = dateIdGenerator(new Date(employee.departmentStartDate));
     const departmentEndDateId: string = dateIdGenerator(new Date(employee.departmentEndDate));
 
-    const organizationMembershipTimeIntervalStartDateNodeName: string = (idNS.prefix + deparmentStartDateId).toLocaleLowerCase();
+    const organizationMembershipTimeIntervalStartDateNodeName: string = (rdfOntologyConfig.getBankIdPrefix() + deparmentStartDateId).toLocaleLowerCase();
     const organizationMembershipTimeIntervalStartDateNode = namedNode(organizationMembershipTimeIntervalStartDateNodeName);
-    const organizationMembershipTimeIntervalEndDateNodeName: string = (idNS.prefix + departmentEndDateId).toLocaleLowerCase();
+    const organizationMembershipTimeIntervalEndDateNodeName: string = (rdfOntologyConfig.getBankIdPrefix() + departmentEndDateId).toLocaleLowerCase();
     const organizationMembershipTimeIntervalEndDateNode = namedNode(organizationMembershipTimeIntervalEndDateNodeName);
 
     writer.addQuads([
-        triple(organizationMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'MembershipDuration')),
-        triple(organizationMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasBeginning'), organizationMembershipTimeIntervalStartDateNode),
-        triple(organizationMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), organizationMembershipTimeIntervalEndDateNode)
+        triple(organizationMembershipTimeIntervalNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'MembershipDuration')),
+        triple(organizationMembershipTimeIntervalNode, namedNode(rdfOntologyConfig.getTimePrefix() + 'hasBeginning'), organizationMembershipTimeIntervalStartDateNode),
+        triple(organizationMembershipTimeIntervalNode, namedNode(rdfOntologyConfig.getTimePrefix() + 'hasEnd'), organizationMembershipTimeIntervalEndDateNode)
     ]);
     writer.addQuads([
-        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
-        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.departmentStartDate.toISOString(),namedNode("xsd:dateTime"))),
+        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'xsdDateTimeInstant')),
+        triple(organizationMembershipTimeIntervalStartDateNode, namedNode(rdfOntologyConfig.getTimePrefix() + 'inXSDDateTimeStamp'), literal(employee.departmentStartDate.toISOString(),namedNode("xsd:dateTime"))),
     ]);
 
     writer.addQuads([
-        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
-        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.departmentEndDate.toISOString(), namedNode("xsd:dateTime"))),
+        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'xsdDateTimeInstant')),
+        triple(organizationMembershipTimeIntervalEndDateNode, namedNode(rdfOntologyConfig.getTimePrefix() + 'inXSDDateTimeStamp'), literal(employee.departmentEndDate.toISOString(), namedNode("xsd:dateTime"))),
     ]);
 
     // Corporate Title Role Membership (e.g., Staff, Asoociate VP, VP, Director, Managing Director, etc.)
@@ -138,42 +108,42 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
             break;
     }
 
-    const corpTitleMembershipName: string = (idNS.prefix + employee.employee_id + "-" + jobTitleName + "-membership").toLocaleLowerCase();
+    const corpTitleMembershipName: string = (rdfOntologyConfig.getBankIdPrefix() + employee.employee_id + "-" + jobTitleName + "-membership").toLocaleLowerCase();
     const coprTitleMembershipNode = namedNode(corpTitleMembershipName);
     const corpTitleMembershipTimeIntervalName: string = (corpTitleMembershipName + "-timeinterval").toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalNode = namedNode(corpTitleMembershipTimeIntervalName);
     
     // corporate title membership
     writer.addQuads([
-        triple(coprTitleMembershipNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix +  'BankEmployeeCorporateTitleMembership')),
-        triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'member'), personNode),
-        triple(coprTitleMembershipNode, namedNode(bankOrgfNS.prefix + 'BankCorporateTitle'), corporateTitleNode),
-        triple(coprTitleMembershipNode, namedNode(orgNS.prefix + 'memberDuring'), corpTitleMembershipTimeIntervalNode),
+        triple(coprTitleMembershipNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getBankOrgPrefix() +  'BankEmployeeCorporateTitleMembership')),
+        triple(coprTitleMembershipNode, namedNode(rdfOntologyConfig.getOrgPrefix() + 'member'), personNode),
+        triple(coprTitleMembershipNode, namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'BankCorporateTitle'), corporateTitleNode),
+        triple(coprTitleMembershipNode, namedNode(rdfOntologyConfig.getOrgPrefix() + 'memberDuring'), corpTitleMembershipTimeIntervalNode),
     ]);
 
     const corpTitleStartDateId: string = dateIdGenerator(new Date(employee.departmentStartDate));
     const corpTitleEndDateId: string = dateIdGenerator(new Date(employee.departmentEndDate));
-    const corpTitleMembershipTimeIntervalStartDateName: string = (idNS.prefix + corpTitleStartDateId).toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalStartDateName: string = (rdfOntologyConfig.getBankIdPrefix() + corpTitleStartDateId).toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalStartDateNode = namedNode(corpTitleMembershipTimeIntervalStartDateName);
-    const corpTitleMembershipTimeIntervalEndDateName: string = (idNS.prefix + corpTitleEndDateId).toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalEndDateName: string = (rdfOntologyConfig.getBankIdPrefix() + corpTitleEndDateId).toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalEndDateNode = namedNode(corpTitleMembershipTimeIntervalEndDateName);
 
 
     // corporate title membership time interval
     writer.addQuads([
-        triple(corpTitleMembershipTimeIntervalNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'MembershipDuration')),
-        triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasBeginning'), corpTitleMembershipTimeIntervalStartDateNode),
-        triple(corpTitleMembershipTimeIntervalNode, namedNode(timeNS.prefix + 'hasEnd'), corpTitleMembershipTimeIntervalEndDateNode)
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'MembershipDuration')),
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(rdfOntologyConfig.getTimePrefix() + 'hasBeginning'), corpTitleMembershipTimeIntervalStartDateNode),
+        triple(corpTitleMembershipTimeIntervalNode, namedNode(rdfOntologyConfig.getTimePrefix() + 'hasEnd'), corpTitleMembershipTimeIntervalEndDateNode)
     ]);
 
     writer.addQuads([
-        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
-        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.departmentStartDate.toISOString(), namedNode("xsd:dateTime"))),
+        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'xsdDateTimeInstant')),
+        triple(corpTitleMembershipTimeIntervalStartDateNode, namedNode(rdfOntologyConfig.getTimePrefix() + 'inXSDDateTimeStamp'), literal(employee.departmentStartDate.toISOString(), namedNode("xsd:dateTime"))),
     ]);
 
     writer.addQuads([
-        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(rdfNS.path + 'type'), namedNode(bankOrgfNS.prefix + 'xsdDateTimeInstant')),
-        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(timeNS.prefix + 'inXSDDateTimeStamp'), literal(employee.departmentEndDate.toISOString(), namedNode("xsd:dateTime"))),
+        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'xsdDateTimeInstant')),
+        triple(corpTitleMembershipTimeIntervalEndDateNode, namedNode(rdfOntologyConfig.getTimePrefix() + 'inXSDDateTimeStamp'), literal(employee.departmentEndDate.toISOString(), namedNode("xsd:dateTime"))),
     ]);
 
     // writer.end((error, result) => console.log(result));
@@ -190,20 +160,21 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
 }
 
 function createSubOrganizations(organization: string, writer: Writer): NamedNode<string> {
+    const rdfOntologyConfig: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
     const departmentHierarchy: string[] = getDepartmentCodeHierarchy(organization).reverse();
     var departmentNodeNames: NamedNode<string>[] = [];
     var lastDepartmentNode: NamedNode<string> | null = null;
 
     departmentHierarchy.forEach((department: string) => {
-        const organizationNodeName: string = idNS.prefix + department + "-organization";
+        const organizationNodeName: string = rdfOntologyConfig.getBankIdPrefix() + department + "-organization";
         const organizationNode = namedNode(organizationNodeName.toLowerCase());
         writer.addQuads([
-            triple(organizationNode, namedNode(rdfNS.path + 'type'), namedNode(orgNS.prefix + 'FormalOrganization')),
-            triple(organizationNode, namedNode(orgNS.prefix + 'name'),literal(department))
+            triple(organizationNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getOrgPrefix() + 'FormalOrganization')),
+            triple(organizationNode, namedNode(rdfOntologyConfig.getOrgPrefix() + 'name'),literal(department))
         ]);
         if (lastDepartmentNode) {
             writer.addQuads([
-                triple(organizationNode, namedNode(orgNS.prefix + 'subOrganizationOf'), lastDepartmentNode)
+                triple(organizationNode, namedNode(rdfOntologyConfig.getOrgPrefix() + 'subOrganizationOf'), lastDepartmentNode)
             ]);
         }
         lastDepartmentNode = organizationNode;

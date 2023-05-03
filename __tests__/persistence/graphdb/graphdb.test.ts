@@ -5,7 +5,7 @@ import { IRdfGraphDB } from "../../../src/persistence/IRdfGraphDB";
 
 describe("GraphDB IRdfGraph interface testing", () => {
     test("Load single employee turtle and retreive", async () => {
-        const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getGraphDB();
+        const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getInstance().getGraphDB();
         // await graphDB.init();
         const employeeRecord : Employee = new Employee("4041234", "A041234", "John", "Hawkins", "A", "Staff",
             new Date("2012-01-01"),
