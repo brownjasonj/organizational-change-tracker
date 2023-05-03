@@ -1,20 +1,28 @@
-FROM node:10
+FROM node:latest
 
-WORKDIR /usr
+WORKDIR /usr/org-change
 
 # Get the latest version of the code from git
-RUN git clone git@github.com:brownjasonj/organizational-change-tracker.git
-RUN cd organizational-change-tracker
+COPY --from=project src src
+COPY --from=project package.json package.json
+COPY --from=project tsconfig.json tsconfig.json
+COPY --from=project config config
+COPY --from=project openapi-schemas openapi-schemas
+
+RUN ls
+RUN npm init -y
+# install the typescript compiler
+RUN npm install -g typescript
 
 # install the necessary packages
-RUN npm install --only=production
+RUN npm install
 
 # build the application for production
 RUN npm run build
-RUN cd build
+
+WORKDIR /usr/org-change/build
 
 # run the application
-RUN node ./index.js --config config/application-config.json
+WORKDIR /usr/org-change/build
 EXPOSE 8080
-
-CMD ["node","run","index.js"]
+CMD ["node","./index.js","--config config/application-config.json"]
