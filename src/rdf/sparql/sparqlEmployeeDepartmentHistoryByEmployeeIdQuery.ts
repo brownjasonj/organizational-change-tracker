@@ -14,9 +14,9 @@ const sparqlEmployeeDepartmentHistoryQueryByEmployeeId = (employeeId: string): s
     
     select distinct ?department ?startDate ?endDate
     where {
-          ?member org:organization ?org.              # find all members of the organization
-          ?member org:member ?employee.
           ?employee bank-id:pid "${employeeId}".
+          ?member org:member ?employee.
+          ?member org:organization ?org.              # find all members of the organization
           ?org org:name ?department.
         {
           optional {
