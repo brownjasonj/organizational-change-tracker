@@ -4,7 +4,7 @@ import { BlazeGraphDB,BlazeGraphDBOptions } from "../../../src/persistence/blaze
 import { IRdfGraphDB, SparqlQueryResultType } from "../../../src/persistence/IRdfGraphDB";
 import { BackEndConfiguration, BackEndDBConfiguration } from "../../../src/models/eom/configuration/BackEndConfiguration";
 import { plainToClass } from "class-transformer";
-
+import 'reflect-metadata';
 
 describe("create a new blazegraph DB", () => {
     beforeAll(async () => {
@@ -22,17 +22,40 @@ describe("create a new blazegraph DB", () => {
     });
 
     test("create a new blazegraph DB", async () => {
-        const backEndConfiguration: BackEndConfiguration = new BackEndConfiguration();
+        const backendConfiguration = {
+                "backend": {
+                    "http": {
+                        "keepAlive": true,
+                        "keepAliveMsecs": 1000,
+                        "proxy": false,
+                        "rejectUnauthorized": false
+                    },
+                    "https": {
+                        "keepAlive": true,
+                        "keepAliveMsecs": 1000,
+                        "proxy": false,
+                        "rejectUnauthorized": false,
+                        "keyPath": "/etc/letsencrypt/live/yourdomain.com/privkey.pem",
+                        "certPath": "/etc/letsencrypt/live/yourdomain.com/fullchain.pem"
+                    },
+                    "graphdb": "blazegraph-test-database",
+                    "graphdbconfigs": [
+                        {
+                            "name": "blazegraph-test-database",
+                            "type": "blazegraph",
+                            "protocol": "http",
+                            "host": "localhost",
+                            "port": 19999,
+                            "namespace": "sparql",
+                            "blazename": "blazegraph"
+                        }
+                    ]
+                }
+            };
+        const backEndConfiguration: BackEndConfiguration = plainToClass(BackEndConfiguration, backendConfiguration);
         const backendDB: BackEndDBConfiguration = new BackEndDBConfiguration();
 
-        backendDB.name = "blazegraph-test-database";
-        backendDB.type = "blazegraph";
-        backendDB.protocol = "http";
-        backendDB.host = "localhost";
-        backendDB.port = 19999;
-
-        backEndConfiguration.graphdbconfigs.push(backendDB);
-        backEndConfiguration.graphdb = "blazegraph-test-database";
+        console.log(`backEndConfiguration: ${JSON.stringify(backEndConfiguration)}`);
 
          // To use the BlazeGraph, uncomment the following line and comment out the OnToTextGraphDB line
         const graphdb: IRdfGraphDB = new BlazeGraphDB(backEndConfiguration, plainToClass(BlazeGraphDBOptions, backendDB))
