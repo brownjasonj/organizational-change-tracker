@@ -14,7 +14,7 @@ const sparqlDepartmentLeaversQuery = (startPeriod: Date, endPeriod: Date) => {
     where {
       ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
       ?member ${ontology.getOrgPrefix()}member ?employee.
-      ?employee ${ontology.getBankIdPrefix()}pid ?pid.
+      ?employee ${ontology.getBankOrgPrefix()}pid ?pid.
       ?org ${ontology.getOrgPrefix()}name ?department.
       ?member ${ontology.getOrgPrefix()}memberDuring ?interval.			# determine when the member was a member of the organization
       ?interval ${ontology.getTimePrefix()}hasEnd ?end.
@@ -35,7 +35,7 @@ const sparqlLeaversQueryByDepartment = (departmentCode: string, startPeriod: Dat
         ?org ${ontology.getOrgPrefix()}subOrganizationOf* ?parentorg.
         ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
         ?member ${ontology.getOrgPrefix()}member ?employee.
-        ?employee ${ontology.getBankIdPrefix()}pid ?pid.
+        ?employee ${ontology.getBankOrgPrefix()}pid ?pid.
         ?org ${ontology.getOrgPrefix()}name ?department.
 	    {
             select ?member (min(?endDate) as ?endingDate)

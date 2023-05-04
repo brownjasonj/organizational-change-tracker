@@ -20,6 +20,7 @@ import { DepartmentEmployeeCountTimeSeries } from "../models/eom/DepartmentEmplo
 import { DepartmentEmployeeCountWithJoinersLeaversEpoc } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeEpoc";
 import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
 import { Calendar } from "../utils/Calendar";
+import { sparqlEmployeeByEmployeeIdQuery } from "./sparql/idqueries/sparqlEmployeeByEmployeeIdQuery";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
@@ -264,7 +265,33 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                 return reject(error);
             });
         });
+    }
 
+    getEmployeeByEmployeeId(employeeId: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            const sparqlQuery = sparqlEmployeeByEmployeeIdQuery(employeeId);
+            this.logger.info(`getEmployeeByEmployeeId(${employeeId}).`);
+            this.logger.info(`Sparql Query: ${sparqlQuery}`);
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                this.logger.info(result);
+                if (result.results.bindings.length > 0)
+                result.results.bindings.forEach((binding: any) => {
+                    console.log(binding)
+                    const pid = binding.id.value;
+                    const firstName = binding.firstName.value;
+                    const lastName = binding.lastName.value;
+                    
+                    resolve([pid, firstName, lastName]);
+                });
+                else 
+                    resolve(null);
+            })
+            .catch((error) => {
+                this.logger.error(error);
+                return reject(error);
+            });
+        });
     }
 }
 

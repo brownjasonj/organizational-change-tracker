@@ -11,7 +11,7 @@ const sparqlEmployeeDepartmentHistoryQueryByEmployeeId = (employeeId: string): s
     
     select distinct ?department (min(?date1) as ?startDate) (max(?date2) as ?endDate)
     where {
-        ?employee ${ontology.getBankIdPrefix()}pid "${employeeId}".
+        ?employee ${ontology.getBankOrgPrefix()}pid "${employeeId}".
         ?member ${ontology.getOrgPrefix()}member ?employee.
         ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
         ?org ${ontology.getOrgPrefix()}name ?department.

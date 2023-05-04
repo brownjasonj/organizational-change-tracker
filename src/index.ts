@@ -33,6 +33,11 @@ import { FrontEndConfiguration } from './models/eom/configuration/FrontEndConfig
 import PinoHttp from 'pino-http';
 import { consoleLogger } from './logging/consoleLogger';
 import { employeeDepartmentHistoryByEmployeeIdHandler } from './handlers/employeeDepartmentHistoryByEmployeeIdHandler';
+import { employeeByEmployeeIdHandler } from './handlers/idhandlers/employeeByEmployeeIdHandler';
+import { membershipByMembershipIdHandler } from './handlers/idhandlers/membershipByMembershipIdHandler';
+import { organizationByOrganizationIdHandler } from './handlers/idhandlers/organizationByOrganizationIdHandler';
+import { timeByTimeIdHandler } from './handlers/idhandlers/timeByTimeIdHandler';
+import { timeIntervalByTimeIntervalIdHandler } from './handlers/idhandlers/timeIntervalByTimeIntervalIdHandler';
 
   
 
@@ -83,6 +88,11 @@ api.register('upload', addEmployeesHandler);
 api.register('operationsLoadingStatus', operationsLoadStatusHandler);
 api.register('operationsDeleteTriples', operationsDeleteTriplesHandler);
 api.register('operationsGetConfiguration', operationsGetConfiguration);
+api.register('employeeByEmployeeId', employeeByEmployeeIdHandler);
+api.register('membershipByMembershipId', membershipByMembershipIdHandler);
+api.register('organizationByOrganizationId', organizationByOrganizationIdHandler);
+api.register('timeByTimeId', timeByTimeIdHandler);
+api.register('timeIntervalByTimeIntervalId', timeIntervalByTimeIntervalIdHandler);
 
 // register mock handlers
 //api.mockResponseForOperation('test');

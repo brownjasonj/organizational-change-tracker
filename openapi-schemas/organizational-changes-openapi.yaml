@@ -348,6 +348,77 @@ paths:
         '500':
           description: Internal error.
 
+  /id/employee-id/{employeeId}:
+    get:
+      description: get the employees data by employee id
+      operationId: "employeeByEmployeeId"
+      parameters:
+        - in: path
+          name: employeeId
+          schema:
+            type: string
+          required: true
+          description: Employee Id
+      responses:
+        '200':
+          description: OK
+  /id/organization-id/{organizationId}:
+    get:
+      description: get the organization data by organization id
+      operationId: "organizationByOrganizationId"
+      parameters:
+        - in: path
+          name: organizationId
+          schema:
+            type: string
+          required: true
+          description: Organization Id
+      responses:
+        '200':
+          description: OK
+  /id/time-id/{timeId}:
+    get:
+      description: get the time data by time id
+      operationId: "timeByTimeId"
+      parameters:
+        - in: path
+          name: timeId
+          schema:
+            type: string
+          required: true
+          description: Time Id
+      responses:
+        '200':
+          description: OK
+  /id/time-interval-id/{timeIntervalId}:
+    get:
+      description: get the time interval data by time interval id
+      operationId: "timeintervalByTimeIntervalId"
+      parameters:
+        - in: path
+          name: timeIntervalId
+          schema:
+            type: string
+          required: true
+          description: Time Interval Id
+      responses:
+        '200':
+          description: OK
+  /id/membership-id/{membershipId}:
+    get:
+      description: get the membership data by mmbership id
+      operationId: "membershipByMembershipId"
+      parameters:
+        - in: path
+          name: membershipId
+          schema:
+            type: string
+          required: true
+          description: Membership Id
+      responses:
+        '200':
+          description: OK
+
 components:
   schemas:
     employee:

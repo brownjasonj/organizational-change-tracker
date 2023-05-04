@@ -13,7 +13,7 @@ const sparqlEmployeeDepartmentHistoryQuery = (): string => {
     where {
         ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
         ?member ${ontology.getOrgPrefix()}member ?employee.
-        ?employee ${ontology.getBankIdPrefix()}pid ?pid.
+        ?employee ${ontology.getBankOrgPrefix()}pid ?pid.
         ?org ${ontology.getOrgPrefix()}name ?department 
         {
           optional {

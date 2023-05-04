@@ -54,7 +54,7 @@
         "dataIngestionLogging": true,
         "dataIngestionLoggingLevel": "info",
         "dataIngestionLoggingPath": "./logs/dataIngestion/",
-        "dataIngestionDeadLetterPath": "./logs/dataIngestion/deadLetter/",
+        "dataIngestionDeadLetterPath": "./logs/dataIngestion/indigestion/",
         "queryLogging": true,
         "queryLoggingLevel": "info",
         "queryLoggingPath": "./logs/query/"
@@ -62,7 +62,11 @@
     "rdfOntologies": {
         "prefixes": {
             "bank-org": "http://example.org/bank-org#",
-            "bank-id": "http://example.org/id#",
+            "organization-id": "http://example.org/organization-id/",
+            "employee-id": "http://example.org/employee-id/",
+            "membership-id": "http://example.org/membership-id/",
+            "time-id": "http://example.org/time-id/",
+            "time-interval-id": "http://example.org/time-interval-id/",
             "org": "http://www.w3.org/ns/org#",
             "time": "http://www.w3.org/2006/time#",
             "interval": "http://example.org/interval#",
@@ -73,3 +77,4 @@
         }
     }
 }
+

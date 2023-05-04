@@ -14,7 +14,7 @@ const sparqlDepartmentJoinersQuery = (startDate: Date, endDate: Date) => {
     where {
       ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
       ?member ${ontology.getOrgPrefix()}member ?employee.
-      ?employee ${ontology.getBankIdPrefix()}pid ?pid.
+      ?employee ${ontology.getBankOrgPrefix()}pid ?pid.
       ?org ${ontology.getOrgPrefix()}name ?department.
       ?member ${ontology.getOrgPrefix()}memberDuring ?interval.			# determine when the member was a member of the organization
       ?interval ${ontology.getTimePrefix()}hasBeginning ?start.
@@ -35,7 +35,7 @@ const sparqlJoinersQueryByDepartment = (departmentCode: string, startDate: Date,
         ?org ${ontology.getOrgPrefix()}subOrganizationOf* ?parentorg.
         ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
         ?member ${ontology.getOrgPrefix()}member ?employee.
-        ?employee ${ontology.getBankIdPrefix()}pid ?pid.
+        ?employee ${ontology.getBankOrgPrefix()}pid ?pid.
         ?org ${ontology.getOrgPrefix()}name ?department.
 	    {
             select ?member (min(?startDate) as ?startingDate)

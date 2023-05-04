@@ -1,6 +1,5 @@
-import { write } from "fs";
+import * as crypto from 'crypto';
 import { Writer, DataFactory, NamedNode, Quad } from "n3";
-import { DateTime } from "neo4j-driver-core";
 
 const { namedNode, literal, defaultGraph, quad, triple } = DataFactory;
 
@@ -23,12 +22,12 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     const mdrRoleNode: NamedNode<string> = namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'MDRTitle');
 
 
-    const personNodeName: string = rdfOntologyConfig.getBankIdPrefix() + employee.employee_id;
+    const personNodeName: string = `${rdfOntologyConfig.getEmployeeDomainIdPrefix()}${employee.employee_id}`;
     const personNode = namedNode(personNodeName.toLowerCase());
     writer.addQuads([
         triple(personNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'BankEmployee')),
-        triple(personNode, namedNode(rdfOntologyConfig.getBankIdPrefix() + 'id'),literal(employee.employee_id)),
-        triple(personNode, namedNode(rdfOntologyConfig.getBankIdPrefix() + 'pid'),literal(employee.system_id)),
+        triple(personNode, namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'id'),literal(employee.employee_id)),
+        triple(personNode, namedNode(rdfOntologyConfig.getBankOrgPrefix() + 'pid'),literal(employee.system_id)),
         triple(personNode, namedNode(rdfOntologyConfig.getFoafPrefix() + 'firstName'), literal(employee.firstName)),
         triple(personNode, namedNode(rdfOntologyConfig.getFoafPrefix() + 'surname'), literal(employee.secondName))
     ]);
@@ -36,10 +35,10 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     const organizationNode = createSubOrganizations(employee.department, writer);
 
     // set up the membership and time interval
-    const organizationMembershipNodeName: string = (rdfOntologyConfig.getBankIdPrefix() + employee.employee_id + "-" + employee.department + "-membership").toLocaleLowerCase();
+    const organizationMembershipNodeName: string = (rdfOntologyConfig.getMembershipDomainIdPrefix() + getHashedIdFromIdName(employee.employee_id + "-" + employee.department + "-membership")).toLocaleLowerCase();
     const organizationMembershipNode = namedNode(organizationMembershipNodeName);
 
-    const organizationMembershipTimeIntervalNodeName: string = (organizationMembershipNodeName + "-timeinterval").toLocaleLowerCase();
+    const organizationMembershipTimeIntervalNodeName: string = (rdfOntologyConfig.getTimeIntervalDomainIdPrefix() + getHashedIdFromIdName(employee.employee_id + "-" + employee.department + "-membership-timeinterval")).toLocaleLowerCase();
     const organizationMembershipTimeIntervalNode = namedNode(organizationMembershipTimeIntervalNodeName);
     
     writer.addQuads([
@@ -57,9 +56,9 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
     const deparmentStartDateId: string = dateIdGenerator(new Date(employee.departmentStartDate));
     const departmentEndDateId: string = dateIdGenerator(new Date(employee.departmentEndDate));
 
-    const organizationMembershipTimeIntervalStartDateNodeName: string = (rdfOntologyConfig.getBankIdPrefix() + deparmentStartDateId).toLocaleLowerCase();
+    const organizationMembershipTimeIntervalStartDateNodeName: string = (rdfOntologyConfig.getTimeDomainIdPrefix() + deparmentStartDateId).toLocaleLowerCase();
     const organizationMembershipTimeIntervalStartDateNode = namedNode(organizationMembershipTimeIntervalStartDateNodeName);
-    const organizationMembershipTimeIntervalEndDateNodeName: string = (rdfOntologyConfig.getBankIdPrefix() + departmentEndDateId).toLocaleLowerCase();
+    const organizationMembershipTimeIntervalEndDateNodeName: string = (rdfOntologyConfig.getTimeDomainIdPrefix() + departmentEndDateId).toLocaleLowerCase();
     const organizationMembershipTimeIntervalEndDateNode = namedNode(organizationMembershipTimeIntervalEndDateNodeName);
 
     writer.addQuads([
@@ -108,9 +107,9 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
             break;
     }
 
-    const corpTitleMembershipName: string = (rdfOntologyConfig.getBankIdPrefix() + employee.employee_id + "-" + jobTitleName + "-membership").toLocaleLowerCase();
+    const corpTitleMembershipName: string = (rdfOntologyConfig.getMembershipDomainIdPrefix() + getHashedIdFromIdName(employee.employee_id + "-" + jobTitleName + "-membership")).toLocaleLowerCase();
     const coprTitleMembershipNode = namedNode(corpTitleMembershipName);
-    const corpTitleMembershipTimeIntervalName: string = (corpTitleMembershipName + "-timeinterval").toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalName: string = (rdfOntologyConfig.getTimeIntervalDomainIdPrefix() + getHashedIdFromIdName(employee.employee_id + "-" + jobTitleName + "-membership-timeinterval")).toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalNode = namedNode(corpTitleMembershipTimeIntervalName);
     
     // corporate title membership
@@ -123,9 +122,9 @@ function BankOrgRdfDataGenerator(employee:Employee): Promise<string> {
 
     const corpTitleStartDateId: string = dateIdGenerator(new Date(employee.departmentStartDate));
     const corpTitleEndDateId: string = dateIdGenerator(new Date(employee.departmentEndDate));
-    const corpTitleMembershipTimeIntervalStartDateName: string = (rdfOntologyConfig.getBankIdPrefix() + corpTitleStartDateId).toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalStartDateName: string = (rdfOntologyConfig.getTimeDomainIdPrefix() + corpTitleStartDateId).toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalStartDateNode = namedNode(corpTitleMembershipTimeIntervalStartDateName);
-    const corpTitleMembershipTimeIntervalEndDateName: string = (rdfOntologyConfig.getBankIdPrefix() + corpTitleEndDateId).toLocaleLowerCase();
+    const corpTitleMembershipTimeIntervalEndDateName: string = (rdfOntologyConfig.getTimeDomainIdPrefix() + corpTitleEndDateId).toLocaleLowerCase();
     const corpTitleMembershipTimeIntervalEndDateNode = namedNode(corpTitleMembershipTimeIntervalEndDateName);
 
 
@@ -166,7 +165,7 @@ function createSubOrganizations(organization: string, writer: Writer): NamedNode
     var lastDepartmentNode: NamedNode<string> | null = null;
 
     departmentHierarchy.forEach((department: string) => {
-        const organizationNodeName: string = rdfOntologyConfig.getBankIdPrefix() + department + "-organization";
+        const organizationNodeName: string = rdfOntologyConfig.getIdPrefix() + getHashedIdFromIdName(department + "-organization");
         const organizationNode = namedNode(organizationNodeName.toLowerCase());
         writer.addQuads([
             triple(organizationNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getOrgPrefix() + 'FormalOrganization')),
@@ -197,5 +196,9 @@ function getDepartmentCodeHierarchy(str: string): string[] {
     return result;
 }
 
+
+function getHashedIdFromIdName(idName: string): string {
+    return crypto.createHash('md5').update(idName).digest('hex');
+}
 
 export { BankOrgRdfDataGenerator };
