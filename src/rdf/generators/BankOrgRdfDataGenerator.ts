@@ -165,7 +165,7 @@ function createSubOrganizations(organization: string, writer: Writer): NamedNode
     var lastDepartmentNode: NamedNode<string> | null = null;
 
     departmentHierarchy.forEach((department: string) => {
-        const organizationNodeName: string = rdfOntologyConfig.getIdPrefix() + getHashedIdFromIdName(department + "-organization");
+        const organizationNodeName: string = rdfOntologyConfig.getOrganizationIdPrefix() + getHashedIdFromIdName(department + "-organization");
         const organizationNode = namedNode(organizationNodeName.toLowerCase());
         writer.addQuads([
             triple(organizationNode, namedNode(rdfOntologyConfig.getRdfPrefix() + 'type'), namedNode(rdfOntologyConfig.getOrgPrefix() + 'FormalOrganization')),

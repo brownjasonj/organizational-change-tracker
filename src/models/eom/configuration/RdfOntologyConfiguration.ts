@@ -104,7 +104,7 @@ class RdfOntologyConfiguration {
         return `${bankOrgName}:`;
     }
 
-    public getIdPrefix(): string {
+    public getOrganizationIdPrefix(): string {
         return `${idOrg}:`;
     }
 

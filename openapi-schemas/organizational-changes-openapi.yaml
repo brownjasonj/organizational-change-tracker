@@ -393,7 +393,7 @@ paths:
   /id/time-interval-id/{timeIntervalId}:
     get:
       description: get the time interval data by time interval id
-      operationId: "timeintervalByTimeIntervalId"
+      operationId: "timeIntervalByTimeIntervalId"
       parameters:
         - in: path
           name: timeIntervalId

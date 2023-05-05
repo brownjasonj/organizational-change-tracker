@@ -21,6 +21,10 @@ import { DepartmentEmployeeCountWithJoinersLeaversEpoc } from "../models/eom/Dep
 import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
 import { Calendar } from "../utils/Calendar";
 import { sparqlEmployeeByEmployeeIdQuery } from "./sparql/idqueries/sparqlEmployeeByEmployeeIdQuery";
+import { sparqlOrganizationByOrganizationIdQuery } from "./sparql/idqueries/sparqlOrganizationByOrganizationIdQuery";
+import { sparqlMembershipByMembershipIdQuery } from "./sparql/idqueries/sparqlMembershipByMembershipIdQuery";
+import { sparqlTimeByTimeIdQuery } from "./sparql/idqueries/sparqlTimeByTimeIdQuery";
+import { sparqlTimeIntervalByTimeIntervalId } from "./sparql/idqueries/sparqlTimeIntervalByTimeIntervalIdQuery";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
@@ -286,6 +290,101 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                 });
                 else 
                     resolve(null);
+            })
+            .catch((error) => {
+                this.logger.error(error);
+                return reject(error);
+            });
+        });
+    }
+
+    getOrganizationByOrganizationId(organizationId: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            const sparqlQuery = sparqlOrganizationByOrganizationIdQuery(organizationId);
+            this.logger.info(`getOrganizationByOrganizationId(${organizationId}).`);
+            this.logger.info(`Sparql Query: ${sparqlQuery}`);
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                this.logger.info(result);
+                if (result.results.bindings.length > 0)
+                    result.results.bindings.forEach((binding: any) => {
+                        console.log(binding)
+                        const orgName = binding.orgName.value;                    
+                        resolve([orgName]);
+                    });
+                else 
+                    resolve(null);
+            })
+            .catch((error) => {
+                this.logger.error(error);
+                return reject(error);
+            });
+        });
+    }
+
+
+    getMembershipByMembershipId(membershipId: string): Promise<Map<string, string>> {
+        return new Promise<Map<string, string>>((resolve, reject) => {
+            const sparqlQuery = sparqlMembershipByMembershipIdQuery(membershipId);
+            this.logger.info(`getMembershipByMembershipId(${membershipId}).`);
+            this.logger.info(`Sparql Query: ${sparqlQuery}`);
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                this.logger.info(result);
+                var returnResult = new Map<string, string>();
+                if (result.results.bindings.length > 0) {
+                    result.results.bindings.forEach((binding: any) => {
+                        console.log(binding)
+                        returnResult.set(binding.predicate.value, binding.object.value);
+                    });
+                }
+                resolve(returnResult);
+            })
+            .catch((error) => {
+                this.logger.error(error);
+                return reject(error);
+            });
+        });
+    }
+
+    getTimeByTimeId(timeId: string): Promise<Date> {
+        return new Promise<Date>((resolve, reject) => {
+            const sparqlQuery = sparqlTimeByTimeIdQuery(timeId);
+            this.logger.info(`getTimeByTimeId(${timeId}).`);
+            this.logger.info(`Sparql Query: ${sparqlQuery}`);
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                this.logger.info(result);
+                if (result.results.bindings.length > 0)
+                    result.results.bindings.forEach((binding: any) => {
+                        console.log(binding)
+                        const dateTime: Date = new Date(binding.dateTime.value);                    
+                        resolve(dateTime);
+                    });
+                })
+            .catch((error) => {
+                this.logger.error(error);
+                return reject(error);
+            });
+        });
+    }
+
+    getTimeIntervalByTimeIntervalId(timeIntervalId: string): Promise<Map<string, string>> {
+        return new Promise<Map<string, string>>((resolve, reject) => {
+            const sparqlQuery = sparqlTimeIntervalByTimeIntervalId(timeIntervalId);
+            this.logger.info(`getTimeIntervalByTimeIntervalId(${timeIntervalId}).`);
+            this.logger.info(`Sparql Query: ${sparqlQuery}`);
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                this.logger.info(result);
+                var returnResult = new Map<string, string>();
+                if (result.results.bindings.length > 0) {
+                    result.results.bindings.forEach((binding: any) => {
+                        console.log(binding)
+                        returnResult.set(binding.predicate.value, binding.object.value);
+                    });
+                }
+                resolve(returnResult);
             })
             .catch((error) => {
                 this.logger.error(error);

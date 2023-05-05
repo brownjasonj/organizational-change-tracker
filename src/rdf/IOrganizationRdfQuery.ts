@@ -21,6 +21,10 @@ interface IOrganizationRdfQuery {
 
     // id lookups
     getEmployeeByEmployeeId(employeeId: string): Promise<any>;
+    getOrganizationByOrganizationId(organizationId: string): Promise<any>;
+    getMembershipByMembershipId(membershipId: string): Promise<Map<string,string>>;
+    getTimeByTimeId(timeId: string): Promise<Date>;
+    getTimeIntervalByTimeIntervalId(timeIntervalId: string): Promise<Map<string,string>>;
 }
 
 export { IOrganizationRdfQuery }
