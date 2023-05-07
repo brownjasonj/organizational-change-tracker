@@ -1,4 +1,5 @@
 import { dateIdGenerator } from "../src/utils/dateIdGenerator";
+import 'reflect-metadata';
 
 describe("Date Id Generator Testing", () => {
     test("Test Date Id Generator 2012-01-01T00:00:00.000Z", async () => {

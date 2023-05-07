@@ -1,4 +1,4 @@
-import { exec } from "child_process"
+import { ChildProcess, exec } from "child_process"
 import {v4 as uuidv4} from 'uuid';
 import { BlazeGraphDB,BlazeGraphDBOptions } from "../../../src/persistence/blazegraph/BlazeGraphDB";
 import { IRdfGraphDB, SparqlQueryResultType } from "../../../src/persistence/IRdfGraphDB";
@@ -7,58 +7,68 @@ import { plainToClass } from "class-transformer";
 import 'reflect-metadata';
 
 describe("create a new blazegraph DB", () => {
+    let testDirectory: string;
+    let blazegraphProcess: ChildProcess;
+
     beforeAll(async () => {
         const myuuid = uuidv4();
-        const testDirectory = `blazegraph-test-database${myuuid}`;
+        testDirectory = `blazegraph-test-database-${myuuid}`;
 //        const createdDirectory = await exec(`mkdir ${testDirectory}; cd ${testDirectory}`);
         // await exec(`mkdir ${testDirectory}`);
         // await exec(`cd ${testDirectory}`);
         // await exec(`wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar`);
         // await exec(`java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);
-        await exec(`mkdir ${testDirectory};
+        blazegraphProcess = await exec(`mkdir ${testDirectory};
                     cd ${testDirectory};
                     wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar;
                     java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);
     });
 
+    afterAll(async () => {
+        await blazegraphProcess.kill();
+        await exec(`rm -rf ${testDirectory}`);
+    });
+
     test("create a new blazegraph DB", async () => {
+        const testDBConfigurationName = "blazegraph-test-database";
         const backendConfiguration = {
-                "backend": {
-                    "http": {
-                        "keepAlive": true,
-                        "keepAliveMsecs": 1000,
-                        "proxy": false,
-                        "rejectUnauthorized": false
-                    },
-                    "https": {
-                        "keepAlive": true,
-                        "keepAliveMsecs": 1000,
-                        "proxy": false,
-                        "rejectUnauthorized": false,
-                        "keyPath": "/etc/letsencrypt/live/yourdomain.com/privkey.pem",
-                        "certPath": "/etc/letsencrypt/live/yourdomain.com/fullchain.pem"
-                    },
-                    "graphdb": "blazegraph-test-database",
-                    "graphdbconfigs": [
-                        {
-                            "name": "blazegraph-test-database",
-                            "type": "blazegraph",
-                            "protocol": "http",
-                            "host": "localhost",
-                            "port": 19999,
-                            "namespace": "sparql",
-                            "blazename": "blazegraph"
-                        }
-                    ]
-                }
+                "http": {
+                    "keepAlive": true,
+                    "keepAliveMsecs": 1000,
+                    "proxy": false,
+                    "rejectUnauthorized": false
+                },
+                "https": {
+                    "keepAlive": true,
+                    "keepAliveMsecs": 1000,
+                    "proxy": false,
+                    "rejectUnauthorized": false,
+                    "keyPath": "/etc/letsencrypt/live/yourdomain.com/privkey.pem",
+                    "certPath": "/etc/letsencrypt/live/yourdomain.com/fullchain.pem"
+                },
+                "graphdb": testDBConfigurationName,
+                "graphdbconfigs": [
+                    {
+                        "name": testDBConfigurationName,
+                        "type": "blazegraph",
+                        "protocol": "http",
+                        "host": "localhost",
+                        "port": 19999,
+                        "namespace": "sparql",
+                        "blazename": "blazegraph"
+                    }
+                ]
             };
         const backEndConfiguration: BackEndConfiguration = plainToClass(BackEndConfiguration, backendConfiguration);
-        const backendDB: BackEndDBConfiguration = new BackEndDBConfiguration();
+        const blazegraphDBOptions: BlazeGraphDBOptions = plainToClass(BlazeGraphDBOptions, backEndConfiguration.getGraphDBConfiguration(testDBConfigurationName));
 
         console.log(`backEndConfiguration: ${JSON.stringify(backEndConfiguration)}`);
+        // console.log(`blazegraphDBOptions: ${JSON.stringify(backEndConfiguration.getGraphDBConfiguration(testDBConfigurationName))}`);
+        console.log(`blazegraphDBOptions: ${JSON.stringify(blazegraphDBOptions)}`);
+        
 
          // To use the BlazeGraph, uncomment the following line and comment out the OnToTextGraphDB line
-        const graphdb: IRdfGraphDB = new BlazeGraphDB(backEndConfiguration, plainToClass(BlazeGraphDBOptions, backendDB))
+        const graphdb: IRdfGraphDB = new BlazeGraphDB(backEndConfiguration, blazegraphDBOptions);
 
         const query = `prefix bank-org: <http://example.org/bank-org#>
     prefix bank-id: <http://example.org/bank-id#>

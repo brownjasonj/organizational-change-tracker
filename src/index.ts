@@ -38,6 +38,8 @@ import { membershipByMembershipIdHandler } from './handlers/idhandlers/membershi
 import { organizationByOrganizationIdHandler } from './handlers/idhandlers/organizationByOrganizationIdHandler';
 import { timeByTimeIdHandler } from './handlers/idhandlers/timeByTimeIdHandler';
 import { timeIntervalByTimeIntervalIdHandler } from './handlers/idhandlers/timeIntervalByTimeIntervalIdHandler';
+import { BackEndConfiguration } from './models/eom/configuration/BackEndConfiguration';
+import { GraphPersistenceFactory } from './persistence/GraphPersistenceFactory';
 
   
 
@@ -55,7 +57,7 @@ app.use(cors({
     origin: 'http://localhost:3000',
 }));
 
-const openApiDocumentPath = './openapi-schemas/organizational-changes-openapi.yaml';
+const openApiDocumentPath = './openapi-schemas/organizational-change-openapi.yaml';
 
 // create api with your definition file or object
 const api = new OpenAPIBackend({ 
@@ -126,6 +128,16 @@ if (argv.config) {
 // get the application configuration
 const applicationConfiguration: ApplicationConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration();
 
+/*
+    Set up the back end server according to the given configuration
+*/
+const backEndConfiguration: BackEndConfiguration = applicationConfiguration.getBackEndConfiguration();
+
+GraphPersistenceFactory.setBackEndConfiguration(backEndConfiguration);
+
+/*
+    Set up the front end server according to the given configuration
+*/
 const frontEndConfiguration: FrontEndConfiguration = applicationConfiguration.getFrontEndConfiguration();
 
 if (frontEndConfiguration.isHttpsEnabled()) {

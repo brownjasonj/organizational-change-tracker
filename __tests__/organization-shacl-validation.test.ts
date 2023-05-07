@@ -1,6 +1,7 @@
 import SHACLValidator from 'rdf-validate-shacl';
 import { loadN3DataSetfromFile, loadN3DataSetfromString } from '../src/utils/loadN3DataSet';
 import factory from 'rdf-ext';
+import 'reflect-metadata';
 import { Employee } from "../src/models/eom/Employee";
 import { BankOrgRdfDataGenerator } from "../src/rdf/generators/BankOrgRdfDataGenerator";
 

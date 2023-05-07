@@ -7,25 +7,40 @@ import { OnToTextGraphDB } from "./graphdb/OnToTextGraphDB";
 import { consoleLogger } from "../logging/consoleLogger";
 
 class GraphPersistenceFactory {
-    private static singleton: GraphPersistenceFactory;
+    private static singleton: GraphPersistenceFactory | undefined = undefined;
+    private static backEndConfiguration: BackEndConfiguration | undefined = undefined;
     private graphDB: IRdfGraphDB;
 
     constructor (graphDB: IRdfGraphDB) {
         this.graphDB = graphDB;
     }
 
+    public static setBackEndConfiguration(backEndConfiguration: BackEndConfiguration) {
+        if (!GraphPersistenceFactory.singleton) {
+            GraphPersistenceFactory.backEndConfiguration = backEndConfiguration;
+        }
+        else {
+            throw new Error("GraphPersistenceFactory already instantiated");
+        }
+    }
+
     public static getInstance(): GraphPersistenceFactory {
-        if (GraphPersistenceFactory.singleton == null) {
+        if (!GraphPersistenceFactory.singleton) {
             consoleLogger.info("GraphPersistenceFactory is NULL")
-            const bec = ConfigurationManager.getInstance().getApplicationConfiguration().getBackEndConfiguration();
-            consoleLogger.info(bec);
-            const bedbc:BackEndDBConfiguration = bec.getGraphDBConfiguration(bec.getGraphDB())! as BackEndDBConfiguration;
-            consoleLogger.info(bedbc);
-            switch(bedbc.getType()) {
-                case "blazegraph":
-                default:
-                    GraphPersistenceFactory.singleton = new GraphPersistenceFactory(new BlazeGraphDB(bec, plainToClass(BlazeGraphDBOptions, bedbc)));
-                    break;
+            if (GraphPersistenceFactory.backEndConfiguration) {
+                // const bec = ConfigurationManager.getInstance().getApplicationConfiguration().getBackEndConfiguration();
+                // consoleLogger.info(bec);
+                const backEndDBConfiguration:BackEndDBConfiguration = GraphPersistenceFactory.backEndConfiguration.getGraphDBConfiguration(GraphPersistenceFactory.backEndConfiguration.getGraphDB())! as BackEndDBConfiguration;
+                consoleLogger.info(backEndDBConfiguration);
+                switch(backEndDBConfiguration.getType()) {
+                    case "blazegraph":
+                    default:
+                        GraphPersistenceFactory.singleton = new GraphPersistenceFactory(new BlazeGraphDB(GraphPersistenceFactory.backEndConfiguration, plainToClass(BlazeGraphDBOptions, backEndDBConfiguration)));
+                        break;
+                }
+            }
+            else {
+                throw new Error("BackEndConfiguration is undefined!");
             }
         }
         return GraphPersistenceFactory.singleton;
