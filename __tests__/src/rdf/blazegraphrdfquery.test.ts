@@ -20,10 +20,12 @@ describe("create a new blazegraph DB", () => {
         const myuuid = uuidv4();
         testDirectory = `blazegraph-test-database-${myuuid}`;
 
+        const blazegraphPort = 19999;
+
         blazegraphProcess = await exec(`mkdir ${testDirectory};
                     cd ${testDirectory};
                     wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar;
-                    java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);
+                    java -server -Xmx64g -Djetty.port=${blazegraphPort} -jar blazegraph.jar&`);
 
         const testDBConfigurationName = "blazegraph-test-database";
         const backendConfiguration = {
@@ -48,7 +50,7 @@ describe("create a new blazegraph DB", () => {
                         "type": "blazegraph",
                         "protocol": "http",
                         "host": "localhost",
-                        "port": 19999,
+                        "port": blazegraphPort,
                         "namespace": "sparql",
                         "blazename": "blazegraph"
                     }

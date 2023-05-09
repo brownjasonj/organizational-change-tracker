@@ -1,4 +1,4 @@
-const sparqlDeleteAllTriples = (graph: string) => `
+const sparqlDeleteAllTriples = () => `
 delete {
     ?s ?p ?o .
 } where {
