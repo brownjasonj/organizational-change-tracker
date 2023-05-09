@@ -55,13 +55,11 @@ class RdfOntologyConfiguration {
       }, { toClassOnly: true })
     @Transform(value => {
         const trains: {[key: string]: object} = {};
-
-        if (value && value instanceof Map) {
-            for (const entry of value.entries()) {
+        if (value && value.value instanceof Map) {
+            for (const entry of value.value.entries()) {
                 trains[entry[0]] = entry[1];
             }
         }
-        console.log(trains);
         return trains;
       }, { toPlainOnly: true })
     prefixes: Map<string,String> = new Map();

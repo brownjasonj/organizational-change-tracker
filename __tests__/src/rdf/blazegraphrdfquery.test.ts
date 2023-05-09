@@ -5,31 +5,26 @@ import { IRdfGraphDB, SparqlQueryResultType } from "../../../src/persistence/IRd
 import { BackEndConfiguration, BackEndDBConfiguration } from "../../../src/models/eom/configuration/BackEndConfiguration";
 import { plainToClass } from "class-transformer";
 import 'reflect-metadata';
+import { BlazeGraphRdfQuery } from "../../../src/rdf/BlazeGraphRdfQuery";
+import { consoleLogger } from "../../../src/logging/consoleLogger";
+import { Employee } from "../../../src/models/eom/Employee";
+import { BankOrgRdfDataGenerator } from "../../../src/rdf/generators/BankOrgRdfDataGenerator";
+import { GraphPersistenceFactory } from "../../../src/persistence/GraphPersistenceFactory";
 
 describe("create a new blazegraph DB", () => {
     let testDirectory: string;
     let blazegraphProcess: ChildProcess;
+    let blazegaphRdfQuery: BlazeGraphRdfQuery;
 
     beforeAll(async () => {
         const myuuid = uuidv4();
         testDirectory = `blazegraph-test-database-${myuuid}`;
-//        const createdDirectory = await exec(`mkdir ${testDirectory}; cd ${testDirectory}`);
-        // await exec(`mkdir ${testDirectory}`);
-        // await exec(`cd ${testDirectory}`);
-        // await exec(`wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar`);
-        // await exec(`java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);
+
         blazegraphProcess = await exec(`mkdir ${testDirectory};
                     cd ${testDirectory};
                     wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar;
                     java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);
-    });
 
-    afterAll(async () => {
-        await blazegraphProcess.kill();
-        await exec(`rm -rf ${testDirectory}`);
-    });
-
-    test("create a new blazegraph DB", async () => {
         const testDBConfigurationName = "blazegraph-test-database";
         const backendConfiguration = {
                 "http": {
@@ -62,45 +57,38 @@ describe("create a new blazegraph DB", () => {
         const backEndConfiguration: BackEndConfiguration = plainToClass(BackEndConfiguration, backendConfiguration);
         const blazegraphDBOptions: BlazeGraphDBOptions = plainToClass(BlazeGraphDBOptions, backEndConfiguration.getGraphDBConfiguration(testDBConfigurationName));
 
+        GraphPersistenceFactory.setBackEndConfiguration(backEndConfiguration);
+        
         console.log(`backEndConfiguration: ${JSON.stringify(backEndConfiguration)}`);
         // console.log(`blazegraphDBOptions: ${JSON.stringify(backEndConfiguration.getGraphDBConfiguration(testDBConfigurationName))}`);
         console.log(`blazegraphDBOptions: ${JSON.stringify(blazegraphDBOptions)}`);
         
 
-         // To use the BlazeGraph, uncomment the following line and comment out the OnToTextGraphDB line
+        // To use the BlazeGraph, uncomment the following line and comment out the OnToTextGraphDB line
         const graphdb: IRdfGraphDB = new BlazeGraphDB(backEndConfiguration, blazegraphDBOptions);
 
-        const query = `prefix bank-org: <http://example.org/bank-org#>
-    prefix bank-id: <http://example.org/bank-id#>
-    prefix org: <http://www.w3.org/ns/org#>
-    prefix time: <http://www.w3.org/2006/time#>
-    prefix interval: <http://example.org/interval#>
-    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-    
-    select  distinct ?employee ?corpTitle ?startDate ?endDate
-	where {
-        ?employee rdf:type bank-org:BankEmployee.
-		?corpTitleMembership org:member ?employee.
-        ?employee bank-id:id "e10".
-        ?corpTitleMembership bank-org:BankCorporateTitle ?corpTitle.
-        {
-            optional {
-              select ?corpTitleMembership (min(?date1) as ?startDate) (max(?date2) as ?endDate)
-              where {
-                    ?corpTitleMembership org:memberDuring ?interval.			# determine when the member was a member of the organization
-                    ?interval time:hasBeginning ?start.
-                    ?interval time:hasEnd ?end.
-                    ?start time:inXSDDateTimeStamp ?date1.
-                      ?end time:inXSDDateTimeStamp ?date2.
-              }
-              group by ?corpTitleMembership ?org ?startDate ?endDate
-           } 
-          }
-    }`;
+        blazegaphRdfQuery = new BlazeGraphRdfQuery(graphdb, consoleLogger);
 
+        // insert an employee population that we will run all the tests against
+
+        const employeeRecord : Employee = new Employee("4041234", "A041234", "John", "Hawkins", "A", "Staff",
+            new Date("2012-01-01"),
+            new Date("2012-12-31"),
+            new Date("2009-11-02"),
+            new Date("9999-12-31"));
+
+        const turtleData: string = await BankOrgRdfDataGenerator(employeeRecord);
+        const insertResponse = await graphdb.turtleUpdate(turtleData); 
+    });
+
+    afterAll(async () => {
+        await blazegraphProcess.kill();
+        await exec(`rm -rf ${testDirectory}`);
+    });
+
+    test("Test retreiving employee by Id", async () => {
         try {
-            const result = await graphdb.sparqlQuery(query, SparqlQueryResultType.JSON);
+            const result = await blazegaphRdfQuery.getEmployeeByEmployeeId("4041234");
             console.log(result);
         }
         catch (err) {
@@ -108,5 +96,4 @@ describe("create a new blazegraph DB", () => {
         }
         expect(true).toBe(true);
     });
-    }
-)
+});

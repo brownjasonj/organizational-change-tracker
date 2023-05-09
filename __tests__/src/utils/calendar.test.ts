@@ -1,4 +1,4 @@
-import { Calendar } from "../../src/utils/Calendar";
+import { Calendar } from "../../../src/utils/Calendar";
 
 describe("Calendar Testing", () => {
     test("Given a date 2012-01-01T14:30:59Z, getStartOfDate should set time to 00:00:00", async () => {

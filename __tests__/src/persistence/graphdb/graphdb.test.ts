@@ -1,12 +1,12 @@
-import { Employee } from "../../../src/models/eom/Employee";
-import { BankOrgRdfDataGenerator } from "../../../src/rdf/generators/BankOrgRdfDataGenerator";
-import { GraphPersistenceFactory } from "../../../src/persistence/GraphPersistenceFactory";
-import { IRdfGraphDB } from "../../../src/persistence/IRdfGraphDB";
+import { Employee } from "../../../../src/models/eom/Employee";
+import { BankOrgRdfDataGenerator } from "../../../../src/rdf/generators/BankOrgRdfDataGenerator";
+import { GraphPersistenceFactory } from "../../../../src/persistence/GraphPersistenceFactory";
+import { IRdfGraphDB } from "../../../../src/persistence/IRdfGraphDB";
 import 'reflect-metadata';
 import {v4 as uuidv4} from 'uuid';
 
 import { ChildProcess, exec } from "child_process";
-import { BackEndConfiguration } from "../../../src/models/eom/configuration/BackEndConfiguration";
+import { BackEndConfiguration } from "../../../../src/models/eom/configuration/BackEndConfiguration";
 import { plainToClass } from "class-transformer";
 
 describe("GraphDB IRdfGraph interface testing", () => {
@@ -21,8 +21,6 @@ describe("GraphDB IRdfGraph interface testing", () => {
         // await exec(`cd ${testDirectory}`);
         // await exec(`wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar`);
         // await exec(`java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);
-
-
 
         const testDBConfigurationName = "blazegraph-test-database";
         const blazegraphPort = 19999;

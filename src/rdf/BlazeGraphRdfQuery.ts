@@ -5,7 +5,7 @@ import { BlazeGraphDB, BlazeGraphDBOptions } from "../persistence/blazegraph/Bla
 import { RdfCompliantBackend } from "./RdfCompliantBackend";
 
 class BlazeGraphRdfQuery extends RdfCompliantBackend {
-    constructor(logger: Logger) {
+    constructor(graphDB: IRdfGraphDB, logger: Logger) {
         super(GraphPersistenceFactory.getInstance().getGraphDB(), logger);
     }
 }
