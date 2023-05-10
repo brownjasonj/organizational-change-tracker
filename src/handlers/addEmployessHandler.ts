@@ -5,8 +5,8 @@ import { loadN3DataSetfromFile } from "../utils/loadN3DataSet";
 import { DataIngestionStreamsFactory } from "../dataingestors/DataIngestionStreamsFactory";
 import { StreamDataIngestorType } from "../dataingestors/StreamDataIngestorType";
 import { ConfigurationManager } from "../ConfigurationManager";
-import { createDataIngestionLogger } from "../logging/createdataIngestionLogger";
 import { createFailedDataIngestionLogger } from "../logging/createFailedDataIngestionLogger";
+import { createDataIngestionLogger } from "../logging/createDataIngestionLogger";
 
 const getResourceLocation = (requestId: string) =>  {
     const frontEndConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration();
