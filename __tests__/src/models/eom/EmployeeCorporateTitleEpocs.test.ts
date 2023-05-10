@@ -1,6 +1,6 @@
-import { CorporateTitle } from "../../../../../src/models/eom/CorporateTitle";
-import { EmployeeCorporateTitleEpoc } from "../../../../../src/models/eom/EmployeeCorporateTitleEpoc";
-import { EmployeeCorporateTitleEpocs } from "../../../../../src/models/eom/EmployeeCorporateTitleEpocs";
+import { CorporateTitle } from "../../../../src/models/eom/CorporateTitle";
+import { EmployeeCorporateTitleEpoc } from "../../../../src/models/eom/EmployeeCorporateTitleEpoc";
+import { EmployeeCorporateTitleEpocs } from "../../../../src/models/eom/EmployeeCorporateTitleEpocs";
 
 
 describe("EmployeeCorporateTitleEpocs test", () => {

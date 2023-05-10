@@ -1,4 +1,4 @@
-import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../../../../../src/models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
+import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../../../../src/models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
 
 
 describe("DepartmentEmployeeCountWithJoinersLeaversTimeSeries test", () => {

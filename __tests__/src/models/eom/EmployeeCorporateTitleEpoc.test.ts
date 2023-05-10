@@ -1,5 +1,5 @@
-import { CorporateTitle } from "../../../../../src/models/eom/CorporateTitle";
-import { EmployeeCorporateTitleEpoc } from "../../../../../src/models/eom/EmployeeCorporateTitleEpoc";
+import { CorporateTitle } from "../../../../src/models/eom/CorporateTitle";
+import { EmployeeCorporateTitleEpoc } from "../../../../src/models/eom/EmployeeCorporateTitleEpoc";
 
 describe("EmployeeCorporateTitleEpoc test", () => {
     test("Construct instance of EmployeeCorporateTitleEpoc and check the values", async () => {

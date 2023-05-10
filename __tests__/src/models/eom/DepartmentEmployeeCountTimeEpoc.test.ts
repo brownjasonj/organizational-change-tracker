@@ -1,4 +1,4 @@
-import { DepartmentEmployeeCountTimeEpoc } from "../../../../../src/models/eom/DepartmentEmployeeCountTimeEpoc";
+import { DepartmentEmployeeCountTimeEpoc } from "../../../../src/models/eom/DepartmentEmployeeCountTimeEpoc";
 
 describe("DepartmentEmployeeCountTimeEpoc test", () => {
     test("Construct instance of DepartmentEmployeeCountTimeEpoc and check the values", async () => {

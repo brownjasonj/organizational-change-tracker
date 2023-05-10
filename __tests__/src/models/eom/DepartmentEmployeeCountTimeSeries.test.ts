@@ -1,5 +1,5 @@
-import { DepartmentEmployeeCountTimeEpoc } from "../../../../../src/models/eom/DepartmentEmployeeCountTimeEpoc";
-import { DepartmentEmployeeCountTimeSeries } from "../../../../../src/models/eom/DepartmentEmployeeCountTimeSeries";
+import { DepartmentEmployeeCountTimeEpoc } from "../../../../src/models/eom/DepartmentEmployeeCountTimeEpoc";
+import { DepartmentEmployeeCountTimeSeries } from "../../../../src/models/eom/DepartmentEmployeeCountTimeSeries";
 
 
 describe("DepartmentEmployeeCountTimeSeries test", () => {

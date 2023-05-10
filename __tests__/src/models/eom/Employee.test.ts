@@ -1,4 +1,4 @@
-import { Employee } from "../../../../../src/models/eom/Employee";
+import { Employee } from "../../../../src/models/eom/Employee";
 
 describe("Employee test", () => {
     test("Construct instance of Employee and check the values", async () => {
