@@ -1,8 +1,6 @@
-import { EmployeeCountByDepartmentTimeEpoc } from "../models/eom/EmployeeCountByDepartmentTimeEpoc";
 import { Employee } from "../models/eom/Employee";
 import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
 import { IOrganizationRdfQuery } from "./IOrganizationRdfQuery";
-import { DepartmentTimeSeries } from "../models/eom/DepartmentTimeSeries";
 import { sparqlDepartmentHistoryQuery } from "./sparql/sparqlDepartmentHistoryQuery";
 import { sparqlJoinersQueryByDepartment } from "./sparql/sparqlDepartmentJoinersQuery";
 import { EmployeeLeaverJoiner, EmployeeLeaverJoinerType } from "../models/eom/EmployeeLeaverJoiner";

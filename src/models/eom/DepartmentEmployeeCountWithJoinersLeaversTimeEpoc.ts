@@ -24,6 +24,34 @@ class DepartmentEmployeeCountWithJoinersLeaversEpoc {
       this.joiners = [];
     }
 
+    getDepartment(): string {
+        return this.department;
+    }
+
+    getStartDate(): Date {
+        return this.startDate;
+    }
+
+    getEndDate(): Date {
+        return this.endDate;
+    }
+
+    getEmployeeCountAtStart(): number {
+        return this.employeesAtStart;
+    }
+
+    getEmployeeCountAtEnd(): number {
+        return this.employeesAtEnd;
+    }
+
+    getNumberOfLeavers(): number {
+        return this.numberOfLeavers;
+    }
+
+    getNumberOfJoiners(): number {
+        return this.numberOfJoiners;
+    }
+    
     setEmployeeCountAtStart(count: number) {
         this.employeesAtStart = count;
     }

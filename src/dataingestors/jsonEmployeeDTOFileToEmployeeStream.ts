@@ -10,21 +10,15 @@ import { StreamDataIngestionStatusUpdater } from './streamstages/StreamDataInges
 import { StreamThrottle } from './streamstages/StreamThrottle';
 import { StreamTransformEmployeeDtoToEmployee } from './streamstages/StreamTransformEmployeeDtoToEmployee';
 import { StreamTransformEmployeeToRdf } from './streamstages/StreamTransformEmployeeToRdf';
-import { ConfigurationManager } from '../ConfigurationManager';
 import { consoleLogger } from '../logging/consoleLogger';
 import { Logger } from 'pino';
 import { StreamRdfBankOrgValidation } from './streamstages/StreamRdfBankOrgValidation';
 
 
-const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus, throttleTimeoutMs: number, logger: Logger, failedDataSavePath: string) => {
+const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus, throttleTimeoutMs: number, logger: Logger, failedDataIngestionLogger: Logger) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
     const parser = JSONStream.parse('*');
     const streamThrottle = new StreamThrottle(throttleTimeoutMs, logger);
-
-    // check if the failedDataSavePath exists, if not create it
-    if (!fs.existsSync(`${failedDataSavePath}/ttls`)) {
-        fs.mkdirSync(`${failedDataSavePath}/ttls`, { recursive: true });
-    }
 
      pipeline(
          stream,
@@ -33,7 +27,7 @@ const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchem
          new StreamTransformEmployeeDtoToEmployee(logger),
          new StreamTransformEmployeeToRdf(logger),
          new StreamRdfBankOrgValidation(organizationSchema, logger),
-         new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger, `${failedDataSavePath}/ttls`),
+         new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger, failedDataIngestionLogger),
          new StreamDataIngestionStatusUpdater(dataIngestionStatus, logger),
 //         (err) => {
 //             if (err) {

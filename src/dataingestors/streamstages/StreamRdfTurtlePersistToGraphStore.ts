@@ -15,14 +15,14 @@ class StreamRdfTurtlePersistToGraphStore extends PassThrough {
     private msgsQueued = 1;
     private streamThrottle: StreamThrottle;
     private logger: Logger;
-    private failedDataSavePath: string;
+    private failedDataIngestionLogger: Logger
     
-    constructor(streamThrottle: StreamThrottle, graphDB: IRdfGraphDB, logger: Logger, failedDataSavePath: string) {
+    constructor(streamThrottle: StreamThrottle, graphDB: IRdfGraphDB, logger: Logger, failedDataIngestionLogger: Logger) {
         super({ objectMode: true });
         this.graphDB = graphDB;
         this.streamThrottle = streamThrottle;
         this.logger = logger;
-        this.failedDataSavePath = failedDataSavePath;
+        this.failedDataIngestionLogger = failedDataIngestionLogger;
     }
 
     trywrite(data: string, msg: number, retries: number, next: Function) {
@@ -48,7 +48,7 @@ class StreamRdfTurtlePersistToGraphStore extends PassThrough {
                 // save the message to a file for later processing
                 this.msgsQueued--;
                 this.streamThrottle.updateTimeout(this.TIME_OUT_MS * this.msgsQueued);
-                fs.writeFileSync(`${this.failedDataSavePath}/${randomUUID().toString()}.ttl`, data);
+                this.failedDataIngestionLogger.error(`${data}`);
                 next();
             }
         });

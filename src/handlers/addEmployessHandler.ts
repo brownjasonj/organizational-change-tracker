@@ -1,14 +1,12 @@
 import { Context } from "openapi-backend";
-import { IRdfGraphDB } from "../persistence/IRdfGraphDB";
-import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
 import { Response, Request } from "express";
 import { UploadedFile } from "express-fileupload";
 import { loadN3DataSetfromFile } from "../utils/loadN3DataSet";
 import { DataIngestionStreamsFactory } from "../dataingestors/DataIngestionStreamsFactory";
 import { StreamDataIngestorType } from "../dataingestors/StreamDataIngestorType";
 import { ConfigurationManager } from "../ConfigurationManager";
-import { FrontEndHttpConfiguration } from "../models/eom/configuration/FrontEndConfiguration";
-import { createDataIngestionLogger } from "../logging/dataIngestionLogger";
+import { createDataIngestionLogger } from "../logging/createdataIngestionLogger";
+import { createFailedDataIngestionLogger } from "../logging/createFailedDataIngestionLogger";
 
 const getResourceLocation = (requestId: string) =>  {
     const frontEndConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration();
@@ -41,19 +39,12 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
     
                 // create a new stream status object
                 const dataIngestionStreamStatus = DataIngestionStreamsFactory.createStreamStatus();
-                const loggingConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration();
                 const dataIngestionLogger = createDataIngestionLogger(ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration(), `${dataIngestionStreamStatus.getRequestId()}.json`);
+                const failedDataIngestionLogger = createFailedDataIngestionLogger(ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration(), `${dataIngestionStreamStatus.getRequestId()}-failed.json`);
                 const streamThrottleTimoutMs = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs();
-                var failedDataSavePath;
-                if (loggingConfiguration.getDataIngestionDeadLetterPath() === '') {
-                    failedDataSavePath = './tmp/${dataIngestionStreamStatus.getRequestId()}/';
-                }
-                else {
-                    failedDataSavePath = `${loggingConfiguration.getDataIngestionDeadLetterPath()}/${dataIngestionStreamStatus.getRequestId()}`;
-                }
 
                 const streamDataIngestor: StreamDataIngestorType = DataIngestionStreamsFactory.getSreamDataIngestor(filePath);
-                streamDataIngestor(filePath, shapes, dataIngestionStreamStatus, streamThrottleTimoutMs, dataIngestionLogger, failedDataSavePath);
+                streamDataIngestor(filePath, shapes, dataIngestionStreamStatus, streamThrottleTimoutMs, dataIngestionLogger, failedDataIngestionLogger);
                 response.status(202).json({'Operation-Location': `${getResourceLocation(dataIngestionStreamStatus.getRequestId())}`});
                 return;
             }

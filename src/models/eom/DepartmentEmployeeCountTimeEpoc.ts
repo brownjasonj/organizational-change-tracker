@@ -16,6 +16,18 @@ class DepartmentEmployeeCountTimeEpoc {
     getEmployeeCount(): number {
         return this.employeeCount;
     }
+
+    getDepartment(): string {
+        return this.department;
+    }
+
+    getStartDate(): Date {
+        return this.startDate;
+    }
+
+    getEndDate(): Date {
+        return this.endDate;
+    }
   }
 
 

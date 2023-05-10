@@ -16,6 +16,22 @@ class DepartmentEmployeeCountWithJoinersLeaversTimeSeries {
         this.timeseries = [];
     }
 
+    getDepartmentName(): string {
+        return this.departmentName;
+    }
+
+    getStartDate(): Date {
+        return this.startDate;
+    }
+
+    getEndDate(): Date {
+        return this.endDate;
+    }
+
+    getDateStep(): number {
+        return this.dateStep;
+    }
+
     addPoint(point: DepartmentEmployeeCountWithJoinersLeaversEpoc): void {
         if (point)
             this.timeseries.push(point);

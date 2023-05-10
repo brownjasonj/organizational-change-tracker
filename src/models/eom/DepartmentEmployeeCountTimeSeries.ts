@@ -19,6 +19,26 @@ class DepartmentEmployeeCountTimeSeries {
         if (point)
             this.timeseries.push(point);
     }
+
+    getDepartmentName(): string {
+        return this.departmentName;
+    }
+
+    getStartDate(): Date {
+        return this.startDate;
+    }
+
+    getEndDate(): Date {
+        return this.endDate;
+    }
+
+    getDateStep(): number {
+        return this.dateStep;
+    }
+
+    getTimeseries(): DepartmentEmployeeCountTimeEpoc[] {
+        return this.timeseries;
+    }
 }
 
 export { DepartmentEmployeeCountTimeSeries }

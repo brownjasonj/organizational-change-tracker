@@ -38,6 +38,46 @@ class Employee {
         //     this.employmentEndDate = employmentEndDate;
         // }
     }
+
+    getEmployeeId(): string {
+        return this.employee_id;
+    }
+
+    getSystemId(): string {
+        return this.system_id;
+    }
+
+    getFirstName(): string {
+        return this.firstName;
+    }
+
+    getSecondName(): string {
+        return this.secondName;
+    }
+
+    getJobTitle(): string {
+        return this.jobTitle;
+    }
+
+    getDepartment(): string {
+        return this.department;
+    }
+
+    getDepartmentStartDate(): Date {
+        return this.departmentStartDate;
+    }
+
+    getDepartmentEndDate(): Date {
+        return this.departmentEndDate;
+    }
+
+    getEmploymentStartDate(): Date {
+        return this.employmentStartDate;
+    }
+
+    getEmploymentEndDate(): Date {
+        return this.employmentEndDate;
+    }    
 }
 
 export { Employee };
