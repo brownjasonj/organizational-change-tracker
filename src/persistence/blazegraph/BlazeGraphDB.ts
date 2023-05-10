@@ -5,7 +5,6 @@ import { IRdfGraphDB, SparqlQueryResultType } from "../IRdfGraphDB";
 import { BackEndConfiguration, BackEndDBConfiguration } from "../../models/eom/configuration/BackEndConfiguration";
 import { consoleLogger } from "../../logging/consoleLogger";
 
-
 class BlazeGraphDBOptions extends BackEndDBConfiguration {
     private namespace: string;
     private blazename: string;
@@ -69,18 +68,39 @@ class BlazeGraphDB implements IRdfGraphDB {
           });
     }
 
+    // async sparqlQuery(query: string, resultType: SparqlQueryResultType): Promise<any> {
+    //     const url = `${this.options.getUrl()}?query=${encodeURIComponent(query)}`;
+    //     return new Promise((resolve, reject) => {
+    //         this.axios({
+    //             method: 'get',
+    //             url: url,
+    //             headers: {
+    //                 'Accept': resultType
+    //             },
+    //             protocol: this.options.getProtocol(),
+    //             proxy: this.options.getProtocol() === 'https' ? this.bdc.getHttpsConfiguration().proxy : this.bdc.getHttpConfiguration().proxy
+    //         }).then((response: { data: any; }) => {
+    //             resolve(response.data);
+    //         }).catch((error: any) => {
+    //             reject(error);
+    //         })
+    //     });
+    // }
+
+
     async sparqlQuery(query: string, resultType: SparqlQueryResultType): Promise<any> {
-        const url = `${this.options.getUrl()}?query=${encodeURIComponent(query)}`;
         return new Promise((resolve, reject) => {
             this.axios({
-                method: 'get',
-                url: url,
+                method: 'POST',
+                url: `${this.options.getUrl()}`,
                 headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded' ,
                     'Accept': resultType
                 },
                 protocol: this.options.getProtocol(),
-                proxy: this.options.getProtocol() === 'https' ? this.bdc.getHttpsConfiguration().proxy : this.bdc.getHttpConfiguration().proxy
-            }).then((response: { data: any; }) => {
+                proxy: this.options.getProtocol() === 'https' ? this.bdc.getHttpsConfiguration().proxy : this.bdc.getHttpConfiguration().proxy,
+                data: {query: query}})
+            .then((response: { data: any; }) => {
                 resolve(response.data);
             }).catch((error: any) => {
                 reject(error);
@@ -91,7 +111,7 @@ class BlazeGraphDB implements IRdfGraphDB {
     async turtleUpdate(turtle: string): Promise<any> {
         return new Promise((resolve, reject) => {
             this.axios({
-                method: 'post',
+                method: 'POST',
                 url: `${this.options.getUrl()}`,
                 headers: {
                     'Content-Type': 'application/x-turtle',
