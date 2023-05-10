@@ -9,6 +9,14 @@ class EmployeeCorporateTitleEpocs {
         this.epocs = [];
     }
 
+    getEmployeeId(): string {
+        return this.employeeId;
+    }
+
+    getEpocs(): EmployeeCorporateTitleEpoc[] {
+        return this.epocs;
+    }
+    
     addEpoc(epoc: EmployeeCorporateTitleEpoc) {
         this.epocs.push(epoc);
     }

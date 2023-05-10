@@ -12,6 +12,22 @@ class EmployeeCorporateTitleEpoc {
         this.startdate = startdate;
         this.enddate = enddate;
     }
+
+    getEmployeeId(): string {
+        return this.employeeId;
+    }
+
+    getCorporateTitle(): CorporateTitle {
+        return this.corporateTitle;
+    }
+
+    getStartDate(): string {
+        return this.startdate;
+    }
+
+    getEndDate(): string {      
+        return this.enddate;
+    }
 }
 
 export { EmployeeCorporateTitleEpoc }

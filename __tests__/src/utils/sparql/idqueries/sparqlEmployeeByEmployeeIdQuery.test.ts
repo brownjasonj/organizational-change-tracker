@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { sparqlEmployeeByEmployeeIdQuery } from "../../../../../src/rdf/sparql/idqueries/sparqlEmployeeByEmployeeIdQuery";
 
 describe("sparqlEmployeeByEmployeeIdQuery test", () => {

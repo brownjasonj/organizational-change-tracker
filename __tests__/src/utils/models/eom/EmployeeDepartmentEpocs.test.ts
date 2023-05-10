@@ -1,4 +1,4 @@
-import { EmployeeDepartmentEpoc } from "./EmployeeDepartmentEpoc";
+import { EmployeeDepartmentEpoc } from "./EmployeeDepartmentEpoc.test";
 
 class EmployeeDepartmentEpocs {
     employeeId: string
