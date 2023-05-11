@@ -1,25 +1,16 @@
+import { EmployeeLeaverJoiner, EmployeeLeaverJoinerType } from "../../../models/eom/EmployeeLeaverJoiner";
 
-enum EmployeeLeaverJoinerType {
-    LEAVER = "Leaver",
-    JOINER = "Joiner"
-}
+describe("EmployeeLeaverJoiner test", () => {
+    test("Construct instance of EmployeeLeaverJoiner and check the values", async () => {
+        const leaverJoinerType = EmployeeLeaverJoinerType.LEAVER;
+        const employeeId: string = "123456789";
+        const departmentName: string = "departmentName";
+        const date: Date = new Date();
 
-class EmployeeLeaverJoiner {
-    status: EmployeeLeaverJoinerType;
-    pid: string;
-    department: string;
-    date: Date;
-
-    constructor(pid: string, department: string, date: Date, status: EmployeeLeaverJoinerType) {
-        this.pid = pid;
-        this.department = department;
-        this.date = date;
-        this.status = status;
-    }
-
-    getDate(): Date {
-        return this.date;
-    }
-}
-
-export { EmployeeLeaverJoiner, EmployeeLeaverJoinerType }
+        const employeeLeaverJoiner = new EmployeeLeaverJoiner(employeeId, departmentName, date, leaverJoinerType);
+        expect(employeeLeaverJoiner.getEmployeeId()).toEqual(employeeId);
+        expect(employeeLeaverJoiner.getDepartment()).toEqual(departmentName);
+        expect(employeeLeaverJoiner.getDate()).toEqual(date);
+        expect(employeeLeaverJoiner.getStatus()).toEqual(leaverJoinerType);
+    });
+  });

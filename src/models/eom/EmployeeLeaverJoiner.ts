@@ -6,17 +6,29 @@ enum EmployeeLeaverJoinerType {
 
 class EmployeeLeaverJoiner {
     status: EmployeeLeaverJoinerType;
-    pid: string;
+    employeeId: string;
     department: string;
     date: Date;
 
-    constructor(pid: string, department: string, date: Date, status: EmployeeLeaverJoinerType) {
-        this.pid = pid;
+    constructor(employeeId: string, department: string, date: Date, status: EmployeeLeaverJoinerType) {
+        this.employeeId = employeeId;
         this.department = department;
         this.date = date;
         this.status = status;
     }
 
+    getStatus(): EmployeeLeaverJoinerType {
+        return this.status;
+    }
+
+    getEmployeeId(): string {
+        return this.employeeId;
+    }
+
+    getDepartment(): string {
+        return this.department;
+    }
+    
     getDate(): Date {
         return this.date;
     }

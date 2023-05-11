@@ -92,11 +92,11 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                     // and start date on the same day.  This will cause the joiner/leaver to be counted twice.  So we need to remove them.
                     for(var joiner of joiners) {
                         for(var leaver of leavers) {
-                            if(joiner.pid == leaver.pid) {
+                            if(joiner.getEmployeeId() == leaver.getEmployeeId()) {
                                 if (Calendar.isConsequtiveDay(joiner.getDate(), leaver.getDate())) {
-                                    this.logger.info(`Removing joiner/leaver ${joiner.pid} from joiner/leaver list.  Joiner: ${joiner.date} Leaver: ${leaver.date}`);
-                                    joiners = joiners.filter((j) => j.pid != joiner.pid);
-                                    leavers = leavers.filter((l) => l.pid != leaver.pid);
+                                    this.logger.info(`Removing joiner/leaver ${joiner.getEmployeeId()} from joiner/leaver list.  Joiner: ${joiner.date} Leaver: ${leaver.date}`);
+                                    joiners = joiners.filter((j) => j.getEmployeeId() != joiner.getEmployeeId());
+                                    leavers = leavers.filter((l) => l.getEmployeeId() != leaver.getEmployeeId());
                                 }
                             }
                         }

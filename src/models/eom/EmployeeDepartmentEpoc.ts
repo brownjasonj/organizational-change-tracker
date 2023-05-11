@@ -10,6 +10,22 @@ class EmployeeDepartmentEpoc {
         this.startdate = startdate;
         this.enddate = enddate;
     }
+
+    getEmployeeId(): string {
+        return this.employeeId;
+    }
+
+    getDepartment(): string {
+        return this.department;
+    }
+
+    getStartDate(): string {
+        return this.startdate;
+    }
+
+    getEndDate(): string {
+        return this.enddate;
+    }
 }
 
 export { EmployeeDepartmentEpoc }

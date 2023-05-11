@@ -1,15 +1,15 @@
 import { ChildProcess, exec } from "child_process"
 import {v4 as uuidv4} from 'uuid';
-import { BlazeGraphDB,BlazeGraphDBOptions } from "../../../src/persistence/blazegraph/BlazeGraphDB";
-import { IRdfGraphDB, SparqlQueryResultType } from "../../../src/persistence/IRdfGraphDB";
-import { BackEndConfiguration, BackEndDBConfiguration } from "../../../src/models/eom/configuration/BackEndConfiguration";
+import { BlazeGraphDB,BlazeGraphDBOptions } from "../../persistence/blazegraph/BlazeGraphDB";
+import { IRdfGraphDB } from "../../persistence/IRdfGraphDB";
+import { BackEndConfiguration } from "../../models/eom/configuration/BackEndConfiguration";
 import { plainToClass } from "class-transformer";
 import 'reflect-metadata';
-import { BlazeGraphRdfQuery } from "../../../src/rdf/BlazeGraphRdfQuery";
-import { consoleLogger } from "../../../src/logging/consoleLogger";
-import { Employee } from "../../../src/models/eom/Employee";
-import { BankOrgRdfDataGenerator } from "../../../src/rdf/generators/BankOrgRdfDataGenerator";
-import { GraphPersistenceFactory } from "../../../src/persistence/GraphPersistenceFactory";
+import { BlazeGraphRdfQuery } from "../../rdf/BlazeGraphRdfQuery";
+import { consoleLogger } from "../../logging/consoleLogger";
+import { Employee } from "../../models/eom/Employee";
+import { BankOrgRdfDataGenerator } from "../../rdf/generators/BankOrgRdfDataGenerator";
+import { GraphPersistenceFactory } from "../../persistence/GraphPersistenceFactory";
 
 describe("create a new blazegraph DB", () => {
     let testDirectory: string;

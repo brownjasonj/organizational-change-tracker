@@ -1,7 +1,5 @@
 import { ConfigurationManager } from "../../ConfigurationManager";
-import { EmployeeCountByDepartmentTimeEpoc } from "../../models/eom/EmployeeCountByDepartmentTimeEpoc";
 import { RdfOntologyConfiguration } from "../../models/eom/configuration/RdfOntologyConfiguration";
-import { IRdfGraphDB, SparqlQueryResultType } from "../../persistence/IRdfGraphDB";
 
 const sparqlDepartmentHistoryQuery = (departmentCode: string, startDate: Date, endDate: Date): string => {
     const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();

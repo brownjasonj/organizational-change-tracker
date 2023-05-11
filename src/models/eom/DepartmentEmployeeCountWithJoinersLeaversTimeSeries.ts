@@ -1,5 +1,4 @@
 import { DepartmentEmployeeCountWithJoinersLeaversEpoc } from "./DepartmentEmployeeCountWithJoinersLeaversTimeEpoc";
-import { EmployeeCountByDepartmentTimeEpoc } from "./EmployeeCountByDepartmentTimeEpoc";
 
 class DepartmentEmployeeCountWithJoinersLeaversTimeSeries {
     departmentName: string;

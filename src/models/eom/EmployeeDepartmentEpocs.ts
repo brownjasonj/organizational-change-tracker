@@ -9,6 +9,14 @@ class EmployeeDepartmentEpocs {
         this.epocs = [];
     }
 
+    getEmployeeId(): string {
+        return this.employeeId;
+    }
+
+    getEpocs(): EmployeeDepartmentEpoc[] {
+        return this.epocs;
+    }
+    
     addEpoc(epoc: EmployeeDepartmentEpoc) {
         this.epocs.push(epoc);
     }

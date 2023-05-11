@@ -1,5 +1,3 @@
-import { EmployeeLeaverJoiner } from "./EmployeeLeaverJoiner";
-
 class DepartmentEmployeeCountTimeEpoc {
     department: string;
     startDate: Date;
