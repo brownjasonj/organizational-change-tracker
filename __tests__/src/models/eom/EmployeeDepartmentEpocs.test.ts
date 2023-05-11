@@ -13,7 +13,7 @@ describe("EmployeeDepartmentEpocs test", () => {
         expect(employeeDepartmentEpocs.getEmployeeId()).toEqual(employeeId);
         expect(employeeDepartmentEpocs.getEpocs()).toEqual([]);
 
-        const employeeDepartmentEpoc = new EmployeeDepartmentEpoc(employeeId, departmentName, startDate.toISOString(), endDate.toISOString());
+        const employeeDepartmentEpoc = new EmployeeDepartmentEpoc(employeeId, departmentName, startDate, endDate);
         employeeDepartmentEpocs.addEpoc(employeeDepartmentEpoc);
         expect(employeeDepartmentEpocs.getEpocs()).toEqual([employeeDepartmentEpoc]);
     });

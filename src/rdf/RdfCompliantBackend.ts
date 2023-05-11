@@ -203,8 +203,8 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                 result.results.bindings.forEach((binding: any) => {
                     const employeeId = binding.pid.value;
                     const department = binding.department.value;
-                    const startDate = new Date(binding.startDate.value.split("^^")[0]).toUTCString();
-                    const endDate = new Date(binding.endDate.value.split("^^")[0]).toUTCString();
+                    const startDate = new Date(binding.startDate.value.split("^^")[0]);
+                    const endDate = new Date(binding.endDate.value.split("^^")[0]);
                     const epoc = new EmployeeDepartmentEpoc(employeeId, department, startDate, endDate);
                     if (employeeDepartmentEpocs.has(employeeId)) {
                         employeeDepartmentEpocs.get(employeeId)!.addEpoc(epoc);
@@ -232,8 +232,8 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                 this.logger.info(result);
                 result.results.bindings.forEach((binding: any) => {
                     const department = binding.department.value;
-                    const startDate = new Date(binding.startDate.value.split("^^")[0]).toUTCString();
-                    const endDate = new Date(binding.endDate.value.split("^^")[0]).toUTCString();
+                    const startDate = new Date(binding.startDate.value.split("^^")[0]);
+                    const endDate = new Date(binding.endDate.value.split("^^")[0]);
                     const epoc = new EmployeeDepartmentEpoc(employeeId, department, startDate, endDate);
                     employeeDepartmentEpocs.addEpoc(epoc);
                 });
@@ -255,8 +255,8 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                 this.logger.info(result);
                 result.results.bindings.forEach((binding: any) => {
                     const corporateTitle = binding.corpTitle.value;
-                    const startDate = new Date(binding.startDate.value.split("^^")[0]).toUTCString();
-                    const endDate = new Date(binding.endDate.value.split("^^")[0]).toUTCString();
+                    const startDate = new Date(binding.startDate.value.split("^^")[0]);
+                    const endDate = new Date(binding.endDate.value.split("^^")[0]);
                     const epoc = new EmployeeCorporateTitleEpoc(employeeId, corporateTitle, startDate, endDate);
                     employeeCorporateTitleEpocs.addEpoc(epoc);
                 });

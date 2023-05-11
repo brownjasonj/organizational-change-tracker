@@ -7,10 +7,10 @@ describe("EmployeeCorporateTitleEpoc test", () => {
         const corporateTitle: CorporateTitle = CorporateTitle.AVP;
         const startDate: Date = new Date();
         const endDate: Date = new Date();
-        const employeeCorporateTitleEpoc = new EmployeeCorporateTitleEpoc(employeeId, corporateTitle, startDate.toISOString(), endDate.toISOString());
+        const employeeCorporateTitleEpoc = new EmployeeCorporateTitleEpoc(employeeId, corporateTitle, startDate, endDate);
         expect(employeeCorporateTitleEpoc.getEmployeeId()).toEqual(employeeId);
         expect(employeeCorporateTitleEpoc.getCorporateTitle()).toContain(corporateTitle);
-        expect(employeeCorporateTitleEpoc.getStartDate()).toEqual(startDate.toISOString());
-        expect(employeeCorporateTitleEpoc.getEndDate()).toEqual(endDate.toISOString());
+        expect(employeeCorporateTitleEpoc.getStartDate()).toEqual(startDate);
+        expect(employeeCorporateTitleEpoc.getEndDate()).toEqual(endDate);
     });
   });

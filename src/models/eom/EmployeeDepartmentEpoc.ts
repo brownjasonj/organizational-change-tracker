@@ -1,10 +1,10 @@
 class EmployeeDepartmentEpoc {
     employeeId: string;
     department: string;
-    startdate: string;
-    enddate: string;
+    startdate: Date;
+    enddate: Date;
 
-    constructor(employeeId: string, department: string, startdate: string, enddate: string) {
+    constructor(employeeId: string, department: string, startdate: Date, enddate: Date) {
         this.employeeId = employeeId;
         this.department = department;
         this.startdate = startdate;
@@ -19,11 +19,11 @@ class EmployeeDepartmentEpoc {
         return this.department;
     }
 
-    getStartDate(): string {
+    getStartDate(): Date {
         return this.startdate;
     }
 
-    getEndDate(): string {
+    getEndDate(): Date {
         return this.enddate;
     }
 }

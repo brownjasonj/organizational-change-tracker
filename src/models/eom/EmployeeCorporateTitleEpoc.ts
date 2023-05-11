@@ -3,10 +3,10 @@ import { CorporateTitle } from "./CorporateTitle";
 class EmployeeCorporateTitleEpoc {
     employeeId: string;
     corporateTitle: CorporateTitle;
-    startdate: string;
-    enddate: string;
+    startdate: Date;
+    enddate: Date;
 
-    constructor(employeeId: string, corporateTitle: CorporateTitle, startdate: string, enddate: string) {
+    constructor(employeeId: string, corporateTitle: CorporateTitle, startdate: Date, enddate: Date) {
         this.employeeId = employeeId;
         this.corporateTitle = corporateTitle;
         this.startdate = startdate;
@@ -21,11 +21,11 @@ class EmployeeCorporateTitleEpoc {
         return this.corporateTitle;
     }
 
-    getStartDate(): string {
+    getStartDate(): Date {
         return this.startdate;
     }
 
-    getEndDate(): string {      
+    getEndDate(): Date {      
         return this.enddate;
     }
 }
