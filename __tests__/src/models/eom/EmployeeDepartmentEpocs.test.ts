@@ -1,5 +1,5 @@
-import { EmployeeDepartmentEpoc } from "../../../models/eom/EmployeeDepartmentEpoc";
-import { EmployeeDepartmentEpocs } from "../../../models/eom/EmployeeDepartmentEpocs";
+import { EmployeeDepartmentEpoc } from "../../../../src/models/eom/EmployeeDepartmentEpoc";
+import { EmployeeDepartmentEpocs } from "../../../../src/models/eom/EmployeeDepartmentEpocs";
 
 
 describe("EmployeeDepartmentEpocs test", () => {

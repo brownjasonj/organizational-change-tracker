@@ -1,4 +1,4 @@
-import { EmployeeDepartmentEpoc } from "../../../models/eom/EmployeeDepartmentEpoc";
+import { EmployeeDepartmentEpoc } from "../../../../src/models/eom/EmployeeDepartmentEpoc";
 
 
 describe("EmployeeDepartmentEpoc test", () => {
@@ -9,7 +9,7 @@ describe("EmployeeDepartmentEpoc test", () => {
         const endDate: Date = new Date();
         const employeeDepartmentEpoc = new EmployeeDepartmentEpoc(employeeId, departmentName, startDate.toISOString(), endDate.toISOString());
         expect(employeeDepartmentEpoc.getEmployeeId()).toEqual(employeeId);
-        expect(employeeDepartmentEpoc.getDepartment).toEqual(departmentName);
+        expect(employeeDepartmentEpoc.getDepartment()).toEqual(departmentName);
         expect(employeeDepartmentEpoc.getStartDate()).toEqual(startDate.toISOString());
         expect(employeeDepartmentEpoc.getEndDate()).toEqual(endDate.toISOString());
     });

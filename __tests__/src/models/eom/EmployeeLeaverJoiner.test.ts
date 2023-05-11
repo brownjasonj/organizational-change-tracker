@@ -1,4 +1,4 @@
-import { EmployeeLeaverJoiner, EmployeeLeaverJoinerType } from "../../../models/eom/EmployeeLeaverJoiner";
+import { EmployeeLeaverJoiner, EmployeeLeaverJoinerType } from "../../../../src/models/eom/EmployeeLeaverJoiner";
 
 describe("EmployeeLeaverJoiner test", () => {
     test("Construct instance of EmployeeLeaverJoiner and check the values", async () => {
