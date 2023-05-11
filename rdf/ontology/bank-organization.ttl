@@ -34,13 +34,6 @@ bank-org:pid a rdf:Property, sh:PropertyShape;
     sh:minLength 7;
     sh:maxLength 7.
 
-bank-org:bankOrganizationEmployeeCount a rdf:Property, sh:PropertyShape;
-    rdfs:label "Employee ID"@en;
-    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
-    sh:path bank-org:bankOrganizationEmployeeCount;
-    sh:datatype xsd:number;
-    sh:minCount 1;
-    sh:maxCount 1.
 
 bank-org:BankCorporateTitle a rdfs:Class;
     rdfs:subClassOf org:Role;
@@ -214,10 +207,21 @@ bank-org:BankEmployeeOrganizationalEntityMembership a rdfs:Class, sh:NodeShape;
 # Employee Count in an organizational entity at a given point in time
 #
 ############################################################################################################
-bank-org:BankNumberOfEmployeesInOrg a rdfs:Class, sh:NodeShape;
+bank-org:bankOrganizationEmployeeCount a rdf:Property, sh:PropertyShape;
+    rdfs:label "Employee ID"@en;
+    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
+    sh:path bank-org:bankOrganizationEmployeeCount;
+    sh:datatype xsd:number;
+    sh:minCount 1;
+    sh:maxCount 1.
+    
+bank-org:DeparmentEmployeeCount a rdfs:Class;
     rdfs:label "The number of BankEmployees in the given organization."@en;
-    rdfs:comment """An organization is defined as a tree structure."""@en;
-    sh:targetClass bank-org:BankNumberOfEmployeesInOrg;
+    rdfs:comment """An organization is defined as a tree structure."""@en.
+
+
+bank-org:DeparmentEmployeeCount a sh:NodeShape;
+    sh:targetClass bank-org:DeparmentEmployeeCount;
     sh:nodeKind sh:IRI;
     sh:property [
         sh:path org:organization;
