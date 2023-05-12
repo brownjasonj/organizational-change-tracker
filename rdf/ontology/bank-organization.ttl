@@ -207,13 +207,23 @@ bank-org:BankEmployeeOrganizationalEntityMembership a rdfs:Class, sh:NodeShape;
 # Employee Count in an organizational entity at a given point in time
 #
 ############################################################################################################
-bank-org:bankOrganizationEmployeeCount a rdf:Property, sh:PropertyShape;
-    rdfs:label "Employee ID"@en;
-    rdfs:comment "An employee ID is a unique identifier for a bank employee."@en;
-    sh:path bank-org:bankOrganizationEmployeeCount;
-    sh:datatype xsd:number;
+bank-org:employeeCount a rdf:Property, sh:PropertyShape;
+    rdfs:label "employeeCount"@en;
+    rdfs:comment "The number of BankEmployees in the given organization."@en;
+    sh:path bank-org:employeeCount;
+    sh:datatype xsd:integer;
     sh:minCount 1;
     sh:maxCount 1.
+
+bank-org:departmentName a sh:PropertyShape;
+    rdfs:label "departmentName"@en;
+    rdfs:comment "The name of the department."@en;
+    sh:path bank-org:departmentName.
+
+bank-org:asOfDate a sh:PropertyShape;
+    rdfs:label "asOfDate"@en;
+    rdfs:comment "The date of the employee count."@en;
+    sh:path bank-org:asOfDate.
     
 bank-org:DepartmentEmployeeCount a rdfs:Class;
     rdfs:label "DepartmentEmployeeCount"@en;
@@ -226,26 +236,20 @@ bank-org:DepartmentEmployeeCount a sh:NodeShape;
     sh:targetClass bank-org:DepartmentEmployeeCount;
     sh:nodeKind sh:IRI;
     sh:property [
-        rdfs:label "org"@en;
-        rdfs:comment "The organization for which the employee count is valid."@en;
-        sh:path org:organization;
+        sh:path bank-org:OrganizationalEntity;
         sh:class org:FormalOrganization;
         sh:minCount 1;
         sh:maxCount 1;
     ];
     sh:property [
-        rdfs:label "asOfDate"@en;
-        rdfs:comment "The date for which the employee count is valid."@en;
-        sh:path time:inXSDDateTimeStamp;
+        sh:path bank-org:asOfDate;
         sh:datatype xsd:dateTime;
         sh:minCount 1;
         sh:maxCount 1;
     ];
     sh:property [
-        rdfs:label "employeeCount"@en;
-        rdfs:comment "The number of BankEmployees in the given organization."@en;
         sh:path bank-org:bankOrganizationEmployeeCount;
         sh:datatype xsd:integer;
-        sh:minCount 1;
-        sh:maxCount 1;
+        # sh:minCount 1;
+        # sh:maxCount 1;
     ].
