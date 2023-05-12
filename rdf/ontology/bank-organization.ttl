@@ -68,7 +68,7 @@ bank-org:MDRTitle a bank-org:BankCorporateTitle;
 
 bank-org:BankEmployee a rdfs:Class, sh:NodeShape;
     rdfs:subClassOf foaf:Person;
-    rdfs:label "Bank Employee"@en;
+    rdfs:label "BankEmployee"@en;
     rdfs:comment """A Bank Employee is a foaf:person who works for a bank, but will also have other properties
                     relating to the Bank such as an employee identifier, a corporate title, and organization."""@en;
     sh:targetClass bank-org:BankEmployee;
@@ -215,27 +215,35 @@ bank-org:bankOrganizationEmployeeCount a rdf:Property, sh:PropertyShape;
     sh:minCount 1;
     sh:maxCount 1.
     
-bank-org:DeparmentEmployeeCount a rdfs:Class;
-    rdfs:label "The number of BankEmployees in the given organization."@en;
+bank-org:DepartmentEmployeeCount a rdfs:Class;
+    rdfs:label "DepartmentEmployeeCount"@en;
+    rdfs:comment "The number of BankEmployees in the given organization."@en;
     rdfs:comment """An organization is defined as a tree structure."""@en.
 
 
-bank-org:DeparmentEmployeeCount a sh:NodeShape;
-    sh:targetClass bank-org:DeparmentEmployeeCount;
+bank-org:DepartmentEmployeeCount a sh:NodeShape;
+    rdfs:label "DepartmentEmployeeCount"@en;
+    sh:targetClass bank-org:DepartmentEmployeeCount;
     sh:nodeKind sh:IRI;
     sh:property [
+        rdfs:label "org"@en;
+        rdfs:comment "The organization for which the employee count is valid."@en;
         sh:path org:organization;
         sh:class org:FormalOrganization;
         sh:minCount 1;
         sh:maxCount 1;
     ];
     sh:property [
+        rdfs:label "asOfDate"@en;
+        rdfs:comment "The date for which the employee count is valid."@en;
         sh:path time:inXSDDateTimeStamp;
         sh:datatype xsd:dateTime;
         sh:minCount 1;
         sh:maxCount 1;
     ];
     sh:property [
+        rdfs:label "employeeCount"@en;
+        rdfs:comment "The number of BankEmployees in the given organization."@en;
         sh:path bank-org:bankOrganizationEmployeeCount;
         sh:datatype xsd:integer;
         sh:minCount 1;
