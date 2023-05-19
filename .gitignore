@@ -43,3 +43,14 @@ build/
 
 ### Application ###
 logs/
+tmp/
+
+# Local .terraform directories
+**/.terraform/*
+**/.terraform.lock.hcl
+
+
+# Compiled files
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info

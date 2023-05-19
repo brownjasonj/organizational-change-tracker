@@ -13,9 +13,11 @@ import { StreamTransformEmployeeToRdf } from './streamstages/StreamTransformEmpl
 import { consoleLogger } from '../logging/consoleLogger';
 import { Logger } from 'pino';
 import { StreamRdfBankOrgValidation } from './streamstages/StreamRdfBankOrgValidation';
+import { StreamDataIngestorType } from './StreamDataIngestorType';
+import { RdfSchemaValidation } from '../rdf/RdfSchemaValidation';
 
 
-const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchema: DatasetExt, dataIngestionStatus: DataIngestionStreamStatus, throttleTimeoutMs: number, logger: Logger, failedDataIngestionLogger: Logger) => {
+const jsonEmployeeDTOFileToEmployeeStream: StreamDataIngestorType = (filePath: string, rdfSchemaValidator: RdfSchemaValidation | undefined, dataIngestionStatus: DataIngestionStreamStatus, throttleTimeoutMs: number, logger: Logger, failedDataIngestionLogger: Logger) => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
     const parser = JSONStream.parse('*');
     const streamThrottle = new StreamThrottle(throttleTimeoutMs, logger);
@@ -26,7 +28,7 @@ const jsonEmployeeDTOFileToEmployeeStream = (filePath: string, organizationSchem
          streamThrottle,
          new StreamTransformEmployeeDtoToEmployee(logger),
          new StreamTransformEmployeeToRdf(logger),
-         new StreamRdfBankOrgValidation(organizationSchema, logger),
+         new StreamRdfBankOrgValidation(rdfSchemaValidator, logger),
          new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger, failedDataIngestionLogger),
          new StreamDataIngestionStatusUpdater(dataIngestionStatus, logger),
 //         (err) => {

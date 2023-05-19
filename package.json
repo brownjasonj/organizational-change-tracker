@@ -59,6 +59,7 @@
     "http": "^0.0.1-security",
     "https": "^1.0.0",
     "jsonstream": "^1.0.3",
+    "linkedin-api-client": "^0.3.0",
     "morgan": "^1.10.0",
     "n3": "^1.16.4",
     "neo4j-driver": "^5.8.0",
