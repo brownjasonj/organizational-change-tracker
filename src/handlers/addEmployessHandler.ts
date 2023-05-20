@@ -1,13 +1,13 @@
 import { Context } from "openapi-backend";
 import { Response, Request } from "express";
 import { UploadedFile } from "express-fileupload";
-import { loadN3DataSetfromFile } from "../utils/loadN3DataSet";
 import { DataIngestionStreamsFactory } from "../dataingestors/DataIngestionStreamsFactory";
 import { StreamDataIngestorType } from "../dataingestors/StreamDataIngestorType";
 import { ConfigurationManager } from "../ConfigurationManager";
 import { createFailedDataIngestionLogger } from "../logging/createFailedDataIngestionLogger";
 import { createDataIngestionLogger } from "../logging/createDataIngestionLogger";
 import { RdfSchemaValidation } from "../rdf/RdfSchemaValidation";
+import { RdfInputSourceToN3Parser } from "../rdf/RdfInputSourceToN3Parser";
 
 const getResourceLocation = (requestId: string) =>  {
     const frontEndConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration();
@@ -16,12 +16,15 @@ const getResourceLocation = (requestId: string) =>  {
 };
 
 const addEmployeesHandler =  async (context: Context, request: Request, response: Response) => {
-    // create a new stream status object
+    const backEndConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getBackEndConfiguration();
+    const loggingConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration();
+
     const dataIngestionStreamStatus = DataIngestionStreamsFactory.createStreamStatus();
-    const dataIngestionLogger = createDataIngestionLogger(ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration(), `${dataIngestionStreamStatus.getRequestId()}.json`);
-    const failedDataIngestionLogger = createFailedDataIngestionLogger(ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration(), `${dataIngestionStreamStatus.getRequestId()}-failed.json`);
+    const dataIngestionLogger = createDataIngestionLogger(loggingConfiguration, `${dataIngestionStreamStatus.getRequestId()}.json`);
+    const failedDataIngestionLogger = createFailedDataIngestionLogger(loggingConfiguration, `${dataIngestionStreamStatus.getRequestId()}-failed.json`);
     const streamThrottleTimoutMs = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs();
-    const rdfValidateData = new RdfSchemaValidation(ConfigurationManager.getInstance().getApplicationConfiguration().getBackEndConfiguration(), ConfigurationManager.getInstance().getApplicationConfiguration().getDataIngestionConfiguration().getOntologyValidationSchemaPath(), dataIngestionLogger);
+    const rdfInputSourceToN3Parser = new RdfInputSourceToN3Parser(backEndConfiguration, dataIngestionLogger);
+    const rdfValidateData = new RdfSchemaValidation(backEndConfiguration, ConfigurationManager.getInstance().getApplicationConfiguration().getDataIngestionConfiguration().getOntologyValidationSchemaPath(), dataIngestionLogger, rdfInputSourceToN3Parser);
 
     if (!request.files) {
         response.status(400).send('No files were uploaded.');

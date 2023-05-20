@@ -25,12 +25,10 @@ import { addEmployeeRecordHandler } from './handlers/addEmployeeRecordHandler';
 import { validationFailHandler } from './handlers/validationFailHandler';
 import { notFoundHandler } from './handlers/notFoundHandler';
 import { notImplementedHandler } from './handlers/notImplementedHandler';
-import { testHandler } from './handlers/testHandler';
 import yargs from 'yargs';
 import { operationsGetConfiguration } from './handlers/operationsGetConfiguration';
 import { ApplicationConfiguration } from './models/eom/configuration/ApplicationConfiguration';
 import { FrontEndConfiguration } from './models/eom/configuration/FrontEndConfiguration';
-import PinoHttp from 'pino-http';
 import { consoleLogger } from './logging/consoleLogger';
 import { employeeDepartmentHistoryByEmployeeIdHandler } from './handlers/employeeDepartmentHistoryByEmployeeIdHandler';
 import { employeeByEmployeeIdHandler } from './handlers/idhandlers/employeeByEmployeeIdHandler';
@@ -74,7 +72,6 @@ api.register('notFound', notFoundHandler);
 api.register('notImplemented', notImplementedHandler);
 
 // register openapi application handlers
-api.register('test', testHandler);
 api.register('addemployeeGet', addEmployeeRecordHandler);
 api.register('addemployeesPost', addEmployeesHandler);
 api.register('employeeDepartmentHistory', employeeDepartmentHistoryHandler);

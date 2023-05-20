@@ -1,8 +1,4 @@
 import { PassThrough } from "stream";
-import SHACLValidator from "rdf-validate-shacl";
-import factory from "rdf-ext";
-import DatasetExt from "rdf-ext/lib/Dataset";
-import { loadN3DataSetfromString } from "../../utils/loadN3DataSet";
 import { Logger } from "pino";
 import { RdfSchemaValidation } from "../../rdf/RdfSchemaValidation";
 
