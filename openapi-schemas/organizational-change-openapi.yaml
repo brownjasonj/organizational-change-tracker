@@ -287,7 +287,7 @@ paths:
             application/x-binary-rdf-results-table:
               schema:
                 type: string
-  /upload:
+  /operations/upload:
     post:
       description: upload a binary file
       operationId: "upload"
@@ -305,10 +305,10 @@ paths:
       responses:
         '202':
           description: Request to upload file has been succesfully.   Response contains operational url to poll for upload status.
-  /operations/load/{requestid}:
+  /operations/status/upload/{requestid}:
     get:
       description: Pollable end-point to check the status of the load
-      operationId: "operationsLoadingStatus"
+      operationId: "operationsFileUploadStatusByRequestId"
       parameters:
         - in: path
           name: requestid
@@ -322,6 +322,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/addEmployeeLoadStatus"
+  /operations/status/upload:
+    get:
+      description: Pollable end-point to check the status of the upload
+      operationId: "operationsFilesUploadStatuses"
+      responses:
+        '200':
+          description: OK
+
   /operations/delete:
     get:
       description: "Operational function to delete all triples from the graph database"

@@ -14,7 +14,7 @@ import { departmentHistoryHandler } from './handlers/departmentHistoryHandler';
 import { employeeRoleHistoryByEmployeeIdHandler } from './handlers/employeeRoleHistoryByEmployeeIdHandler';
 import { employeeDepartmentHistoryHandler } from './handlers/employeeDepartmentHistoryHandler';
 import fileUpload from 'express-fileupload';
-import { operationsLoadStatusHandler } from './handlers/operationsLoadStatusHandler';
+import { operationsFileUploadStatusByRequestIdHandler } from './handlers/operationsFileUploadStatusByRequestIdHandler';
 import { addEmployeesHandler } from './handlers/addEmployessHandler';
 import { ConfigurationManager } from './ConfigurationManager';
 import { employeeJoinersByDepartment } from './handlers/employeeJoinersByDepartment';
@@ -39,6 +39,7 @@ import { timeIntervalByTimeIntervalIdHandler } from './handlers/idhandlers/timeI
 import { BackEndConfiguration } from './models/eom/configuration/BackEndConfiguration';
 import { GraphPersistenceFactory } from './persistence/GraphPersistenceFactory';
 import { employeeByEmployeeSystemIdHandler } from './handlers/idhandlers/employeeByEmployeeSystemIdHandler';
+import { operationsFilesUploadStatusesHandler } from './handlers/operationsFilesUploadStatusesHandler';
 
   
 
@@ -85,7 +86,8 @@ api.register('employee-count-by-department-code', employeeCountByDepartmentCodeH
 api.register('department-codes', departmentCodesHandler);
 api.register('departmentHistory', departmentHistoryHandler);
 api.register('upload', addEmployeesHandler);
-api.register('operationsLoadingStatus', operationsLoadStatusHandler);
+api.register('operationsFileUploadStatusByRequestId', operationsFileUploadStatusByRequestIdHandler);
+api.register('operationsFilesUploadStatuses', operationsFilesUploadStatusesHandler)
 api.register('operationsDeleteTriples', operationsDeleteTriplesHandler);
 api.register('operationsGetConfiguration', operationsGetConfiguration);
 api.register('employeeByEmployeeId', employeeByEmployeeIdHandler);

@@ -78,8 +78,10 @@
     },
     "dataIngestion": {
         "temporaryDirectory": "./tmp",
-        "ontologyValidation": true,
-        "ontologyValidationSchemaPath": "http://127.0.0.1:8000/bank-org"
+        "ontologyValidation": false,
+        "ontologyValidationSchemaPath": "http://127.0.0.1:8000/bank-org",
+        "ontologyValidationSchemaFormat": "text/turtle",
+        "deleteTemporaryFiles": true
     }
 }
 

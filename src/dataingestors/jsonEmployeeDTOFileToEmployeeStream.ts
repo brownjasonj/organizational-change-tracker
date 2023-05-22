@@ -1,8 +1,6 @@
 import * as fs from 'fs';
 import JSONStream from 'jsonstream';
-import { Employee } from '../models/eom/Employee';
 import { StreamRdfTurtlePersistToGraphStore } from './streamstages/StreamRdfTurtlePersistToGraphStore';
-import DatasetExt from 'rdf-ext/lib/Dataset';
 import { pipeline } from 'stream';
 import { GraphPersistenceFactory } from '../persistence/GraphPersistenceFactory';
 import { DataIngestionStreamStatus } from './DataIngestionStreamsFactory';
@@ -13,11 +11,18 @@ import { StreamTransformEmployeeToRdf } from './streamstages/StreamTransformEmpl
 import { consoleLogger } from '../logging/consoleLogger';
 import { Logger } from 'pino';
 import { StreamRdfBankOrgValidation } from './streamstages/StreamRdfBankOrgValidation';
-import { StreamDataIngestorType } from './StreamDataIngestorType';
 import { RdfSchemaValidation } from '../rdf/RdfSchemaValidation';
+import { DataIngestionConfiguration } from '../models/eom/configuration/DataIngestionConfiguration';
+import { StreamDataIngestionCleanup } from './streamstages/StreamDataIngestionCleanup';
 
 
-const jsonEmployeeDTOFileToEmployeeStream: StreamDataIngestorType = (filePath: string, rdfSchemaValidator: RdfSchemaValidation | undefined, dataIngestionStatus: DataIngestionStreamStatus, throttleTimeoutMs: number, logger: Logger, failedDataIngestionLogger: Logger) => {
+function jsonEmployeeDTOFileToEmployeeStream(filePath: string, 
+                rdfSchemaValidator: RdfSchemaValidation | undefined,
+                dataIngestionStatus: DataIngestionStreamStatus,
+                dataIngestionConfiguration: DataIngestionConfiguration,
+                throttleTimeoutMs: number,
+                logger: Logger,
+                failedDataIngestionLogger: Logger): void {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
     const parser = JSONStream.parse('*');
     const streamThrottle = new StreamThrottle(throttleTimeoutMs, logger);
@@ -31,6 +36,7 @@ const jsonEmployeeDTOFileToEmployeeStream: StreamDataIngestorType = (filePath: s
          new StreamRdfBankOrgValidation(rdfSchemaValidator, logger),
          new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger, failedDataIngestionLogger),
          new StreamDataIngestionStatusUpdater(dataIngestionStatus, logger),
+         new StreamDataIngestionCleanup(dataIngestionConfiguration, dataIngestionStatus, logger),
 //         (err) => {
 //             if (err) {
 //               console.error('Pipeline failed', err);
