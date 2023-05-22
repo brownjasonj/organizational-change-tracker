@@ -13,9 +13,9 @@ provider "aws" {
 
 # GET the default vpc.
 resource "aws_default_vpc" "default" {
-    # tags {
-    #     Name = "Default VPC"
-    # }
+    tags = {
+        Name = "Default VPC"
+    }
 }
 
 #
@@ -52,15 +52,15 @@ resource "aws_neptune_cluster_instance" "example" {
 
 ## ------ EC2 Instance inside SG  ----------------------------------------------
 
-resource "aws_instance" "neptune-ec2-connector" {
-  ami = "ami-0c21ae4a3bd190229"
-  instance_type = "t1.micro"
-#   tags {
-#     Name = "neptune-demo"
-#   }
-  vpc_security_group_ids = [ "${aws_security_group.neptune_example.id}" ]
-  key_name = "testpair"
-}
+# resource "aws_instance" "neptune-ec2-connector" {
+#   ami = "ami-0c21ae4a3bd190229"
+#   instance_type = "t1.micro"
+# #   tags {
+# #     Name = "neptune-demo"
+# #   }
+#   vpc_security_group_ids = [ "${aws_security_group.neptune_example.id}" ]
+#   key_name = "testpair"
+# }
 
 ## ------ SGs  -----------------------------------------------------------------
 

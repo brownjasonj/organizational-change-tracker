@@ -5,6 +5,7 @@ import { EmployeeCorporateTitleEpocs } from "../models/eom/EmployeeCorporateTitl
 import { DepartmentEmployeeCountTimeEpoc } from "../models/eom/DepartmentEmployeeCountTimeEpoc";
 import { DepartmentEmployeeCountTimeSeries } from "../models/eom/DepartmentEmployeeCountTimeSeries";
 import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
+import { EmployeeId } from "../models/eom/ids/EmployeeId";
 
 interface IOrganizationRdfQuery {
     createBankOrgRdfDataGenerator(employee:Employee): Promise<string>;
@@ -20,7 +21,8 @@ interface IOrganizationRdfQuery {
     getDepartmentLeavers(departmentCode: string, startDate: Date, endDate: Date): Promise<EmployeeLeaverJoiner[]>
 
     // id lookups
-    getEmployeeByEmployeeId(employeeId: string): Promise<any>;
+    getEmployeeByEmployeeSystemId(employeeSystemId: string): Promise<EmployeeId>;
+    getEmployeeByEmployeeId(employeeId: string): Promise<EmployeeId>;
     getOrganizationByOrganizationId(organizationId: string): Promise<any>;
     getMembershipByMembershipId(membershipId: string): Promise<Map<string,string>>;
     getTimeByTimeId(timeId: string): Promise<Date>;

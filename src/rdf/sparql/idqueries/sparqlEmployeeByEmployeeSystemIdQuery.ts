@@ -5,18 +5,18 @@ import { RdfOntologyConfiguration } from "../../../models/eom/configuration/RdfO
 import { IRdfGraphDB, SparqlQueryResultType } from "../../../persistence/IRdfGraphDB";
 
 
-const sparqlEmployeeByEmployeeIdQuery = (employeeId: string): string => {
+const sparqlEmployeeByEmployeeSystemIdQuery = (employeeSystemId: string): string => {
   const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
   return `${ontology.getSparqlPrefixes()}
   
     select ?id ?pid ?firstName ?lastName
     where {
-        ?employee ${ontology.getBankOrgPrefix()}id "${employeeId}".
-        ?employee ${ontology.getBankOrgPrefix()}id ?id.
+        ?employee ${ontology.getBankOrgPrefix()}pid "${employeeSystemId}".
         ?employee ${ontology.getBankOrgPrefix()}pid ?pid.
+        ?employee ${ontology.getBankOrgPrefix()}id ?id.
         ?employee ${ontology.getFoafPrefix()}firstName ?firstName.
         ?employee ${ontology.getFoafPrefix()}surname ?lastName.
     }`;
 }
 
-export { sparqlEmployeeByEmployeeIdQuery }
+export { sparqlEmployeeByEmployeeSystemIdQuery }

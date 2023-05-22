@@ -38,6 +38,7 @@ import { timeByTimeIdHandler } from './handlers/idhandlers/timeByTimeIdHandler';
 import { timeIntervalByTimeIntervalIdHandler } from './handlers/idhandlers/timeIntervalByTimeIntervalIdHandler';
 import { BackEndConfiguration } from './models/eom/configuration/BackEndConfiguration';
 import { GraphPersistenceFactory } from './persistence/GraphPersistenceFactory';
+import { employeeByEmployeeSystemIdHandler } from './handlers/idhandlers/employeeByEmployeeSystemIdHandler';
 
   
 
@@ -88,6 +89,7 @@ api.register('operationsLoadingStatus', operationsLoadStatusHandler);
 api.register('operationsDeleteTriples', operationsDeleteTriplesHandler);
 api.register('operationsGetConfiguration', operationsGetConfiguration);
 api.register('employeeByEmployeeId', employeeByEmployeeIdHandler);
+api.register('employeeByEmployeeSystemId', employeeByEmployeeSystemIdHandler)
 api.register('membershipByMembershipId', membershipByMembershipIdHandler);
 api.register('organizationByOrganizationId', organizationByOrganizationIdHandler);
 api.register('timeByTimeId', timeByTimeIdHandler);

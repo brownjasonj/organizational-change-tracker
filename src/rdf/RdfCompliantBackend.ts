@@ -1,4 +1,5 @@
 import { Employee } from "../models/eom/Employee";
+import { EmployeeId } from "../models/eom/ids/EmployeeId";
 import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
 import { IOrganizationRdfQuery } from "./IOrganizationRdfQuery";
 import { sparqlDepartmentHistoryQuery } from "./sparql/sparqlDepartmentHistoryQuery";
@@ -23,6 +24,7 @@ import { sparqlOrganizationByOrganizationIdQuery } from "./sparql/idqueries/spar
 import { sparqlMembershipByMembershipIdQuery } from "./sparql/idqueries/sparqlMembershipByMembershipIdQuery";
 import { sparqlTimeByTimeIdQuery } from "./sparql/idqueries/sparqlTimeByTimeIdQuery";
 import { sparqlTimeIntervalByTimeIntervalId } from "./sparql/idqueries/sparqlTimeIntervalByTimeIntervalIdQuery";
+import { sparqlEmployeeByEmployeeSystemIdQuery } from "./sparql/idqueries/sparqlEmployeeByEmployeeSystemIdQuery";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
@@ -269,7 +271,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
-    getEmployeeByEmployeeId(employeeId: string): Promise<any> {
+    getEmployeeByEmployeeId(employeeId: string): Promise<EmployeeId> {
         return new Promise<any>((resolve, reject) => {
             const sparqlQuery = sparqlEmployeeByEmployeeIdQuery(employeeId);
             this.logger.info(`getEmployeeByEmployeeId(${employeeId}).`);
@@ -280,11 +282,40 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                 if (result.results.bindings.length > 0)
                 result.results.bindings.forEach((binding: any) => {
                     console.log(binding)
-                    const pid = binding.id.value;
+                    const id = binding.id.value;
+                    const pid = binding.pid.value;
                     const firstName = binding.firstName.value;
                     const lastName = binding.lastName.value;
                     
-                    resolve([pid, firstName, lastName]);
+                    resolve(new EmployeeId(id, pid, firstName, lastName));
+                });
+                else 
+                    resolve(null);
+            })
+            .catch((error) => {
+                this.logger.error(error);
+                return reject(error);
+            });
+        });
+    }
+
+    getEmployeeByEmployeeSystemId(employeeSystemId: string): Promise<EmployeeId> {
+        return new Promise<any>((resolve, reject) => {
+            const sparqlQuery = sparqlEmployeeByEmployeeSystemIdQuery(employeeSystemId);
+            this.logger.info(`getEmployeeByEmployeeSystemId(${employeeSystemId}).`);
+            this.logger.info(`Sparql Query: ${sparqlQuery}`);
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                this.logger.info(result);
+                if (result.results.bindings.length > 0)
+                result.results.bindings.forEach((binding: any) => {
+                    console.log(binding)
+                    const id = binding.id.value;
+                    const pid = binding.pid.value;
+                    const firstName = binding.firstName.value;
+                    const lastName = binding.lastName.value;
+                    
+                    resolve(new EmployeeId(id, pid, firstName, lastName));
                 });
                 else 
                     resolve(null);

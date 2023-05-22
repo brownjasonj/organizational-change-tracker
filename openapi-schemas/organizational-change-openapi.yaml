@@ -340,7 +340,6 @@ paths:
           description: OK
         '500':
           description: Internal error.
-
   /id/employee-id/{employeeId}:
     get:
       description: get the employees data by employee id
@@ -352,6 +351,20 @@ paths:
             type: string
           required: true
           description: Employee Id
+      responses:
+        '200':
+          description: OK
+  /id/employee-system-id/{employeeSystemId}:
+    get:
+      description: get the employees data by employee system id
+      operationId: "employeeByEmployeeSystemId"
+      parameters:
+        - in: path
+          name: employeeSystemId
+          schema:
+            type: string
+          required: true
+          description: Employee System Id
       responses:
         '200':
           description: OK
