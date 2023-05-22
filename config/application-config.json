@@ -79,7 +79,7 @@
     "dataIngestion": {
         "temporaryDirectory": "./tmp",
         "ontologyValidation": false,
-        "ontologyValidationSchemaPath": "http://127.0.0.1:8000/bank-org",
+        "ontologyValidationSchemaPath": "./rdf/ontology/bank-organization.ttl",
         "ontologyValidationSchemaFormat": "text/turtle",
         "deleteTemporaryFiles": true
     }

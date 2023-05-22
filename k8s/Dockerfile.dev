@@ -25,4 +25,4 @@ WORKDIR /usr/org-change/build
 # run the application
 WORKDIR /usr/org-change/build
 EXPOSE 8080
-CMD ["node","./index.js","--config config/application-config.json"]
+CMD ["node","./src/index.js","--config config/application-config.json"]

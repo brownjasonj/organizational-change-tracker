@@ -7,7 +7,7 @@
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/.bin/jest --detectOpenHandles --coverage",
     "start:dev": "npx nodemon",
-    "build": "rimraf ./build && tsc && ts-add-js-extension add --dir ./build && mkdir -p ./build/config && cp ./config/*.* ./build/config && mkdir -p ./build/openapi-schemas && cp ./openapi-schemas/*.* ./build/openapi-schemas",
+    "build": "rimraf ./build && tsc && ts-add-js-extension add --dir ./build && mkdir -p ./build/config && cp ./config/*.* ./build/config && mkdir -p ./build/openapi-schemas && cp ./openapi-schemas/*.* ./build/openapi-schemas && mkdir -p ./build/rdf/ontology && cp ./rdf/ontology/*.* ./build/rdf/ontology",
     "start": "npm run build && node --max-old-space-size=8192 ./build/index.js"
   },
   "keywords": [],

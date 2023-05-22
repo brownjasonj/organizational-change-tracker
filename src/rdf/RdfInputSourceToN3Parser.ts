@@ -11,9 +11,7 @@ import { Logger } from 'pino';
 class RdfInputSourceToN3Parser {
     private logger: Logger;
     private backEndConfiguration: BackEndConfiguration;
-    private schemaLocation: string | undefined = undefined;
     private n3Parser: ParserN3<Quad> | undefined = undefined;
-    private schemaDataset: DatasetExt | undefined = undefined;
 
     constructor(backEndConfiguration: BackEndConfiguration, logger: Logger) {
         this.logger = logger;
