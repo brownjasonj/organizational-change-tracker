@@ -21,7 +21,6 @@ import { employeeJoinersByDepartment } from './handlers/employeeJoinersByDepartm
 import { employeeLeaversByDepartment } from './handlers/employeeLeaversByDepartment';
 import { departmentHistoryWithJoinersLeaversHandler } from './handlers/departmentHistoryWithJoinersLeaversHandler';
 import { operationsDeleteTriplesHandler } from './handlers/operationsDeleteHandler';
-import { addEmployeeRecordHandler } from './handlers/addEmployeeRecordHandler';
 import { validationFailHandler } from './handlers/validationFailHandler';
 import { notFoundHandler } from './handlers/notFoundHandler';
 import { notImplementedHandler } from './handlers/notImplementedHandler';
@@ -72,8 +71,6 @@ api.register('notFound', notFoundHandler);
 api.register('notImplemented', notImplementedHandler);
 
 // register openapi application handlers
-api.register('addemployeeGet', addEmployeeRecordHandler);
-api.register('addemployeesPost', addEmployeesHandler);
 api.register('employeeDepartmentHistory', employeeDepartmentHistoryHandler);
 api.register('employeeDepartmentHistoryByEmployeeId', employeeDepartmentHistoryByEmployeeIdHandler);
 api.register('employeeRoleHistoryByEmployeeId', employeeRoleHistoryByEmployeeIdHandler);

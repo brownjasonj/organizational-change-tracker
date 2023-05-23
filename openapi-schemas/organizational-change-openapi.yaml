@@ -8,41 +8,6 @@ servers:
   - url: https://localhost:8443
     description: locally hosted server for local development purposes
 paths:
-  /addemployee:
-    get:
-      description: "Simple test end-point returning a Hello World!"
-      operationId: "addemployeeGet"
-      responses:
-        '200':
-          description: OK
-  /addemployees:
-    post:
-      description: "Upload of employee data"
-      operationId: "addemployeesPost"
-      parameters:
-        - in: query
-          name: employeeEndsBefore
-          schema:
-            type: string
-          required: false
-          description: If the employee end date is before this date then the employee is not loaded.
-      requestBody: 
-        description: The content to be upload should be JSON format as per the given schema, either directly in post of via a file.
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                # 'file' will be the field name in this multipart request
-                file:
-                  type: string
-                  format: base64
-      responses:
-        '202':
-          description: Request to upload file has been succesfully.   Response contains operational url to poll for upload status.
-        "400":
-          description: "Invalid status value"
   /employee-count-by-department-code:
     get:
       description: "Simple test end-point returning a Hello World!"
