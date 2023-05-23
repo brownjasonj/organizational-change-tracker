@@ -41,8 +41,6 @@ import { GraphPersistenceFactory } from './persistence/GraphPersistenceFactory';
 import { employeeByEmployeeSystemIdHandler } from './handlers/idhandlers/employeeByEmployeeSystemIdHandler';
 import { operationsFilesUploadStatusesHandler } from './handlers/operationsFilesUploadStatusesHandler';
 
-  
-
 const app = Express();
 // enable file uploads
 app.use(fileUpload({

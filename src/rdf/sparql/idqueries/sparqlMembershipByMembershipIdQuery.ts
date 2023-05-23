@@ -9,9 +9,9 @@ const sparqlMembershipByMembershipIdQuery = (membershipId: string): string => {
   const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
   return `${ontology.getSparqlPrefixes()}
   
-    select ?predicate ?object
+    select ?key ?value
     where {
-        ${ontology.getMembershipDomainIdPrefix()}${membershipId} ?predicate ?object.
+        ${ontology.getMembershipDomainIdPrefix()}${membershipId} ?key ?value.
     }`;
 }
 

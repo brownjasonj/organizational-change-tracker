@@ -9,9 +9,9 @@ const sparqlTimeByTimeIdQuery = (timeId: string): string => {
   const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
   return `${ontology.getSparqlPrefixes()}
   
-    select ?dateTime
+    select ?key ?value
     where {
-        ${ontology.getTimeDomainIdPrefix()}${timeId} ${ontology.getTimePrefix()}inXSDDateTimeStamp ?dateTime.
+        ${ontology.getTimeDomainIdPrefix()}${timeId} ?key ?value.
     }`;
 }
 

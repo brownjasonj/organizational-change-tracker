@@ -9,9 +9,9 @@ const sparqlOrganizationByOrganizationIdQuery = (organizationId: string): string
   const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
   return `${ontology.getSparqlPrefixes()}
   
-    select ?orgName
+    select ?key ?value
     where {
-        ${ontology.getOrganizationIdPrefix()}${organizationId} ${ontology.getOrgPrefix()}name ?orgName.
+        ${ontology.getOrganizationIdPrefix()}${organizationId} ?key ?value.
     }`;
 }
 

@@ -1,5 +1,4 @@
 import { Employee } from "../models/eom/Employee";
-import { EmployeeId } from "../models/eom/ids/EmployeeId";
 import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
 import { IOrganizationRdfQuery } from "./IOrganizationRdfQuery";
 import { sparqlDepartmentHistoryQuery } from "./sparql/sparqlDepartmentHistoryQuery";
@@ -25,6 +24,7 @@ import { sparqlMembershipByMembershipIdQuery } from "./sparql/idqueries/sparqlMe
 import { sparqlTimeByTimeIdQuery } from "./sparql/idqueries/sparqlTimeByTimeIdQuery";
 import { sparqlTimeIntervalByTimeIntervalId } from "./sparql/idqueries/sparqlTimeIntervalByTimeIntervalIdQuery";
 import { sparqlEmployeeByEmployeeSystemIdQuery } from "./sparql/idqueries/sparqlEmployeeByEmployeeSystemIdQuery";
+import { SparqlJsonParser } from "sparqljson-parse";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
@@ -271,7 +271,8 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
-    getEmployeeByEmployeeId(employeeId: string): Promise<EmployeeId> {
+    
+    getEmployeeByEmployeeId(employeeId: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             const sparqlQuery = sparqlEmployeeByEmployeeIdQuery(employeeId);
             this.logger.info(`getEmployeeByEmployeeId(${employeeId}).`);
@@ -279,16 +280,10 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 this.logger.info(result);
-                if (result.results.bindings.length > 0)
-                result.results.bindings.forEach((binding: any) => {
-                    console.log(binding)
-                    const id = binding.id.value;
-                    const pid = binding.pid.value;
-                    const firstName = binding.firstName.value;
-                    const lastName = binding.lastName.value;
-                    
-                    resolve(new EmployeeId(id, pid, firstName, lastName));
-                });
+                if (result.results.bindings.length > 0) {
+                    const sparqlJsonParser = new SparqlJsonParser();
+                    resolve(sparqlJsonParser.parseJsonResults(result));
+                }
                 else 
                     resolve(null);
             })
@@ -299,7 +294,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
-    getEmployeeByEmployeeSystemId(employeeSystemId: string): Promise<EmployeeId> {
+    getEmployeeByEmployeeSystemId(employeeSystemId: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             const sparqlQuery = sparqlEmployeeByEmployeeSystemIdQuery(employeeSystemId);
             this.logger.info(`getEmployeeByEmployeeSystemId(${employeeSystemId}).`);
@@ -307,18 +302,15 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 this.logger.info(result);
-                if (result.results.bindings.length > 0)
-                result.results.bindings.forEach((binding: any) => {
-                    console.log(binding)
-                    const id = binding.id.value;
-                    const pid = binding.pid.value;
-                    const firstName = binding.firstName.value;
-                    const lastName = binding.lastName.value;
-                    
-                    resolve(new EmployeeId(id, pid, firstName, lastName));
-                });
-                else 
-                    resolve(null);
+                if (result.results.bindings.length > 0) {
+                    const id = result.results.bindings[0].id.value;
+                    this.getEmployeeByEmployeeId(id).then((employee) => {
+                        resolve(employee);
+                    }
+                    ).catch((error) => {
+                        reject(error);
+                    });
+                }
             })
             .catch((error) => {
                 this.logger.error(error);
@@ -335,12 +327,10 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 this.logger.info(result);
-                if (result.results.bindings.length > 0)
-                    result.results.bindings.forEach((binding: any) => {
-                        console.log(binding)
-                        const orgName = binding.orgName.value;                    
-                        resolve([orgName]);
-                    });
+                if (result.results.bindings.length > 0) {
+                    const sparqlJsonParser = new SparqlJsonParser();
+                    resolve(sparqlJsonParser.parseJsonResults(result));
+                }
                 else 
                     resolve(null);
             })
@@ -352,22 +342,21 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     }
 
 
-    getMembershipByMembershipId(membershipId: string): Promise<Map<string, string>> {
-        return new Promise<Map<string, string>>((resolve, reject) => {
+    getMembershipByMembershipId(membershipId: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
             const sparqlQuery = sparqlMembershipByMembershipIdQuery(membershipId);
             this.logger.info(`getMembershipByMembershipId(${membershipId}).`);
             this.logger.info(`Sparql Query: ${sparqlQuery}`);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 this.logger.info(result);
-                var returnResult = new Map<string, string>();
                 if (result.results.bindings.length > 0) {
-                    result.results.bindings.forEach((binding: any) => {
-                        console.log(binding)
-                        returnResult.set(binding.predicate.value, binding.object.value);
-                    });
+                    const sparqlJsonParser = new SparqlJsonParser();
+                    resolve(sparqlJsonParser.parseJsonResults(result));
                 }
-                resolve(returnResult);
+                else {
+                    resolve(null);
+                }
             })
             .catch((error) => {
                 this.logger.error(error);
@@ -376,21 +365,22 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
-    getTimeByTimeId(timeId: string): Promise<Date> {
-        return new Promise<Date>((resolve, reject) => {
+    getTimeByTimeId(timeId: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
             const sparqlQuery = sparqlTimeByTimeIdQuery(timeId);
             this.logger.info(`getTimeByTimeId(${timeId}).`);
             this.logger.info(`Sparql Query: ${sparqlQuery}`);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 this.logger.info(result);
-                if (result.results.bindings.length > 0)
-                    result.results.bindings.forEach((binding: any) => {
-                        console.log(binding)
-                        const dateTime: Date = new Date(binding.dateTime.value);                    
-                        resolve(dateTime);
-                    });
-                })
+                if (result.results.bindings.length > 0){
+                    const sparqlJsonParser = new SparqlJsonParser();
+                    resolve(sparqlJsonParser.parseJsonResults(result));
+                }
+                else {
+                    resolve(null);
+                }
+            })
             .catch((error) => {
                 this.logger.error(error);
                 return reject(error);
@@ -398,22 +388,21 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
-    getTimeIntervalByTimeIntervalId(timeIntervalId: string): Promise<Map<string, string>> {
-        return new Promise<Map<string, string>>((resolve, reject) => {
+    getTimeIntervalByTimeIntervalId(timeIntervalId: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
             const sparqlQuery = sparqlTimeIntervalByTimeIntervalId(timeIntervalId);
             this.logger.info(`getTimeIntervalByTimeIntervalId(${timeIntervalId}).`);
             this.logger.info(`Sparql Query: ${sparqlQuery}`);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 this.logger.info(result);
-                var returnResult = new Map<string, string>();
                 if (result.results.bindings.length > 0) {
-                    result.results.bindings.forEach((binding: any) => {
-                        console.log(binding)
-                        returnResult.set(binding.predicate.value, binding.object.value);
-                    });
+                    const sparqlJsonParser = new SparqlJsonParser();
+                    resolve(sparqlJsonParser.parseJsonResults(result));
                 }
-                resolve(returnResult);
+                else {
+                    resolve(null);
+                }
             })
             .catch((error) => {
                 this.logger.error(error);

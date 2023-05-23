@@ -5,7 +5,6 @@ import { EmployeeCorporateTitleEpocs } from "../models/eom/EmployeeCorporateTitl
 import { DepartmentEmployeeCountTimeEpoc } from "../models/eom/DepartmentEmployeeCountTimeEpoc";
 import { DepartmentEmployeeCountTimeSeries } from "../models/eom/DepartmentEmployeeCountTimeSeries";
 import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
-import { EmployeeId } from "../models/eom/ids/EmployeeId";
 
 interface IOrganizationRdfQuery {
     createBankOrgRdfDataGenerator(employee:Employee): Promise<string>;
@@ -21,12 +20,12 @@ interface IOrganizationRdfQuery {
     getDepartmentLeavers(departmentCode: string, startDate: Date, endDate: Date): Promise<EmployeeLeaverJoiner[]>
 
     // id lookups
-    getEmployeeByEmployeeSystemId(employeeSystemId: string): Promise<EmployeeId>;
-    getEmployeeByEmployeeId(employeeId: string): Promise<EmployeeId>;
+    getEmployeeByEmployeeSystemId(employeeSystemId: string): Promise<any>;
+    getEmployeeByEmployeeId(employeeId: string): Promise<any>;
     getOrganizationByOrganizationId(organizationId: string): Promise<any>;
-    getMembershipByMembershipId(membershipId: string): Promise<Map<string,string>>;
-    getTimeByTimeId(timeId: string): Promise<Date>;
-    getTimeIntervalByTimeIntervalId(timeIntervalId: string): Promise<Map<string,string>>;
+    getMembershipByMembershipId(membershipId: string): Promise<any>;
+    getTimeByTimeId(timeId: string): Promise<any>;
+    getTimeIntervalByTimeIntervalId(timeIntervalId: string): Promise<any>;
 }
 
 export { IOrganizationRdfQuery }
