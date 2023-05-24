@@ -10,23 +10,19 @@ describe("create a new blazegraph DB", () => {
     let testDirectory: string;
     let blazegraphProcess: ChildProcess;
 
-    beforeAll(async () => {
+    beforeAll(() => {
         const myuuid = uuidv4();
         testDirectory = `blazegraph-test-database-${myuuid}`;
-//        const createdDirectory = await exec(`mkdir ${testDirectory}; cd ${testDirectory}`);
-        // await exec(`mkdir ${testDirectory}`);
-        // await exec(`cd ${testDirectory}`);
-        // await exec(`wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar`);
-        // await exec(`java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);
-        blazegraphProcess = await exec(`mkdir ${testDirectory};
+        blazegraphProcess = exec(`mkdir ${testDirectory};
                     cd ${testDirectory};
                     wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar;
-                    java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);
+                    java -server -Xmx64g -Djetty.port=19999 -jar blazegraph.jar&`);    
     });
 
-    afterAll(async () => {
-        await blazegraphProcess.kill();
-        await exec(`rm -rf ${testDirectory}`);
+    afterAll(() => {
+        if (blazegraphProcess.kill()) {
+            exec(`rm -rf ${testDirectory}`);
+        }
     });
 
     test("create a new blazegraph DB", async () => {

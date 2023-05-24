@@ -1,0 +1,78 @@
+{
+    "frontend": {
+        "hostname": "localhost",
+        "enableHttps": false,
+        "enableHttp": true,
+        "https": {
+            "port": 443,
+            "httpsKeyPath": "/etc/letsencrypt/live/yourdomain.com/privkey.pem",
+            "httpsCertPath": "/etc/letsencrypt/live/yourdomain.com/fullchain.pem"
+        },
+        "http": {
+            "port": 8080
+        },
+        "streamTrottleTimeout": 1000
+    },
+    "backend": {
+        "http": {
+            "keepAlive": true,
+            "keepAliveMsecs": 1000,
+            "proxy": false,
+            "rejectUnauthorized": false
+        },
+        "https": {
+            "keepAlive": true,
+            "keepAliveMsecs": 1000,
+            "proxy": false,
+            "rejectUnauthorized": false,
+            "keyPath": "/etc/letsencrypt/live/yourdomain.com/privkey.pem",
+            "certPath": "/etc/letsencrypt/live/yourdomain.com/fullchain.pem"
+        },
+        "graphdb": "blazegraph-http",
+        "graphdbconfigs": [
+            {
+                "name": "blazegraph-http",
+                "type": "blazegraph",
+                "protocol": "http",
+                "host": "localhost",
+                "port": 19999,
+                "namespace": "sparql",
+                "blazename": "blazegraph"
+            }
+        ]
+    },
+    "logging": {
+        "dataIngestionLogging": false,
+        "dataIngestionLoggingLevel": "info",
+        "dataIngestionLoggingPath": "",
+        "dataIngestionDeadLetterPath": "",
+        "queryLogging": false,
+        "queryLoggingLevel": "info",
+        "queryLoggingPath": ""
+    },
+    "rdfOntologies": {
+        "prefixes": {
+            "bank-org": "http://example.org/bank-org#",
+            "organization-id": "http://example.org/organization-id/",
+            "employee-id": "http://example.org/employee-id/",
+            "membership-id": "http://example.org/membership-id/",
+            "time-id": "http://example.org/time-id/",
+            "time-interval-id": "http://example.org/time-interval-id/",
+            "org": "http://www.w3.org/ns/org#",
+            "time": "http://www.w3.org/2006/time#",
+            "interval": "http://example.org/interval#",
+            "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+            "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+            "foaf": "http://xmlns.com/foaf/0.1#"
+        }
+    },
+    "dataIngestion": {
+        "temporaryDirectory": "./tmp",
+        "ontologyValidation": false,
+        "ontologyValidationSchemaPath": "./rdf/ontology/bank-organization.ttl",
+        "ontologyValidationSchemaFormat": "text/turtle",
+        "deleteTemporaryFiles": true
+    }
+}
+
