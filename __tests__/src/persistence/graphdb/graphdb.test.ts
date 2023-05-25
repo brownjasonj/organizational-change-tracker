@@ -79,33 +79,5 @@ describe("GraphDB IRdfGraph interface testing", () => {
         expect(insertResponse).toBeDefined();
     });
 
-    test("Test Joiners Query: Employee has been in department 'A' in different epocs.", async () => {
-        const graphDB: IRdfGraphDB =  GraphPersistenceFactory.getInstance().getGraphDB();
-        // await graphDB.init();
-        // Employee 1, joins a department 'A' from outside organization on 2000-01-01 and epoc ends on 2000-02-01
-        // Employee 1, epoc in 'A' continues on 2000-02-02 and leaves on 2000-03-01
-        // Employee 1, joins in 'B' on 2000-03-02 and leaves on 2000-05-01
-        // Employee 1, joins in 'C' on 2000-05-02 and leaves on 2010-12-01
-        // Employee 1, joins in 'A' on 2010-12-02 and leaves on 2011-12-01
-        // Employee 1, joins in 'A' on 2011-12-02 and leaves on 2012-12-01
-        //
-        // Note that the intention is that the first 'A' is different from the second  'A' in that the organization
-        // has changed overtime and just reused the names!  But we want to be able to distinguish a joiner/leaver
-        // in this sense.  
-        // 
-        const employeeRecord1 : Employee = new Employee("1", "A1", "John", "Hawkins", "A", "Staff",
-            new Date("2012-01-01"),
-            new Date("2012-12-31"),
-            new Date("2009-11-02"),
-            new Date("9999-12-31"));
-        const employeeRecord2 : Employee = new Employee("4041235", "A041235", "John", "Hawkins", "A", "Staff",
-            new Date("2012-01-01"),
-            new Date("2012-12-31"),
-            new Date("2009-11-02"),
-            new Date("9999-12-31"));
-        const turtleData: string = await BankOrgRdfDataGenerator(employeeRecord1);
-        expect(turtleData).toBeDefined();
-        const insertResponse = await graphDB.turtleUpdate(turtleData);
-        expect(insertResponse).toBeDefined();
-    }
+
 });

@@ -137,7 +137,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                 this.logger.info(result);
                 for(var joiner of result.results.bindings) {
                     this.logger.info(joiner);
-                    joinerSet.push(new EmployeeLeaverJoiner(joiner.pid.value, joiner.department.value, new Date(joiner.startingDate.value as string), EmployeeLeaverJoinerType.JOINER));
+                    joinerSet.push(new EmployeeLeaverJoiner(joiner.employee.value, joiner.department.value, new Date(joiner.startingDate.value as string), EmployeeLeaverJoinerType.JOINER));
                 }
                 resolve(joinerSet);
             })
@@ -154,13 +154,14 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         this.logger.info(`getDepartmentLeavers(${departmentCode}, ${startDay}, ${endDay}).`);
         return new Promise<EmployeeLeaverJoiner[]>(async (resolve, reject) => {
             const sparqlQuery = sparqlLeaversQueryByDepartment(departmentCode, startDay, endDay);
+            console.log(sparqlQuery);
             var joinerSet: EmployeeLeaverJoiner[] = [];
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 this.logger.info(result);
                 for(var joiner of result.results.bindings) {
                     this.logger.info(joiner);
-                    joinerSet.push(new EmployeeLeaverJoiner(joiner.pid.value, joiner.department.value, new Date(joiner.endingDate.value as string), EmployeeLeaverJoinerType.LEAVER));
+                    joinerSet.push(new EmployeeLeaverJoiner(joiner.employee.value, joiner.department.value, new Date(joiner.endingDate.value as string), EmployeeLeaverJoinerType.LEAVER));
                 }
                 resolve(joinerSet);
             })

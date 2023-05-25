@@ -24,30 +24,57 @@ const sparqlDepartmentLeaversQuery = (startPeriod: Date, endPeriod: Date) => {
     }`;
 }
 
+// const sparqlLeaversQueryByDepartment = (departmentCode: string, startPeriod: Date, endPeriod: Date) => {
+//     const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
+//     return `${ontology.getSparqlPrefixes()}
+    
+//     select distinct ?pid ?department ?endingDate
+//     where {
+//         ?parentorg ${ontology.getOrgPrefix()}name "${departmentCode}".                   #find parent organization with given name for which you want to count employees
+//         ?parentorg ${ontology.getOrgPrefix()}name ?name.
+//         ?org ${ontology.getOrgPrefix()}subOrganizationOf* ?parentorg.
+//         ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
+//         ?member ${ontology.getOrgPrefix()}member ?employee.
+//         ?employee ${ontology.getBankOrgPrefix()}pid ?pid.
+//         ?org ${ontology.getOrgPrefix()}name ?department.
+// 	    {
+//             select ?member (min(?endDate) as ?endingDate)
+//             where {
+//                 ?member ${ontology.getOrgPrefix()}memberDuring ?interval.			# determine when the member was a member of the organization
+//                 ?interval ${ontology.getTimePrefix()}hasEnd ?end.
+//                 ?end ${ontology.getTimePrefix()}inXSDDateTimeStamp ?endDate.
+//                 filter(?endDate >= "${startPeriod.toISOString()}"^^${ontology.getXsdPrefix()}dateTime
+//                     && ?endDate <= "${endPeriod.toISOString()}"^^${ontology.getXsdPrefix()}dateTime).
+//             }
+//             group by ?member ?endingDate
+//         }
+//     }`;
+// };
+
+
 const sparqlLeaversQueryByDepartment = (departmentCode: string, startPeriod: Date, endPeriod: Date) => {
     const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
     return `${ontology.getSparqlPrefixes()}
     
-    select distinct ?pid ?department ?endingDate
+    select distinct ?employee ?department ?endingDate
     where {
         ?parentorg ${ontology.getOrgPrefix()}name "${departmentCode}".                   #find parent organization with given name for which you want to count employees
-        ?parentorg ${ontology.getOrgPrefix()}name ?name.
         ?org ${ontology.getOrgPrefix()}subOrganizationOf* ?parentorg.
         ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
-        ?member ${ontology.getOrgPrefix()}member ?employee.
-        ?employee ${ontology.getBankOrgPrefix()}pid ?pid.
-        ?org ${ontology.getOrgPrefix()}name ?department.
 	    {
-            select ?member (min(?endDate) as ?endingDate)
+            select ?member (max(?endDate) as ?endingDate)
             where {
+                ?member ${ontology.getOrgPrefix()}organization ?org.              # find all members of the organization
                 ?member ${ontology.getOrgPrefix()}memberDuring ?interval.			# determine when the member was a member of the organization
                 ?interval ${ontology.getTimePrefix()}hasEnd ?end.
                 ?end ${ontology.getTimePrefix()}inXSDDateTimeStamp ?endDate.
-                filter(?endDate >= "${startPeriod.toISOString()}"^^${ontology.getXsdPrefix()}dateTime
-                    && ?endDate <= "${endPeriod.toISOString()}"^^${ontology.getXsdPrefix()}dateTime).
             }
             group by ?member ?endingDate
         }
+        filter(?endingDate >= "${startPeriod.toISOString()}"^^${ontology.getXsdPrefix()}dateTime
+            && ?endingDate <= "${endPeriod.toISOString()}"^^${ontology.getXsdPrefix()}dateTime).
+        ?member ${ontology.getOrgPrefix()}member ?employee.
+        ?org ${ontology.getOrgPrefix()}name ?department.
     }`;
 };
 
