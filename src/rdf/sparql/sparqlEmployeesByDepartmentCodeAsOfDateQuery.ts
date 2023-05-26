@@ -5,7 +5,7 @@ const sparqlEmployeesByDepartmentCodeAsOfDateQuery = (departmentCode: string, as
   const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
   return `${ontology.getSparqlPrefixes()}
   
-    select distinct ?employee 
+    select distinct ?employee ?org
     where {
         ?parentorg ${ontology.getOrgPrefix()}name "${departmentCode}".                   #find parent organization with given name for which you want to count employees
         ?org ${ontology.getOrgPrefix()}subOrganizationOf* ?parentorg.     # where the organization is a suborganization of the parent organization
