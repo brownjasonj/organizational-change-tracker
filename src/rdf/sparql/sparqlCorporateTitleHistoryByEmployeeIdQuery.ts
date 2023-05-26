@@ -6,8 +6,7 @@ const sparqlCorporateTitleHistoryByEmployeeIdQuery = (employeeId: string) => {
     return `${ontology.getSparqlPrefixes()}
     select ?corpTitle (min(?date1) as ?startDate) (max(?date2) as ?endDate)
     where {
-        ?employee ${ontology.getBankOrgPrefix()}pid "${employeeId}".
-        ?corpTitleMembership ${ontology.getOrgPrefix()}member ?employee.
+        ?corpTitleMembership ${ontology.getOrgPrefix()}member ${ontology.getEmployeeDomainIdPrefix()}${employeeId}.
         ?corpTitleMembership ${ontology.getBankOrgPrefix()}BankCorporateTitle ?corpTitle.
         ?corpTitleMembership ${ontology.getOrgPrefix()}memberDuring ?interval.			# determine when the member was a member of the organization
         ?interval ${ontology.getTimePrefix()}hasBeginning ?start.

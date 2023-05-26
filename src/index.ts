@@ -8,28 +8,24 @@ import { OpenAPIBackend, Request } from 'openapi-backend';
 import * as swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import 'reflect-metadata';
-import { employeeCountByDepartmentCodeHandler } from './handlers/employeeCountByDepartmentCodeHandler';
-import { departmentCodesHandler } from './handlers/departmentCodesHandler';
-import { departmentHistoryHandler } from './handlers/departmentHistoryHandler';
-import { employeeRoleHistoryByEmployeeIdHandler } from './handlers/employeeRoleHistoryByEmployeeIdHandler';
-import { employeeDepartmentHistoryHandler } from './handlers/employeeDepartmentHistoryHandler';
+import yargs from 'yargs';
+import { departmentCodesAsOfDateHandler } from './handlers/departmentCodesAsOfDateHandler';
+import { corporateTitleHistoryByEmployeeIdHandler } from './handlers/corporateTitleHistoryByEmployeeIdHandler';
 import fileUpload from 'express-fileupload';
 import { operationsFileUploadStatusByRequestIdHandler } from './handlers/operationsFileUploadStatusByRequestIdHandler';
-import { addEmployeesHandler } from './handlers/addEmployessHandler';
+import { uploadEmployeesByFileHandler } from './handlers/uploadEmployeesByFileHandler';
 import { ConfigurationManager } from './ConfigurationManager';
-import { employeeJoinersByDepartment } from './handlers/employeeJoinersByDepartment';
-import { employeeLeaversByDepartment } from './handlers/employeeLeaversByDepartment';
-import { departmentHistoryWithJoinersLeaversHandler } from './handlers/departmentHistoryWithJoinersLeaversHandler';
+import { employeesJoiningByDepartmentCodeFromDateToDateHandler } from './handlers/employeesJoiningByDepartmentCodeFromDateToDateHandler';
+import { employeesLeavingByDepartmentCodeFromDateToDateHandler } from './handlers/employeesLeavingByDepartmentCodeFromDateToDateHandler';
 import { operationsDeleteTriplesHandler } from './handlers/operationsDeleteHandler';
 import { validationFailHandler } from './handlers/validationFailHandler';
 import { notFoundHandler } from './handlers/notFoundHandler';
 import { notImplementedHandler } from './handlers/notImplementedHandler';
-import yargs from 'yargs';
 import { operationsGetConfiguration } from './handlers/operationsGetConfiguration';
 import { ApplicationConfiguration } from './models/eom/configuration/ApplicationConfiguration';
 import { FrontEndConfiguration } from './models/eom/configuration/FrontEndConfiguration';
 import { consoleLogger } from './logging/consoleLogger';
-import { employeeDepartmentHistoryByEmployeeIdHandler } from './handlers/employeeDepartmentHistoryByEmployeeIdHandler';
+import { departmentHistoryByEmployeeIdHandler } from './handlers/departmentHistoryByEmployeeIdHandler';
 import { employeeByEmployeeIdHandler } from './handlers/idhandlers/employeeByEmployeeIdHandler';
 import { membershipByMembershipIdHandler } from './handlers/idhandlers/membershipByMembershipIdHandler';
 import { organizationByOrganizationIdHandler } from './handlers/idhandlers/organizationByOrganizationIdHandler';
@@ -39,6 +35,9 @@ import { BackEndConfiguration } from './models/eom/configuration/BackEndConfigur
 import { GraphPersistenceFactory } from './persistence/GraphPersistenceFactory';
 import { employeeByEmployeeSystemIdHandler } from './handlers/idhandlers/employeeByEmployeeSystemIdHandler';
 import { operationsFilesUploadStatusesHandler } from './handlers/operationsFilesUploadStatusesHandler';
+import { employeeCountByDepartmentCodeAsOfDateHandler } from './handlers/employeeCountByDepartmentCodeAsOfDateHandler';
+import { employeeCountByDepartmentCodeFromDateToDateHandler } from './handlers/employeeCountByDepartmentCodeFromDateToDateHandler';
+import { employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler } from './handlers/employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler';
 
 const app = Express();
 // enable file uploads
@@ -71,21 +70,23 @@ api.register('notFound', notFoundHandler);
 api.register('notImplemented', notImplementedHandler);
 
 // register openapi application handlers
-api.register('employeeDepartmentHistory', employeeDepartmentHistoryHandler);
-api.register('employeeDepartmentHistoryByEmployeeId', employeeDepartmentHistoryByEmployeeIdHandler);
-api.register('employeeRoleHistoryByEmployeeId', employeeRoleHistoryByEmployeeIdHandler);
-api.register('departmentHistoryWithJoinersLeaver', departmentHistoryWithJoinersLeaversHandler);
-api.register('departmentJoiners', employeeJoinersByDepartment);
-api.register('departmentLeavers', employeeLeaversByDepartment);
-api.register('employee-count-by-department-code', employeeCountByDepartmentCodeHandler);
-api.register('department-codes', departmentCodesHandler);
-api.register('departmentHistory', departmentHistoryHandler);
-api.register('upload', addEmployeesHandler);
+api.register('employeeByEmployeeId', employeeByEmployeeIdHandler);
+api.register('corporateTitleHistoryByEmployeeId', corporateTitleHistoryByEmployeeIdHandler);
+api.register('departmentHistoryByEmployeeId', departmentHistoryByEmployeeIdHandler);
+
+api.register('employeeCountByDepartmentCodeAsOfDate', employeeCountByDepartmentCodeAsOfDateHandler);
+api.register('employeeCountByDepartmentCodeFromDateToDate', employeeCountByDepartmentCodeFromDateToDateHandler);
+api.register('employeesJoiningLeavingByDepartmentCodeFromDateToDate', employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler);
+api.register('employeesJoiningByDepartmentCodeFromDateToDate', employeesJoiningByDepartmentCodeFromDateToDateHandler);
+api.register('employeesLeavingByDepartmentCodeFromDateToDate', employeesLeavingByDepartmentCodeFromDateToDateHandler);
+
+
+api.register('departmentCodesAsOfDate', departmentCodesAsOfDateHandler);
+api.register('uploadEmployeesByFile', uploadEmployeesByFileHandler);
 api.register('operationsFileUploadStatusByRequestId', operationsFileUploadStatusByRequestIdHandler);
 api.register('operationsFilesUploadStatuses', operationsFilesUploadStatusesHandler)
 api.register('operationsDeleteTriples', operationsDeleteTriplesHandler);
 api.register('operationsGetConfiguration', operationsGetConfiguration);
-api.register('employeeByEmployeeId', employeeByEmployeeIdHandler);
 api.register('employeeByEmployeeSystemId', employeeByEmployeeSystemIdHandler)
 api.register('membershipByMembershipId', membershipByMembershipIdHandler);
 api.register('organizationByOrganizationId', organizationByOrganizationIdHandler);

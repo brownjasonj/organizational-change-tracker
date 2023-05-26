@@ -3,6 +3,7 @@ import { Context, Request } from "openapi-backend";
 import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
 import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
 import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
+import { Calendar } from "../utils/Calendar";
 
 const getDateStep = (dateStep: string): number => {
     switch (dateStep) {
@@ -19,26 +20,17 @@ const getDateStep = (dateStep: string): number => {
     }
 }
 
-const departmentHistoryWithJoinersLeaversHandler = async (context: Context, request: Request, response: Response) => {
-    if (context.request.query.departmentCode
-        && context.request.query.startDate) {
-        const departmentCode: string = context.request.query.departmentCode as string;
-        const startDate: Date = new Date(context.request.query.startDate as string);
-        // set the start date time to 00:00:00
-        // startDate.setHours(1,0,0,0);
-        var endDate: Date;
+const employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler = async (context: Context, request: Request, response: Response) => {
+    if (context.request.params.departmentcode
+        && context.request.params.fromdate
+        && context.request.params.todate) {
+        const departmentCode: string = context.request.params.departmentcode as string;
+        const fromDate: Date = Calendar.getStartOfDay(new Date(context.request.params.startDate as string));
+        const toDate: Date = Calendar.getEndOfDay(new Date(context.request.params.todate as string));
         var dateStep: number;
-        if (context.request.query.endDate) {
-            endDate = new Date (context.request.query.endDate as string);
-        }
-        else {
-            endDate = new Date();
-        }
-        // set the end date time to 23:59:59
-        endDate.setHours(23,59,59,0);
 
-        if (context.request.query.dateStep) {
-            dateStep = getDateStep(context.request.query.dateStep as string);
+        if (context.request.query.datestep) {
+            dateStep = getDateStep(context.request.query.datestep as string);
         }
         else {
             dateStep = getDateStep('day');
@@ -48,7 +40,7 @@ const departmentHistoryWithJoinersLeaversHandler = async (context: Context, requ
         const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
 
         try {
-            const timeseries: DepartmentEmployeeCountWithJoinersLeaversTimeSeries = await rdfOrganization.getDepartmentEmployeeHistoryWithJoinersAndLeavers(departmentCode, startDate, endDate, dateStep);
+            const timeseries: DepartmentEmployeeCountWithJoinersLeaversTimeSeries = await rdfOrganization.getDepartmentEmployeeHistoryWithJoinersAndLeavers(departmentCode, fromDate, toDate, dateStep);
             response.json(timeseries);
             return;
         }
@@ -63,4 +55,4 @@ const departmentHistoryWithJoinersLeaversHandler = async (context: Context, requ
     }
 }
 
-export { departmentHistoryWithJoinersLeaversHandler }
+export { employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler }

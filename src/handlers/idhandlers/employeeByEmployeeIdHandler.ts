@@ -9,7 +9,7 @@ const employeeByEmployeeIdHandler = async (context: Context, request: Request, r
         try {
             const result = await rdfOrganization.getEmployeeByEmployeeId(context.request.params.employeeId as string);
             console.log(result);
-            response.json({ result: result});
+            response.json({result: result});
         }
         catch (error) {
             console.log(error);

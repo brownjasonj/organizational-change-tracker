@@ -54,7 +54,7 @@ function processFile(file: UploadedFile): Promise<string> {
     });
 }
 
-const addEmployeesHandler =  async (context: Context, request: Request, response: Response) => {
+const uploadEmployeesByFileHandler =  async (context: Context, request: Request, response: Response) => {
     if (!request.files) {
         response.status(400).send('No files were uploaded.');
         consoleLogger.error('No files were uploaded.');
@@ -63,9 +63,11 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
     else {
         const uploadedFiles = request.files.file;
         if (uploadedFiles instanceof Array) {
+            var requests: object[] = [];
             await uploadedFiles.forEach((uploadedFile) => {
                 processFile(uploadedFile).then((requestId) => {
-                    response.status(202).json({'Operation-Location': `${getResourceLocation(requestId)}`});
+                    requests.push({'Operation-Location': `${getResourceLocation(requestId)}`});
+//                    response.status(202).json({'Operation-Location': `${getResourceLocation(requestId)}`});
 //                    response.status(202).json({'Operation-Location': `${requestId}`});
                 }).catch((error) => {
                     consoleLogger.error(error);
@@ -73,6 +75,7 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
                 });
                 consoleLogger.info(` Loading file: ${uploadedFile.name}`);
             });
+            response.status(202).json(requests);
         }
         else {
             const file: UploadedFile = uploadedFiles as UploadedFile;
@@ -87,4 +90,4 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
    }
 };
 
-export { addEmployeesHandler }
+export { uploadEmployeesByFileHandler }

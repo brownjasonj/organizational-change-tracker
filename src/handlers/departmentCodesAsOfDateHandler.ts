@@ -6,10 +6,10 @@ import { sparqlDepartmentCodesQuery } from "../rdf/sparql/sparqlDepartmentCodesQ
 
 
 
-const departmentCodesHandler = async (context: Context, request: Request, response: Response) => {
-    if (context.request.query.asOf) {
+const departmentCodesAsOfDateHandler = async (context: Context, request: Request, response: Response) => {
+    if (context.request.params.asofdate) {
         const graphdb: IRdfGraphDB = GraphPersistenceFactory.getInstance().getGraphDB();
-        const sparqlQuery = sparqlDepartmentCodesQuery(new Date(context.request.query.asOf as string))
+        const sparqlQuery = sparqlDepartmentCodesQuery(new Date(context.request.params.asofdate as string))
         if (context.request.headers.accept === 'application/json') {
             console.log('sparqlQuery: ' + sparqlQuery);
             try {
@@ -27,8 +27,4 @@ const departmentCodesHandler = async (context: Context, request: Request, respon
     response.status(404).send();
 }
 
-
-const getContentType = (request: Request) => {
-}
-
-export { departmentCodesHandler} 
+export { departmentCodesAsOfDateHandler} 

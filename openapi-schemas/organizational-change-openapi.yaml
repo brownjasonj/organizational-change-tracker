@@ -8,19 +8,101 @@ servers:
   - url: https://localhost:8443
     description: locally hosted server for local development purposes
 paths:
-  /employee-count-by-department-code:
+  /employee/{employeeId}:
+    get:
+      description: get the employee information.
+      operationId: "employeeByEmployeeId"
+      parameters:
+        - in: path
+          name: employeeid
+          schema:
+            type: string
+          required: true
+          description: Employee Id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/employeeDepartmentEpocs"
+  /employee/{employeeId}/corporateTitles:
+    get:
+      description: get the history of which Corporate Title an employee has had.
+      operationId: "corporateTitleHistoryByEmployeeId"
+      parameters:
+        - in: path
+          name: employeeid
+          schema:
+            type: string
+          required: true
+          description: Employee Id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/employeeCorporateTitleEpocs"
+  /employee/{employeeId}/departments:
+    get:
+      description: get the history of which department an employee has gone through.
+      operationId: "departmentHistoryByEmployeeId"
+      parameters:
+        - in: path
+          name: employeeid
+          schema:
+            type: string
+          required: true
+          description: Employee Id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/employeeDepartmentEpocs"
+  /department/{departmentcode}/{asofdate}/employees:
     get:
       description: "Simple test end-point returning a Hello World!"
-      operationId: "employee-count-by-department-code"
+      operationId: "employeesAsOfDateByDepartmentCode"
       parameters:
-        - in: query
-          name: departmentCode
+        - in: path
+          name: departmentcode
+          schema:
+            type: string
+          required: true
+          description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
+        - in: path
+          name: asofdate
+          schema:
+            type: string
+          required: true
+          description: The date on which to count employees in the organization in the form YYYY-MM-DD
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/employee"
+        '500':
+          description: Internal error, most likely caused by a failure to connect to storage.
+        '400':
+          description: Poorly formed request, most commonly related to the query parameters.
+  /department/{departmentcode}/{asofdate}/employeeCount:
+    get:
+      description: get the number of employees in a department  on the given date
+      operationId: "employeeCountByDepartmentCodeAsOfDate"
+      parameters:
+        - in: path
+          name: departmentcode
           schema:
             type: string
           required: true
           description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
         - in: query
-          name: asOf
+          name: asofdate
           schema:
             type: string
           required: true
@@ -37,78 +119,31 @@ paths:
           description: Internal error, most likely caused by a failure to connect to storage.
         '400':
           description: Poorly formed request, most commonly related to the query parameters.
-  /employee-department-history:
-    get:
-      description: get the history of which department an employee has gone through.  for all employees.
-      operationId: "employeeDepartmentHistory"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/employeeDepartmentEpocs"
-  /employee-department-history-by-employeeid:
-    get:
-      description: get the history of which department an employee has gone through.
-      operationId: "employeeDepartmentHistoryByEmployeeId"
-      parameters:
-        - in: query
-          name: employeeId
-          schema:
-            type: string
-          required: true
-          description: Employees Id
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/employeeDepartmentEpocs"
-  /employee-role-history-by-employeeid:
-    get:
-      description: get the history of which role an employee has gone through.
-      operationId: "employeeRoleHistoryByEmployeeId"
-      parameters:
-        - in: query
-          name: employeeId
-          schema:
-            type: string
-          required: true
-          description: Employees Id
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/employeeRoleEpocs"
-  /department-history:
+  /department/{departmentcode}/{fromdate}/{todate}/employeeCount:
     get:
       description: get the history evolution of a department showing change is size over time and movement of people in and out
-      operationId: "departmentHistory"
+      operationId: "employeeCountByDepartmentCodeFromDateToDate"
       parameters:
-        - in: query
-          name: departmentCode
+        - in: path
+          name: departmentcode
           schema:
             type: string
           required: true
           description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
-        - in: query
-          name: startDate
+        - in: path
+          name: fromdate
           schema:
             type: string
           required: true
           description: The starting point for the history
-        - in: query
-          name: endDate
+        - in: path
+          name: todate
           schema:
             type: string
-          required: false
+          required: true
           description: The ending point for the history, if not provided it is assume to be the date of the call ("today")
         - in: query
-          name: dateStep
+          name: datestep
           schema:
             $ref: "#/components/schemas/dateStep"
           required: false
@@ -120,31 +155,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/departmentHistory"
-  /department-history-with-joinersleavers:
+  /department/{departmentcode}/{fromdate}/{todate}/employeesJoiningLeaving:
     get:
       description: get the history evolution of a department showing change is size over time and movement of people in and out
-      operationId: "departmentHistoryWithJoinersLeaver"
+      operationId: "employeesJoiningLeavingByDepartmentCodeFromDateToDate"
       parameters:
-        - in: query
-          name: departmentCode
+        - in: path
+          name: departmentcode
           schema:
             type: string
           required: true
           description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
-        - in: query
-          name: startDate
+        - in: path
+          name: fromdate
           schema:
             type: string
           required: true
           description: The starting point for the history
-        - in: query
-          name: endDate
+        - in: path
+          name: todate
           schema:
             type: string
-          required: false
+          required: true
           description: The ending point for the history, if not provided it is assume to be the date of the call ("today")
         - in: query
-          name: dateStep
+          name: datestep
           schema:
             $ref: "#/components/schemas/dateStep"
           required: false
@@ -156,31 +191,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/departmentHistory"
-  /department-joiners:
+  /department/{departmentcode}/{fromdate}/{todate}/employeesJoining:
     get:
       description: get list of employees that joined a department in a particular period
-      operationId: "departmentJoiners"
+      operationId: "employeesJoiningByDepartmentCodeFromDateToDate"
       parameters:
-        - in: query
-          name: departmentCode
+        - in: path
+          name: departmentcode
           schema:
             type: string
           required: true
           description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
-        - in: query
-          name: startDate
+        - in: path
+          name: fromdate
           schema:
             type: string
           required: true
           description: The starting point for the history
-        - in: query
-          name: endDate
+        - in: path
+          name: todate
           schema:
             type: string
-          required: false
+          required: true
           description: The ending point for the history, if not provided it is assume to be the date of the call ("today")
         - in: query
-          name: dateStep
+          name: datestep
           schema:
             $ref: "#/components/schemas/dateStep"
           required: false
@@ -192,31 +227,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/departmentHistory"
-  /department-leavers:
+  /department/{departmentcode}/{fromdate}/{todate}/employeesLeaving:
     get:
       description: get list of employees that left a department in a particular period
-      operationId: "departmentLeavers"
+      operationId: "employeesLeavingByDepartmentCodeFromDateToDate"
       parameters:
-        - in: query
-          name: departmentCode
+        - in: path
+          name: departmentcode
           schema:
             type: string
-          required: false
+          required: true
           description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
-        - in: query
-          name: startDate
+        - in: path
+          name: fromdate
           schema:
             type: string
           required: true
           description: The starting point for the history
-        - in: query
-          name: endDate
+        - in: path
+          name: todate
           schema:
             type: string
-          required: false
+          required: true
           description: The ending point for the history, if not provided it is assume to be the date of the call ("today")
         - in: query
-          name: dateStep
+          name: datestep
           schema:
             $ref: "#/components/schemas/dateStep"
           required: false
@@ -224,13 +259,13 @@ paths:
       responses:
         '200':
           description: OK
-  /department-codes:
+  /departments/{asofdate}:
     get:
       description: get a list of department codes as of a given date
-      operationId: "department-codes"
+      operationId: "departmentCodesAsOfDate"
       parameters:
-        - in: query
-          name: asOf
+        - in: path
+          name: asofdate
           schema:
             type: string
           required: true
@@ -255,7 +290,7 @@ paths:
   /operations/upload:
     post:
       description: upload a binary file
-      operationId: "upload"
+      operationId: "uploadEmployeesByFile"
       requestBody:
         required: true
         content:
@@ -266,13 +301,13 @@ paths:
                 # 'file' will be the field name in this multipart request
                 file:
                   type: string
-                  format: base64
+                  format: binary
       responses:
         '202':
           description: Request to upload file has been succesfully.   Response contains operational url to poll for upload status.
-  /operations/status/upload/{requestid}:
+  /operations/upload/{requestid}/status:
     get:
-      description: Pollable end-point to check the status of the load
+      description: Return the status of the file upload with the given request id.
       operationId: "operationsFileUploadStatusByRequestId"
       parameters:
         - in: path
@@ -287,14 +322,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/addEmployeeLoadStatus"
-  /operations/status/upload:
+  /operations/upload/{requestid}/cancel:
+    get:
+      description: Cancel upload of file with the given request id
+      operationId: "operationsFileUploadCancelByRequestId"
+      parameters:
+        - in: path
+          name: requestid
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+  /operations/status/uploads:
     get:
       description: Pollable end-point to check the status of the upload
       operationId: "operationsFilesUploadStatuses"
       responses:
         '200':
           description: OK
-
   /operations/delete:
     get:
       description: "Operational function to delete all triples from the graph database"
@@ -463,7 +510,7 @@ components:
       items:
         $ref: "#/components/schemas/employeeDepartmentEpocs"
     
-    employeeRoleEpoc:
+    employeeCorporateTitleEpoc:
       type: object
       properties:
         role:
@@ -476,10 +523,10 @@ components:
           type: string
           example: "2019-05-17"
 
-    employeeRoleEpocs:
+    employeeCorporateTitleEpocs:
       type: array
       items:
-        $ref: "#/components/schemas/employeeRoleEpoc"
+        $ref: "#/components/schemas/employeeCorporateTitleEpoc"
 
     dateStep:
       type: string

@@ -252,6 +252,9 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     getEmployeeCorporateTitleHistoryByEmployeeId(employeeId: string): Promise<EmployeeCorporateTitleEpocs> {
         return new Promise<EmployeeCorporateTitleEpocs>((resolve, reject) => {
             const sparqlQuery = sparqlCorporateTitleHistoryByEmployeeIdQuery(employeeId);
+            this.logger.info(`getEmployeeCorporateTitleHistoryByEmployeeId(${employeeId}).`);
+            this.logger.info(`Sparql Query: ${sparqlQuery}`);
+            console.log(sparqlQuery);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 const employeeCorporateTitleEpocs = new EmployeeCorporateTitleEpocs(employeeId);
@@ -311,6 +314,9 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                     ).catch((error) => {
                         reject(error);
                     });
+                }
+                else {
+                    reject({error: `Employee with employeeSystemId ${employeeSystemId} not found.`});
                 }
             })
             .catch((error) => {
