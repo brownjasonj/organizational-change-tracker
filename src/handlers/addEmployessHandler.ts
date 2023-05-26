@@ -9,6 +9,7 @@ import { createDataIngestionLogger } from "../logging/createDataIngestionLogger"
 import { RdfSchemaValidation } from "../rdf/RdfSchemaValidation";
 import { RdfInputSourceToN3Parser } from "../rdf/RdfInputSourceToN3Parser";
 import { consoleLogger } from "../logging/consoleLogger";
+import { v4 as uuidv4 } from 'uuid';
 
 const getResourceLocation = (requestId: string) =>  {
     const frontEndConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration();
@@ -18,30 +19,34 @@ const getResourceLocation = (requestId: string) =>  {
 
 function processFile(file: UploadedFile): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        const filePath: string = `${ConfigurationManager.getInstance().getApplicationConfiguration().getDataIngestionConfiguration().getTemporaryDirectory()}/${file.name}`;
+        const applicationConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration();
         const dataIngestionStreamsFactory: DataIngestionStreamsFactory = DataIngestionStreamsFactory.getInstance();
-        const dataIngestionStreamStatus = dataIngestionStreamsFactory.createStreamStatus(filePath);
-        file.mv(filePath).then(() => {
-            const backEndConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getBackEndConfiguration();
-            const loggingConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration();
-            const dataIngestionConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getDataIngestionConfiguration();
+        const dataIngestionStreamStatus = dataIngestionStreamsFactory.createStreamStatus();
+
+        // create the file name of the data that will be stored temporarily.  the name is a combination of the file passed into 
+        // request and the the request id.  this is done to ensure that the file name is unique and that the file is not overwritten
+        const temporaryFileName = `${dataIngestionStreamStatus.getRequestId()}-${file.name}`;
+        const temporaryFilePath: string = `${applicationConfiguration.getDataIngestionConfiguration().getTemporaryDirectory()}/${temporaryFileName}`;
+
+        file.mv(temporaryFilePath).then(() => {
+            const backEndConfiguration = applicationConfiguration.getBackEndConfiguration();
+            const loggingConfiguration = applicationConfiguration.getLoggingConfiguration();
+            const dataIngestionConfiguration = applicationConfiguration.getDataIngestionConfiguration();
             const dataIngestionLogger = createDataIngestionLogger(loggingConfiguration, `${dataIngestionStreamStatus.getRequestId()}.json`);
             const failedDataIngestionLogger = createFailedDataIngestionLogger(loggingConfiguration, `${dataIngestionStreamStatus.getRequestId()}-failed.json`);
-            const streamThrottleTimoutMs = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration().getStreamTrottleTimeoutMs();
+            const streamThrottleTimoutMs = applicationConfiguration.getFrontEndConfiguration().getStreamTrottleTimeoutMs();
             const rdfInputSourceToN3Parser = new RdfInputSourceToN3Parser(backEndConfiguration, dataIngestionLogger);
             var rdfValidateData = undefined;
             
             if (dataIngestionConfiguration.getOntologyValidation()) {
-                rdfValidateData = new RdfSchemaValidation(backEndConfiguration, ConfigurationManager.getInstance().getApplicationConfiguration().getDataIngestionConfiguration().getOntologyValidationSchemaPath(), dataIngestionLogger, rdfInputSourceToN3Parser);
+                rdfValidateData = new RdfSchemaValidation(backEndConfiguration, applicationConfiguration.getDataIngestionConfiguration().getOntologyValidationSchemaPath(), dataIngestionLogger, rdfInputSourceToN3Parser);
             }
     
-            const filePath: string = `${ConfigurationManager.getInstance().getApplicationConfiguration().getDataIngestionConfiguration().getTemporaryDirectory()}/${file.name}`;
-            
             dataIngestionLogger.info(file.name);
+            dataIngestionLogger.info(temporaryFilePath);
             
-            const streamDataIngestor: StreamDataIngestorType = dataIngestionStreamsFactory.getSreamDataIngestor(filePath);
-            streamDataIngestor(filePath, rdfValidateData, dataIngestionStreamStatus, dataIngestionConfiguration, streamThrottleTimoutMs, dataIngestionLogger, failedDataIngestionLogger);
-            // response.status(202).json({'Operation-Location': `${getResourceLocation(dataIngestionStreamStatus.getRequestId())}`});
+            const streamDataIngestor: StreamDataIngestorType = dataIngestionStreamsFactory.getSreamDataIngestor(temporaryFilePath);
+            streamDataIngestor(temporaryFilePath, rdfValidateData, dataIngestionStreamStatus, dataIngestionConfiguration, streamThrottleTimoutMs, dataIngestionLogger, failedDataIngestionLogger);
             resolve(dataIngestionStreamStatus.getRequestId());
         }).catch((err) => {
             reject(err);
@@ -60,7 +65,8 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
         if (uploadedFiles instanceof Array) {
             await uploadedFiles.forEach((uploadedFile) => {
                 processFile(uploadedFile).then((requestId) => {
-                    response.status(202).json({'Operation-Location': `${requestId}`});
+                    response.status(202).json({'Operation-Location': `${getResourceLocation(requestId)}`});
+//                    response.status(202).json({'Operation-Location': `${requestId}`});
                 }).catch((error) => {
                     consoleLogger.error(error);
                     response.status(500).json(error);
@@ -71,7 +77,8 @@ const addEmployeesHandler =  async (context: Context, request: Request, response
         else {
             const file: UploadedFile = uploadedFiles as UploadedFile;
             processFile(file).then((requestId) => {
-                response.status(202).json({'Operation-Location': `${requestId}`});
+                response.status(202).json({'Operation-Location': `${getResourceLocation(requestId)}`});
+//                response.status(202).json({'Operation-Location': `${requestId}`});
             }).catch((error) => {
                 consoleLogger.info(error);
                 response.status(500).json(error);

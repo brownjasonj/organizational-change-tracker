@@ -20,8 +20,8 @@ class DataIngestionStreamsFactory {
         return filePath.substring(filePath.lastIndexOf(".") + 1);
     }
 
-    public createStreamStatus(filePath: string): DataIngestionStreamStatus {
-        const streamStatus = new DataIngestionStreamStatus(filePath);
+    public createStreamStatus(): DataIngestionStreamStatus {
+        const streamStatus = new DataIngestionStreamStatus();
         this.streams.set(streamStatus.requestId, streamStatus);
         return streamStatus;
     }

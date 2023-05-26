@@ -13,18 +13,21 @@ class DataIngestionStreamStatus {
     public entriesProcessed: number;
     public status: StreamStatus;
     public error: string | null;
-    public filePath: string;
+    public filePath: string = '';
 
-    constructor(filePath: string) {
+    constructor() {
         this.requestId = uuidv4().toString();
         this.createdDateTime = new Date();
         this.completedDateTime = null;
         this.entriesProcessed = 0;
         this.status = StreamStatus.processing;
         this.error = null;
-        this.filePath = filePath;
     }
 
+    public setFilePathBeingProcessed(filePath: string) {
+        this.filePath = filePath;
+    }
+    
     public updateStatus(status: StreamStatus, error: string | null) {
         this.status = status;
         this.error = error;

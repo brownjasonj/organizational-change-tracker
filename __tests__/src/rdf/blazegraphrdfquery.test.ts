@@ -1,4 +1,4 @@
-import { ChildProcess, exec, fork, spawn } from "child_process"
+import { ChildProcess, exec, spawn } from "child_process"
 import {v4 as uuidv4} from 'uuid';
 import { IRdfGraphDB } from "../../../src/persistence/IRdfGraphDB";
 import { BackEndConfiguration } from "../../../src/models/eom/configuration/BackEndConfiguration";
@@ -12,6 +12,7 @@ import { ApplicationConfiguration } from "../../../src/models/eom/configuration/
 import { MapEmployeesToBankRdfOntologyTurtle } from "../../../src/rdf/generators/MapEmployeesToBankOrgRdfTurtle";
 import { EmployeeDto } from "../../../src/models/dto/EmployeeDto";
 import { employeeDtoToEmployee } from "../../../src/models/mappers/EmployeeMapper";
+import * as kill from "tree-kill";
 
 // Employee 1, joins a department 'A' from outside organization on 2000-01-01 and epoc ends on 2000-02-01
 // Employee 1, epoc in 'A' continues on 2000-02-02 and leaves on 2000-03-01
@@ -116,8 +117,7 @@ describe("create a new blazegraph DB", () => {
             //                             });
             //                         }});
             //                 }});
-
-            blazegraphSetupProcess = spawn(`./__tests__/config/blazegraph-test-shell.sh ${testDirectory}`, [], { shell: true, stdio: ['pipe'], detached: true});
+            blazegraphSetupProcess = spawn(`mkdir ${testDirectory}; cd ${testDirectory}; java -server -Xmx64g -Djetty.port=19997 -jar /Users/jason/Downloads/blazegraph.jar`, [], { shell: true, stdio: ['pipe'], detached: true});
             if (blazegraphSetupProcess.stdout) {
                 blazegraphSetupProcess.stdout.on('data', (data) => {
                     consoleLogger.info(`stdout: ${data}`);
@@ -126,7 +126,7 @@ describe("create a new blazegraph DB", () => {
                     // has been output!
 
                     // var indexOf = data.search(/http:\/\/([A-Z|a-z|0-9])*:19997\/blazegraph/);
-                    var indexOf = data.indexOf('http://10.223.16.92:19997/blazegraph/');
+                    var indexOf = data.indexOf('http://10.223.16.103:19997/blazegraph/');
 
                     if (indexOf >= 0) {                        
                         MapEmployeesToBankRdfOntologyTurtle(employeeRecords).then((turtleData) => {
@@ -151,25 +151,32 @@ describe("create a new blazegraph DB", () => {
 
     afterAll(() => {
         return new Promise((resolve, reject) => {
-            blazegraphSetupProcess.kill();
-            if (blazegraphSetupProcess.stdout) {
-                blazegraphSetupProcess.stdout.on('data', (data) => {
-                    consoleLogger.info(`stdout: ${data}`);
-                    exec(`rm -rf ${testDirectory}`, (error, stdout, stderr) => {
-                        if (error) {
-                            consoleLogger.error(`exec error: ${error}`);
-                            reject(error);
-                        }
-                        else {
-                            consoleLogger.info(`stdout: ${stdout}`);
-                            consoleLogger.info(`stderr: ${stderr}`);
-                            resolve(stdout);
-                        }
-                    });
-                });
+
+            if (blazegraphSetupProcess.stdout && blazegraphSetupProcess.stderr && blazegraphSetupProcess.stdin) {
+                blazegraphSetupProcess.stdin.write('^C');
+                blazegraphSetupProcess.stdin.destroy();
+                blazegraphSetupProcess.stdout.destroy();
+                blazegraphSetupProcess.stderr.destroy();
+                blazegraphSetupProcess.kill('SIGINT');
+                resolve('done');
             }
+                    // blazegraphSetupProcess.stdout.on('data', (data) => {
+                    // consoleLogger.info(`stdout: ${data}`);
+                    // exec(`rm -rf ${testDirectory}`, (error, stdout, stderr) => {
+                    //     if (error) {
+                    //         consoleLogger.error(`exec error: ${error}`);
+                    //         reject(error);
+                    //     }
+                    //     else {
+                    //         consoleLogger.info(`stdout: ${stdout}`);
+                    //         consoleLogger.info(`stderr: ${stderr}`);
+                    //         resolve(stdout);
+                    //     }
+                    // });
+                });
+            
             // blazegraphProcess.kill();
-        });
+        //});
     }, 60000);
 
     test("0 Joiners in department A, between 1999-01-01 and 1999-12-31", () => {
