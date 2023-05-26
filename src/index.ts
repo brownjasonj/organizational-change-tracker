@@ -38,7 +38,7 @@ import { operationsFilesUploadStatusesHandler } from './handlers/operationsFiles
 import { employeeCountByDepartmentCodeAsOfDateHandler } from './handlers/employeeCountByDepartmentCodeAsOfDateHandler';
 import { employeeCountByDepartmentCodeFromDateToDateHandler } from './handlers/employeeCountByDepartmentCodeFromDateToDateHandler';
 import { employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler } from './handlers/employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler';
-
+import { employeesByDepartmentCodeAsOfDateHandler } from './handlers/employeesByDepartmentCodeAsOfDateHandler';
 const app = Express();
 // enable file uploads
 app.use(fileUpload({
@@ -74,19 +74,20 @@ api.register('employeeByEmployeeId', employeeByEmployeeIdHandler);
 api.register('corporateTitleHistoryByEmployeeId', corporateTitleHistoryByEmployeeIdHandler);
 api.register('departmentHistoryByEmployeeId', departmentHistoryByEmployeeIdHandler);
 
+api.register('employeesByDepartmentCodeAsOfDate', employeesByDepartmentCodeAsOfDateHandler);
 api.register('employeeCountByDepartmentCodeAsOfDate', employeeCountByDepartmentCodeAsOfDateHandler);
 api.register('employeeCountByDepartmentCodeFromDateToDate', employeeCountByDepartmentCodeFromDateToDateHandler);
 api.register('employeesJoiningLeavingByDepartmentCodeFromDateToDate', employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler);
 api.register('employeesJoiningByDepartmentCodeFromDateToDate', employeesJoiningByDepartmentCodeFromDateToDateHandler);
 api.register('employeesLeavingByDepartmentCodeFromDateToDate', employeesLeavingByDepartmentCodeFromDateToDateHandler);
-
-
 api.register('departmentCodesAsOfDate', departmentCodesAsOfDateHandler);
+// operations endpoints
 api.register('uploadEmployeesByFile', uploadEmployeesByFileHandler);
 api.register('operationsFileUploadStatusByRequestId', operationsFileUploadStatusByRequestIdHandler);
 api.register('operationsFilesUploadStatuses', operationsFilesUploadStatusesHandler)
 api.register('operationsDeleteTriples', operationsDeleteTriplesHandler);
 api.register('operationsGetConfiguration', operationsGetConfiguration);
+// id endpoints
 api.register('employeeByEmployeeSystemId', employeeByEmployeeSystemIdHandler)
 api.register('membershipByMembershipId', membershipByMembershipIdHandler);
 api.register('organizationByOrganizationId', organizationByOrganizationIdHandler);

@@ -17,6 +17,7 @@ interface IOrganizationRdfQuery {
     getEmployeeCorporateTitleHistoryByEmployeeId(employeeId: string): Promise<EmployeeCorporateTitleEpocs>;
     getDepartmentJoiners(departmentCode: string, startDate: Date, endDate: Date): Promise<EmployeeLeaverJoiner[]>;
     getDepartmentLeavers(departmentCode: string, startDate: Date, endDate: Date): Promise<EmployeeLeaverJoiner[]>
+    getEmployeesByDepartmentCodeAsOfDate(departmentCode: string, asOfDate: Date): Promise<any>;
 
     // id lookups
     getEmployeeByEmployeeSystemId(employeeSystemId: string): Promise<any>;

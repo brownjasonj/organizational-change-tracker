@@ -65,7 +65,7 @@ paths:
   /department/{departmentcode}/{asofdate}/employees:
     get:
       description: "Simple test end-point returning a Hello World!"
-      operationId: "employeesAsOfDateByDepartmentCode"
+      operationId: "employeesByDepartmentCodeAsOfDate"
       parameters:
         - in: path
           name: departmentcode

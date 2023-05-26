@@ -25,6 +25,7 @@ import { sparqlTimeByTimeIdQuery } from "./sparql/idqueries/sparqlTimeByTimeIdQu
 import { sparqlTimeIntervalByTimeIntervalId } from "./sparql/idqueries/sparqlTimeIntervalByTimeIntervalIdQuery";
 import { sparqlEmployeeByEmployeeSystemIdQuery } from "./sparql/idqueries/sparqlEmployeeByEmployeeSystemIdQuery";
 import { SparqlJsonParser } from "sparqljson-parse";
+import { sparqlEmployeesByDepartmentCodeAsOfDateQuery } from "./sparql/sparqlEmployeesByDepartmentCodeAsOfDateQuery";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
@@ -33,6 +34,26 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     constructor(graphDB: IRdfGraphDB, logger: Logger) {
         this.graphDB = graphDB;
         this.logger = logger;
+    }
+    
+    getEmployeesByDepartmentCodeAsOfDate(departmentCode: string, asOfDate: Date): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            const sparqlQuery = sparqlEmployeesByDepartmentCodeAsOfDateQuery(departmentCode, asOfDate);
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                if (result.results.bindings.length > 0) {
+                    const sparqlJsonParser = new SparqlJsonParser();
+                    resolve(sparqlJsonParser.parseJsonResults(result));
+                }
+                else 
+                    resolve(null);
+            })
+            .catch((error) => {
+                this.logger.error(error);
+                return reject(error);
+            });
+        });
+        throw new Error("Method not implemented.");
     }
 
     createBankOrgRdfDataGenerator(employee: Employee): Promise<string> {
@@ -275,6 +296,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
+    
     
     getEmployeeByEmployeeId(employeeId: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
