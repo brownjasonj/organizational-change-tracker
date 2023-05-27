@@ -4,10 +4,10 @@ import { IOrganizationRdfQuery } from "../../rdf/IOrganizationRdfQuery";
 import { RdfGraphFactory } from "../../rdf/RdfGraphFactory";
 
 const timeByTimeIdHandler = async (context: Context, request: Request, response: Response) => {
-    if (context.request.params.timeId) {
+    if (context.request.params.timeid) {
         const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
         try {
-            const result = await rdfOrganization.getTimeByTimeId(context.request.params.timeId as string);
+            const result = await rdfOrganization.getTimeByTimeId(context.request.params.timeid as string);
             console.log(result);
             response.json({ result: result});
         }

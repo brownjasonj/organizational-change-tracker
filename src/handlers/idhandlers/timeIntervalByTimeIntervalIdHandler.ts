@@ -5,10 +5,10 @@ import { RdfGraphFactory } from "../../rdf/RdfGraphFactory";
 import { classToPlain } from "class-transformer";
 
 const timeIntervalByTimeIntervalIdHandler = async (context: Context, request: Request, response: Response) => {
-    if (context.request.params.timeIntervalId) {
+    if (context.request.params.timeintervalid) {
         const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
         try {
-            const result = await rdfOrganization.getTimeIntervalByTimeIntervalId(context.request.params.timeIntervalId as string);
+            const result = await rdfOrganization.getTimeIntervalByTimeIntervalId(context.request.params.timeintervalid as string);
             console.log(result);
             response.json(classToPlain(result));
         }

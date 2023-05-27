@@ -8,7 +8,7 @@ servers:
   - url: https://localhost:8443
     description: locally hosted server for local development purposes
 paths:
-  /employee/{employeeId}:
+  /employee/{employeeid}:
     get:
       description: get the employee information.
       operationId: "employeeByEmployeeId"
@@ -26,7 +26,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/employeeDepartmentEpocs"
-  /employee/{employeeId}/corporateTitles:
+  /employee/{employeeod}/corporateTitles:
     get:
       description: get the history of which Corporate Title an employee has had.
       operationId: "corporateTitleHistoryByEmployeeId"
@@ -44,7 +44,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/employeeCorporateTitleEpocs"
-  /employee/{employeeId}/departments:
+  /employee/{employeeid}/departments:
     get:
       description: get the history of which department an employee has gone through.
       operationId: "departmentHistoryByEmployeeId"
@@ -360,13 +360,13 @@ paths:
           description: OK
         '500':
           description: Internal error.
-  /id/employee-id/{employeeId}:
+  /id/employee-id/{employeeid}:
     get:
       description: get the employees data by employee id
       operationId: "employeeByEmployeeId"
       parameters:
         - in: path
-          name: employeeId
+          name: employeeid
           schema:
             type: string
           required: true
@@ -374,13 +374,13 @@ paths:
       responses:
         '200':
           description: OK
-  /id/employee-system-id/{employeeSystemId}:
+  /id/employee-system-id/{employeesystemid}:
     get:
       description: get the employees data by employee system id
       operationId: "employeeByEmployeeSystemId"
       parameters:
         - in: path
-          name: employeeSystemId
+          name: employeesystemid
           schema:
             type: string
           required: true
@@ -388,13 +388,13 @@ paths:
       responses:
         '200':
           description: OK
-  /id/organization-id/{organizationId}:
+  /id/organization-id/{organizationid}:
     get:
       description: get the organization data by organization id
       operationId: "organizationByOrganizationId"
       parameters:
         - in: path
-          name: organizationId
+          name: organizationid
           schema:
             type: string
           required: true
@@ -402,13 +402,13 @@ paths:
       responses:
         '200':
           description: OK
-  /id/time-id/{timeId}:
+  /id/time-id/{timeid}:
     get:
       description: get the time data by time id
       operationId: "timeByTimeId"
       parameters:
         - in: path
-          name: timeId
+          name: timeid
           schema:
             type: string
           required: true
@@ -416,13 +416,13 @@ paths:
       responses:
         '200':
           description: OK
-  /id/time-interval-id/{timeIntervalId}:
+  /id/time-interval-id/{timeintervalid}:
     get:
       description: get the time interval data by time interval id
       operationId: "timeIntervalByTimeIntervalId"
       parameters:
         - in: path
-          name: timeIntervalId
+          name: timeintervalid
           schema:
             type: string
           required: true
@@ -430,13 +430,13 @@ paths:
       responses:
         '200':
           description: OK
-  /id/membership-id/{membershipId}:
+  /id/membership-id/{membershipid}:
     get:
       description: get the membership data by mmbership id
       operationId: "membershipByMembershipId"
       parameters:
         - in: path
-          name: membershipId
+          name: membershipid
           schema:
             type: string
           required: true

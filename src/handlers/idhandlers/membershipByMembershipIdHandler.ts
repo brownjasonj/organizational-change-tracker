@@ -5,10 +5,10 @@ import { RdfGraphFactory } from "../../rdf/RdfGraphFactory";
 import { classToPlain } from "class-transformer";
 
 const membershipByMembershipIdHandler = async (context: Context, request: Request, response: Response) => {
-    if (context.request.params.membershipId) {
+    if (context.request.params.membershipid) {
         const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
         try {
-            const result = await rdfOrganization.getMembershipByMembershipId(context.request.params.membershipId as string);
+            const result = await rdfOrganization.getMembershipByMembershipId(context.request.params.membershipid as string);
             console.log(result);
             response.json(classToPlain(result));
         }
