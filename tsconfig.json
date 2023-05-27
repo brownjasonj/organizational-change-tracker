@@ -105,6 +105,6 @@
     "esm": true,
     "experimentalSpecifierResolution": "node",
   },
-  "include": ["src/**/*.ts", "src/logging/pinoPipelineTransport.js", "__tests__/**/*.ts"],
+  "include": ["src/**/*.ts", "src/logging/pinoPipelineTransport.js", "__tests__/**/*.ts", "__tests__/src/api-server.js", "__tests__/src/api-server.js"],
   "exclude": ["build", "coverage"]
 }
