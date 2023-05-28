@@ -33,7 +33,7 @@ console.log(`backEndConfiguration: ${JSON.stringify(backEndConfiguration)}`);
 // graphdb = new BlazeGraphDB(backEndConfiguration, blazegraphDBOptions);
 
 const graphdb = GraphPersistenceFactory.getInstance().getGraphDB();
-const blazegaphRdfQuery = new BlazeGraphRdfQuery(graphdb, consoleLogger);
+const blazegaphRdfQuery = new BlazeGraphRdfQuery(applicationConfiguration.getRdfOntologyConfiguration(), graphdb, consoleLogger);
 
 // start the blazegraph server
 // create a new directory for the blazegraph database

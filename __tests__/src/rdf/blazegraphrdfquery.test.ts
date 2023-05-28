@@ -77,7 +77,7 @@ describe("create a new blazegraph DB", () => {
             // graphdb = new BlazeGraphDB(backEndConfiguration, blazegraphDBOptions);
 
             graphdb = GraphPersistenceFactory.getInstance().getGraphDB();
-            blazegaphRdfQuery = new BlazeGraphRdfQuery(graphdb, consoleLogger);
+            blazegaphRdfQuery = new BlazeGraphRdfQuery(applicationConfiguration.getRdfOntologyConfiguration(), graphdb, consoleLogger);
 
             // start the blazegraph server
             // create a new directory for the blazegraph database

@@ -1,13 +1,12 @@
 import { plainToClass } from 'class-transformer';
 import 'reflect-metadata';
-import { sparqlEmployeeDepartmentHistoryQuery } from '../../../../src/rdf/sparql/sparqlEmployeeDepartmentHistoryQuery';
+import { sparqlCorporateTitleHistoryByEmployeeIdQuery } from "../../../rdf/sparql/sparqlCorporateTitleHistoryByEmployeeIdQuery";
 import { defaultedPrefixes, RdfOntologyConfiguration } from '../../../models/eom/configuration/RdfOntologyConfiguration';
 
-describe("sparqlEmployeeDepartmentHistoryQuery test", () => {
+describe("SparqlCorporateTitleHistoryByEmployeeIdQuery test", () => {
     let rdfOntologyDefinitions = plainToClass(RdfOntologyConfiguration, { prefixes: defaultedPrefixes});
-
     test("Returns valid query string", async () => {
-        const query = sparqlEmployeeDepartmentHistoryQuery(rdfOntologyDefinitions);
-        expect(query).toContain(query);
+        const query = sparqlCorporateTitleHistoryByEmployeeIdQuery(rdfOntologyDefinitions, "123456789");
+        expect(query).toContain("123456789");
     });
 });

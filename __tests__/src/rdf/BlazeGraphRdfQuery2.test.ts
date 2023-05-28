@@ -58,7 +58,7 @@ describe("create a new blazegraph DB", () => {
                 });
             }
         });
-   }, 10000]);
+   }, 10000);
 
     afterAll(() => {
         if (blazegraphSetupProcess.stdout && blazegraphSetupProcess.stderr && blazegraphSetupProcess.stdin) {

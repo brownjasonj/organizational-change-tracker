@@ -135,4 +135,4 @@ class RdfOntologyConfiguration {
     }
 }
 
-export { RdfOntologyConfiguration }
+export { RdfOntologyConfiguration, defaultedPrefixes }
