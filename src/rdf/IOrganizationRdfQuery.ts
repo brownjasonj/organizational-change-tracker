@@ -9,7 +9,7 @@ import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/e
 interface IOrganizationRdfQuery {
     createBankOrgRdfDataGenerator(employee:Employee): Promise<string>;
     deleteAllTriple(): Promise<any>;
-    getDepartmentCodes(asOfDate: Date): Promise<string>;
+    getDepartmentCodesAsOfDate(asOfDate: Date): Promise<string>;
     getDepartmentEmployeeHistoryWithJoinersAndLeavers(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentEmployeeCountWithJoinersLeaversTimeSeries>;
     getDepartmentEmployeeCountHistory(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentEmployeeCountTimeSeries>;
     getEmployeeCountByDepartmentAsOf(departmentCode: string, asOfDate: Date): Promise<DepartmentEmployeeCountTimeEpoc>;

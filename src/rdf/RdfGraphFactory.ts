@@ -18,7 +18,7 @@ class RdfGraphFactory {
         if (RdfGraphFactory.singleton == null) {
             const rdfGraphDB: IRdfGraphDB = GraphPersistenceFactory.getInstance().getGraphDB();
             const logger: Logger = createSparqlQueryLogger(ConfigurationManager.getInstance().getApplicationConfiguration().getLoggingConfiguration());
-            RdfGraphFactory.singleton = new RdfGraphFactory(new BlazeGraphRdfQuery(rdfGraphDB, logger));
+            RdfGraphFactory.singleton = new RdfGraphFactory(new BlazeGraphRdfQuery(ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration(),rdfGraphDB, logger));
         }
         return RdfGraphFactory.singleton;
     }

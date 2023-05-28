@@ -2,12 +2,9 @@
     You are considered to have left a department on a specific point in time {date} if the following holds true
 
 */
-
-import { ConfigurationManager } from "../../ConfigurationManager";
 import { RdfOntologyConfiguration } from "../../models/eom/configuration/RdfOntologyConfiguration";
 
-const sparqlDepartmentJoinersQuery = (startDate: Date, endDate: Date) => {
-    const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
+const sparqlDepartmentJoinersQuery = (ontology: RdfOntologyConfiguration, startDate: Date, endDate: Date) => {
     return `${ontology.getSparqlPrefixes()}
     
     select distinct ?pid ?department ?startDate
@@ -52,8 +49,7 @@ const sparqlDepartmentJoinersQuery = (startDate: Date, endDate: Date) => {
 // };
 
 
-const sparqlJoinersQueryByDepartment = (departmentCode: string, startDate: Date, endDate: Date) => {
-    const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
+const sparqlJoinersQueryByDepartment = (ontology: RdfOntologyConfiguration, departmentCode: string, startDate: Date, endDate: Date) => {
     return `${ontology.getSparqlPrefixes()}
     
     select distinct ?employee ?department ?startingDate

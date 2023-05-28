@@ -2,12 +2,9 @@
     You are considered to have left a department on a specific point in time {date} if the following holds true
 
 */
-
-import { ConfigurationManager } from "../../ConfigurationManager";
 import { RdfOntologyConfiguration } from "../../models/eom/configuration/RdfOntologyConfiguration";
 
-const sparqlDepartmentLeaversQuery = (startPeriod: Date, endPeriod: Date) => {
-    const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
+const sparqlDepartmentLeaversQuery = (ontology: RdfOntologyConfiguration, startPeriod: Date, endPeriod: Date) => {
     return `${ontology.getSparqlPrefixes()}
     
     select distinct ?pid ?department ?interval ?endDate
@@ -52,8 +49,7 @@ const sparqlDepartmentLeaversQuery = (startPeriod: Date, endPeriod: Date) => {
 // };
 
 
-const sparqlLeaversQueryByDepartment = (departmentCode: string, startPeriod: Date, endPeriod: Date) => {
-    const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
+const sparqlLeaversQueryByDepartment = (ontology: RdfOntologyConfiguration, departmentCode: string, startPeriod: Date, endPeriod: Date) => {
     return `${ontology.getSparqlPrefixes()}
     
     select distinct ?employee ?department ?endingDate

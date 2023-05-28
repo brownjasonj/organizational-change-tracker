@@ -1,30 +1,23 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
-import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
-import { GraphPersistenceFactory } from "../persistence/GraphPersistenceFactory";
-import { sparqlDepartmentCodesQuery } from "../rdf/sparql/sparqlDepartmentCodesQuery";
-
-
+import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
+import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
 
 const departmentCodesAsOfDateHandler = async (context: Context, request: Request, response: Response) => {
     if (context.request.params.asofdate) {
-        const graphdb: IRdfGraphDB = GraphPersistenceFactory.getInstance().getGraphDB();
-        const sparqlQuery = sparqlDepartmentCodesQuery(new Date(context.request.params.asofdate as string))
-        if (context.request.headers.accept === 'application/json') {
-            console.log('sparqlQuery: ' + sparqlQuery);
-            try {
-                const result = await graphdb.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON);
-                response.json(result);
-                return;
-            }
-            catch (error) {
-                console.log(error);
-                response.status(500).send();
-                return;
-            }
+        const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
+
+        try {
+            const result = await rdfOrganization.getDepartmentCodesAsOfDate(new Date(context.request.params.asofdate as string));
+            response.json(result);
+        }
+        catch (error) {
+            response.status(500).json(error);
         }
     }
-    response.status(404).send();
+    else {
+        response.status(404).json({ message: "Missing AsOfDate" });
+    }
 }
 
 export { departmentCodesAsOfDateHandler} 

@@ -26,19 +26,22 @@ import { sparqlTimeIntervalByTimeIntervalId } from "./sparql/idqueries/sparqlTim
 import { sparqlEmployeeByEmployeeSystemIdQuery } from "./sparql/idqueries/sparqlEmployeeByEmployeeSystemIdQuery";
 import { SparqlJsonParser } from "sparqljson-parse";
 import { sparqlEmployeesByDepartmentCodeAsOfDateQuery } from "./sparql/sparqlEmployeesByDepartmentCodeAsOfDateQuery";
+import { RdfOntologyConfiguration } from "../models/eom/configuration/RdfOntologyConfiguration";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
     private logger: Logger;
+    private rdfOntologyDefinitions: RdfOntologyConfiguration;
 
-    constructor(graphDB: IRdfGraphDB, logger: Logger) {
+    constructor(rdfOntologyDefinitions: RdfOntologyConfiguration, graphDB: IRdfGraphDB, logger: Logger) {
+        this.rdfOntologyDefinitions = rdfOntologyDefinitions;
         this.graphDB = graphDB;
         this.logger = logger;
     }
     
     getEmployeesByDepartmentCodeAsOfDate(departmentCode: string, asOfDate: Date): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            const sparqlQuery = sparqlEmployeesByDepartmentCodeAsOfDateQuery(departmentCode, asOfDate);
+            const sparqlQuery = sparqlEmployeesByDepartmentCodeAsOfDateQuery(this.rdfOntologyDefinitions, departmentCode, asOfDate);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 if (result.results.bindings.length > 0) {
@@ -53,7 +56,6 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                 return reject(error);
             });
         });
-        throw new Error("Method not implemented.");
     }
 
     createBankOrgRdfDataGenerator(employee: Employee): Promise<string> {
@@ -65,7 +67,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         return this.graphDB.deleteAllTriple();
     }
 
-    getDepartmentCodes(asOfDate: Date): Promise<string> {
+    getDepartmentCodesAsOfDate(asOfDate: Date): Promise<string> {
         this.logger.error("getDepartmentCodes not implemented.");
         throw new Error("Method not implemented.");
     }
@@ -151,7 +153,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         const endDay = Calendar.getEndOfDay(endDate);
         this.logger.info(`getDepartmentJoiners(${departmentCode}, ${startDay}, ${endDay}).`);
         return new Promise<EmployeeLeaverJoiner[]>(async (resolve, reject) => {
-            const sparqlQuery = sparqlJoinersQueryByDepartment(departmentCode, startDay, endDay);
+            const sparqlQuery = sparqlJoinersQueryByDepartment(this.rdfOntologyDefinitions, departmentCode, startDay, endDay);
             var joinerSet: EmployeeLeaverJoiner[] = [];
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
@@ -174,7 +176,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         const endDay = Calendar.getEndOfDay(endDate);
         this.logger.info(`getDepartmentLeavers(${departmentCode}, ${startDay}, ${endDay}).`);
         return new Promise<EmployeeLeaverJoiner[]>(async (resolve, reject) => {
-            const sparqlQuery = sparqlLeaversQueryByDepartment(departmentCode, startDay, endDay);
+            const sparqlQuery = sparqlLeaversQueryByDepartment(this.rdfOntologyDefinitions, departmentCode, startDay, endDay);
             console.log(sparqlQuery);
             var joinerSet: EmployeeLeaverJoiner[] = [];
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
@@ -196,7 +198,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     getEmployeeCountByDepartmentAsOf(departmentCode: string, asOfDate: Date): Promise<DepartmentEmployeeCountTimeEpoc> {
         const startOfDay: Date = Calendar.getStartOfDay(asOfDate);
         const endOfDay: Date = Calendar.getEndOfDay(asOfDate);
-        const sparqlQuery = sparqlDepartmentHistoryQuery(departmentCode, startOfDay, endOfDay);
+        const sparqlQuery = sparqlDepartmentHistoryQuery(this.rdfOntologyDefinitions, departmentCode, startOfDay, endOfDay);
         this.logger.info(`getEmployeeCountByDepartmentCode(${departmentCode}, ${startOfDay}).`);
         this.logger.info(`Sparql Query: ${sparqlQuery}`);
         console.log(sparqlQuery);
@@ -219,7 +221,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     getEmployeeDepartmentHistory(): Promise<EmployeeDepartmentEpocs[]> {
         this.logger.info(`getEmployeeDepartmentHistory().`);
         return new Promise((resolve, reject) => {
-            const sparqlQuery = sparqlEmployeeDepartmentHistoryQuery();
+            const sparqlQuery = sparqlEmployeeDepartmentHistoryQuery(this.rdfOntologyDefinitions);
             const employeeDepartmentEpocs = new Map<string, EmployeeDepartmentEpocs>();
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
@@ -249,7 +251,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     
     getEmployeeDepartmentHistoryByEmployeeId(employeeId: string): Promise<EmployeeDepartmentEpocs> {
         return new Promise<EmployeeDepartmentEpocs>((resolve, reject) => {
-            const sparqlQuery = sparqlEmployeeDepartmentHistoryQueryByEmployeeId(employeeId);
+            const sparqlQuery = sparqlEmployeeDepartmentHistoryQueryByEmployeeId(this.rdfOntologyDefinitions, employeeId);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
             .then((result) => {
                 const employeeDepartmentEpocs = new EmployeeDepartmentEpocs(employeeId);
@@ -272,7 +274,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
 
     getEmployeeCorporateTitleHistoryByEmployeeId(employeeId: string): Promise<EmployeeCorporateTitleEpocs> {
         return new Promise<EmployeeCorporateTitleEpocs>((resolve, reject) => {
-            const sparqlQuery = sparqlCorporateTitleHistoryByEmployeeIdQuery(employeeId);
+            const sparqlQuery = sparqlCorporateTitleHistoryByEmployeeIdQuery(this.rdfOntologyDefinitions, employeeId);
             this.logger.info(`getEmployeeCorporateTitleHistoryByEmployeeId(${employeeId}).`);
             this.logger.info(`Sparql Query: ${sparqlQuery}`);
             console.log(sparqlQuery);
@@ -300,7 +302,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     
     getEmployeeByEmployeeId(employeeId: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            const sparqlQuery = sparqlEmployeeByEmployeeIdQuery(employeeId);
+            const sparqlQuery = sparqlEmployeeByEmployeeIdQuery(this.rdfOntologyDefinitions, employeeId);
             this.logger.info(`getEmployeeByEmployeeId(${employeeId}).`);
             this.logger.info(`Sparql Query: ${sparqlQuery}`);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
@@ -322,7 +324,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
 
     getEmployeeByEmployeeSystemId(employeeSystemId: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            const sparqlQuery = sparqlEmployeeByEmployeeSystemIdQuery(employeeSystemId);
+            const sparqlQuery = sparqlEmployeeByEmployeeSystemIdQuery(this.rdfOntologyDefinitions, employeeSystemId);
             this.logger.info(`getEmployeeByEmployeeSystemId(${employeeSystemId}).`);
             this.logger.info(`Sparql Query: ${sparqlQuery}`);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
@@ -350,7 +352,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
 
     getOrganizationByOrganizationId(organizationId: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            const sparqlQuery = sparqlOrganizationByOrganizationIdQuery(organizationId);
+            const sparqlQuery = sparqlOrganizationByOrganizationIdQuery(this.rdfOntologyDefinitions, organizationId);
             this.logger.info(`getOrganizationByOrganizationId(${organizationId}).`);
             this.logger.info(`Sparql Query: ${sparqlQuery}`);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
@@ -373,7 +375,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
 
     getMembershipByMembershipId(membershipId: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            const sparqlQuery = sparqlMembershipByMembershipIdQuery(membershipId);
+            const sparqlQuery = sparqlMembershipByMembershipIdQuery(this.rdfOntologyDefinitions, membershipId);
             this.logger.info(`getMembershipByMembershipId(${membershipId}).`);
             this.logger.info(`Sparql Query: ${sparqlQuery}`);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
@@ -396,7 +398,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
 
     getTimeByTimeId(timeId: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            const sparqlQuery = sparqlTimeByTimeIdQuery(timeId);
+            const sparqlQuery = sparqlTimeByTimeIdQuery(this.rdfOntologyDefinitions, timeId);
             this.logger.info(`getTimeByTimeId(${timeId}).`);
             this.logger.info(`Sparql Query: ${sparqlQuery}`);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
@@ -419,7 +421,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
 
     getTimeIntervalByTimeIntervalId(timeIntervalId: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            const sparqlQuery = sparqlTimeIntervalByTimeIntervalId(timeIntervalId);
+            const sparqlQuery = sparqlTimeIntervalByTimeIntervalId(this.rdfOntologyDefinitions, timeIntervalId);
             this.logger.info(`getTimeIntervalByTimeIntervalId(${timeIntervalId}).`);
             this.logger.info(`Sparql Query: ${sparqlQuery}`);
             this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)

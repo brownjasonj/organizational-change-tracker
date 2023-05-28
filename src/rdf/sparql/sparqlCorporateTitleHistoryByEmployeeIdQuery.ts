@@ -1,8 +1,6 @@
-import { ConfigurationManager } from "../../ConfigurationManager";
 import { RdfOntologyConfiguration } from "../../models/eom/configuration/RdfOntologyConfiguration";
 
-const sparqlCorporateTitleHistoryByEmployeeIdQuery = (employeeId: string) => {
-    const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
+const sparqlCorporateTitleHistoryByEmployeeIdQuery = (ontology: RdfOntologyConfiguration, employeeId: string) => {
     return `${ontology.getSparqlPrefixes()}
     select ?corpTitle (min(?date1) as ?startDate) (max(?date2) as ?endDate)
     where {

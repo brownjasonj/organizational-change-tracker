@@ -1,8 +1,6 @@
-import { ConfigurationManager } from "../../ConfigurationManager";
 import { RdfOntologyConfiguration } from "../../models/eom/configuration/RdfOntologyConfiguration";
 
-const sparqlEmployeeCountByDepartmentCodeQuery = (departmentCode: string, asOfDate: Date) => {
-    const ontology: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
+const sparqlEmployeeCountByDepartmentCodeQuery = (ontology: RdfOntologyConfiguration, departmentCode: string, asOfDate: Date) => {
     return `${ontology.getSparqlPrefixes()}
     
     SELECT  ?name
