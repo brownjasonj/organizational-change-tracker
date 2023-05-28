@@ -1,3 +1,4 @@
+import { plainToClass } from 'class-transformer';
 import 'reflect-metadata';
 import { sparqlEmployeeByEmployeeIdQuery } from "../../../../../src/rdf/sparql/idqueries/sparqlEmployeeByEmployeeIdQuery";
 import { defaultedPrefixes, RdfOntologyConfiguration } from '../../../../models/eom/configuration/RdfOntologyConfiguration';
@@ -7,7 +8,7 @@ describe("sparqlEmployeeByEmployeeIdQuery test", () => {
 
   test("Returns valid query string", async () => {
     const employeeId: string = "123456789";
-    const query = sparqlEmployeeByEmployeeIdQuery(employeeId);
+    const query = sparqlEmployeeByEmployeeIdQuery(rdfOntologyDefinitions, employeeId);
     expect(query).toContain(employeeId);
   });
 });
