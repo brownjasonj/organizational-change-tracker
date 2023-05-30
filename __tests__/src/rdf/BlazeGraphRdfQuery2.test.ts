@@ -1,4 +1,4 @@
-import { ChildProcess, exec, spawn } from "child_process"
+import { ChildProcess, exec, execSync, spawn } from "child_process"
 import { IRdfGraphDB } from "../../../src/persistence/IRdfGraphDB";
 import 'reflect-metadata';
 import { BlazeGraphRdfQuery } from ".../../../src/rdf/BlazeGraphRdfQuery";
@@ -6,7 +6,7 @@ import { Employee } from "../../../src/models/eom/Employee";
 import { MapEmployeesToBankRdfOntologyTurtle } from "../../../src/rdf/generators/MapEmployeesToBankOrgRdfTurtle";
 import { EmployeeDto } from "../../../src/models/dto/EmployeeDto";
 import { employeeDtoToEmployee } from "../../../src/models/mappers/EmployeeMapper";
-import { readyToStart } from "../persistence/blazegraph/start_blazegraph";
+import { readyToStart, graphdb, blazegaphRdfQuery, testDirectory, startBlazeGraph } from "../persistence/blazegraph/start_blazegraph";
 
 // Employee 1, joins a department 'A' from outside organization on 2000-01-01 and epoc ends on 2000-02-01
 // Employee 1, epoc in 'A' continues on 2000-02-02 and leaves on 2000-03-01
@@ -20,11 +20,11 @@ import { readyToStart } from "../persistence/blazegraph/start_blazegraph";
 // in this sense.  
 // 
 describe("create a new blazegraph DB", () => {
-    let testDirectory: string;
+    // let testDirectory: string;
     let blazegraphSetupProcess: ChildProcess;
     // let blazegraphProcess: ChildProcess;
-    let blazegaphRdfQuery: BlazeGraphRdfQuery;
-    let graphdb: IRdfGraphDB;
+    // let blazegaphRdfQuery: BlazeGraphRdfQuery;
+    // let graphdb: IRdfGraphDB;
 
     const employeeRecords : Employee[] = [
         employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "A", "Staff", "01.01.2000", "01.02.2000", "01.01.2000","31.12.9999")),
@@ -35,39 +35,63 @@ describe("create a new blazegraph DB", () => {
         // employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "A", "MDR", "02.12.2011", "01.12.2012", "01.01.2000","31.12.9999"))
     ];
 
-    beforeAll(() => {
-        return new Promise((resolve, reject) => {
-            if (readyToStart) {
-                readyToStart.then((childprocess) => {
-                    blazegraphSetupProcess = childprocess;
-                    MapEmployeesToBankRdfOntologyTurtle(employeeRecords).then((turtleData) => {
-                        console.log(turtleData);
-                        graphdb.turtleUpdate(turtleData).then((insertResponse) => {
-                            console.log(insertResponse);
-                            resolve(insertResponse);
-                        }).catch((err) => {
-                            console.log(err);
-                            reject(err);
-                        });
-                    }).catch((err) => {
-                        console.log(err);
-                        reject(err);
-                    });
-                        }).catch((err) => {
-                    console.log("server not started");
+//     beforeAll(() => {
+//         return new Promise((resolve, reject) => {
+//             if (readyToStart) {
+//                 readyToStart.then((childprocess) => {
+//                     blazegraphSetupProcess = childprocess;
+//                     MapEmployeesToBankRdfOntologyTurtle(employeeRecords).then((turtleData) => {
+//                         console.log(turtleData);
+//                         graphdb.turtleUpdate(turtleData).then((insertResponse) => {
+//                             console.log(insertResponse);
+//                             resolve(insertResponse);
+//                         }).catch((err) => {
+//                             console.log(err);
+//                             reject(err);
+//                         });
+//                     }).catch((err) => {
+//                         console.log(err);
+//                         reject(err);
+//                     });
+//                         }).catch((err) => {
+//                     console.log("server not started");
+//                 });
+//             }
+//         });
+//    }, 10000);
+
+   beforeAll(() => {
+    return new Promise((resolve, reject) => {
+        startBlazeGraph(testDirectory, "19997", "/Users/jason/Downloads/blazegraph.jar").then((childprocess) => {
+            blazegraphSetupProcess = childprocess;
+            MapEmployeesToBankRdfOntologyTurtle(employeeRecords).then((turtleData) => {
+                console.log(turtleData);
+                graphdb.turtleUpdate(turtleData).then((insertResponse) => {
+                    console.log(insertResponse);
+                    resolve(insertResponse);
+                }).catch((err) => {
+                    console.log(err);
+                    reject(err);
                 });
-            }
+            }).catch((err) => {
+                console.log(err);
+                reject(err);
+            })
+        }).catch((err) => {
+            console.log("server not started");
         });
-   }, 10000);
+    });
+    }, 10000);
 
     afterAll(() => {
-        if (blazegraphSetupProcess.stdout && blazegraphSetupProcess.stderr && blazegraphSetupProcess.stdin) {
-            blazegraphSetupProcess.stdin.write('^C');
-            blazegraphSetupProcess.stdin.destroy();
-            blazegraphSetupProcess.stdout.destroy();
-            blazegraphSetupProcess.stderr.destroy();
-            blazegraphSetupProcess.kill('SIGINT');
-        }
+        console.log(`KILLING ${blazegraphSetupProcess.pid}`);
+        execSync(`pgrep -P ${blazegraphSetupProcess.pid}`).toString().split('\n').forEach((pid) => {
+            if (pid.length > 0) {
+                console.log(`KILLING ${pid}`);
+                execSync(`kill -9 ${pid}`);
+            }
+         });
+        //execSync(`kill -9 ${blazegraphSetupProcess.pid}`);
     }, 10000);
 
     test("0 Joiners in department A, between 1999-01-01 and 1999-12-31", () => {

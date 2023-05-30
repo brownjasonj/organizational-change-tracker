@@ -43,30 +43,69 @@ const blazegaphRdfQuery = new BlazeGraphRdfQuery(applicationConfiguration.getRdf
 //
 let readyToStart: Promise<ChildProcess> | undefined;
 
-const blazegraphSetupProcess = spawn(`mkdir ${testDirectory}; cd ${testDirectory}; java -server -Xmx64g -Djetty.port=19997 -jar /Users/jason/Downloads/blazegraph.jar`, [], { shell: true, stdio: ['pipe'], detached: true});
-readyToStart = new Promise((resolve, reject) => {
-    if (blazegraphSetupProcess.stdout) {
-        blazegraphSetupProcess.stdout.on('data', (data) => {
-            consoleLogger.info(`stdout: ${data}`);
-            // wait for the blazegraph server to start, this is determined by the string 
-            //  http://[::]:${port}/blazegraph/ to get started
-            // has been output!
 
-            // var indexOf = data.search(/http:\/\/([A-Z|a-z|0-9])*:19997\/blazegraph/);
-            var indexOf = data.indexOf('http://172.20.10.8:19997/blazegraph/');
-            consoleLogger.info(`indexOf: ${indexOf}`);
-            if (indexOf >= 0) {
-                resolve(blazegraphSetupProcess);
-            }
-        });
-    }
-    else {
-        reject(undefined);
-    }
-});
+// const blazegraphSetupProcess = spawn(`mkdir ${testDirectory}; cd ${testDirectory}; java -server -Xmx64g -Djetty.port=19997 -jar /Users/jason/Downloads/blazegraph.jar`, [], { shell: true, stdio: ['pipe']});
+// //const blazegraphSetupProcess = exec(`mkdir ${testDirectory}; cd ${testDirectory}; java -server -Xmx64g -Djetty.port=19997 -jar /Users/jason/Downloads/blazegraph.jar`);
+// readyToStart = new Promise((resolve, reject) => {
+//     if (blazegraphSetupProcess.stdout) {
+//         blazegraphSetupProcess.stdout.on('data', (data) => {
+//             consoleLogger.info(`stdout: ${data}`);
+//             // wait for the blazegraph server to start, this is determined by the string 
+//             //  http://[::]:${port}/blazegraph/ to get started
+//             // has been output!
+
+//             // var indexOf = data.search(/http:\/\/([A-Z|a-z|0-9])*:19997\/blazegraph/);
+//             var indexOf = data.indexOf('http://10.223.16.122:19997/blazegraph/');
+//             consoleLogger.info(`indexOf: ${indexOf}`);
+//             if (indexOf >= 0) {
+//                 resolve(blazegraphSetupProcess);
+//             }
+//         });
+//     }
+//     else {
+//         reject(undefined);
+//     }
+// });
 
 
-export { readyToStart };
+/*
+
+*/
+function startBlazeGraph(testDirectoryName: string, blazegraphPort: string, blazgraphImageLocation?: string): Promise<ChildProcess> {
+    const spawnCommand = `
+                    mkdir ${testDirectory};
+                    cd ${testDirectory};
+                    ${blazgraphImageLocation ? 
+                        `cp ${blazgraphImageLocation} blazegraph.jar;`
+                        : 
+                        'wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar;'
+                        }
+                    java -server -Xmx64g -Djetty.port=${blazegraphPort} -jar blazegraph.jar&`;
+    consoleLogger.info(`spawnCommand: ${spawnCommand}`);
+    const blazegraphSetupProcess = spawn(spawnCommand, [], { shell: true, stdio: ['pipe']});
+    return new Promise((resolve, reject) => {
+        if (blazegraphSetupProcess.stdout) {
+            blazegraphSetupProcess.stdout.on('data', (data) => {
+                consoleLogger.info(`stdout: ${data}`);
+                // wait for the blazegraph server to start, this is determined by the string 
+                //  http://[::]:${port}/blazegraph/ to get started
+                // has been output!
+    
+                // var indexOf = data.search(/http:\/\/([A-Z|a-z|0-9])*:19997\/blazegraph/);
+                var indexOf = data.indexOf(`:${blazegraphPort}/blazegraph/ to get started`);
+                consoleLogger.info(`indexOf: ${indexOf}`);
+                if (indexOf >= 0) {
+                    resolve(blazegraphSetupProcess);
+                }
+            });
+        }
+        else {
+            reject(undefined);
+        }
+    });
+}
+
+export { readyToStart, graphdb, blazegaphRdfQuery, testDirectory, startBlazeGraph };
 
 
 
