@@ -25,7 +25,7 @@ const employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler = async (cont
         && context.request.params.fromdate
         && context.request.params.todate) {
         const departmentCode: string = context.request.params.departmentcode as string;
-        const fromDate: Date = Calendar.getStartOfDay(new Date(context.request.params.startDate as string));
+        const fromDate: Date = Calendar.getStartOfDay(new Date(context.request.params.fromdate as string));
         const toDate: Date = Calendar.getEndOfDay(new Date(context.request.params.todate as string));
         var dateStep: number;
 

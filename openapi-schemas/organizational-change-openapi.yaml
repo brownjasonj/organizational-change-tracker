@@ -26,7 +26,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/employeeDepartmentEpocs"
-  /employee/{employeeod}/corporateTitles:
+  /employee/{employeeid}/corporateTitles:
     get:
       description: get the history of which Corporate Title an employee has had.
       operationId: "corporateTitleHistoryByEmployeeId"
@@ -101,7 +101,7 @@ paths:
             type: string
           required: true
           description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
-        - in: query
+        - in: path
           name: asofdate
           schema:
             type: string

@@ -35,7 +35,7 @@
                 "type": "blazegraph",
                 "protocol": "http",
                 "host": "localhost",
-                "port": 19997,
+                "port": 9999,
                 "namespace": "sparql",
                 "blazename": "blazegraph"
             }
