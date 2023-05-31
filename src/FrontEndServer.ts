@@ -87,7 +87,7 @@ class FrontEndServer {
         api.register('uploadEmployeesByFile', uploadEmployeesByFileHandler);
         api.register('operationsFileUploadStatusByRequestId', operationsFileUploadStatusByRequestIdHandler);
         api.register('operationsFilesUploadStatuses', operationsFilesUploadStatusesHandler)
-        api.register('operationsDeleteTriples', operationsDeleteTriplesHandler);
+        api.register('operationsDeleteTriples', operationsDeleteTriplesHandler(rdfOrganization));
         api.register('operationsGetConfiguration', operationsGetConfiguration);
         // id endpoints
         api.register('employeeByEmployeeSystemId', employeeByEmployeeSystemIdHandler(rdfOrganization))

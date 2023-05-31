@@ -1,7 +1,6 @@
 import { Response } from "express";
 import { Context, Request } from "openapi-backend";
 import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
-import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
 import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
 import { Calendar } from "../utils/Calendar";
 
@@ -37,7 +36,6 @@ const employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler =  (rdfOrgani
         }
 
         console.log(`departmentCode: ${departmentCode}`);
-//         const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
 
         try {
             const timeseries: DepartmentEmployeeCountWithJoinersLeaversTimeSeries = await rdfOrganization.getDepartmentEmployeeHistoryWithJoinersAndLeavers(departmentCode, fromDate, toDate, dateStep);

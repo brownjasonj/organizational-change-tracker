@@ -1,9 +1,7 @@
 import { plainToClass } from "class-transformer";
-import { ConfigurationManager } from "../ConfigurationManager";
 import { BackEndConfiguration, BackEndDBConfiguration } from "../models/eom/configuration/BackEndConfiguration";
 import { IRdfGraphDB } from "./IRdfGraphDB";
 import { BlazeGraphDB, BlazeGraphDBOptions } from "./blazegraph/BlazeGraphDB";
-import { OnToTextGraphDB } from "./graphdb/OnToTextGraphDB";
 import { consoleLogger } from "../logging/consoleLogger";
 
 class GraphPersistenceFactory {

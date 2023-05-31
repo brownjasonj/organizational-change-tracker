@@ -11,7 +11,6 @@ import { pipeline } from 'stream';
 import { consoleLogger } from "../logging/consoleLogger";
 import { Logger } from "pino";
 import { StreamRdfBankOrgValidation } from "./streamstages/StreamRdfBankOrgValidation";
-import { StreamDataIngestorType } from "./StreamDataIngestorType";
 import { RdfSchemaValidation } from "../rdf/RdfSchemaValidation";
 import { DataIngestionConfiguration } from "../models/eom/configuration/DataIngestionConfiguration";
 import { StreamDataIngestionCleanup } from "./streamstages/StreamDataIngestionCleanup";
