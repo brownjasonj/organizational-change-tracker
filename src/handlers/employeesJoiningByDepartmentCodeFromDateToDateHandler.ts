@@ -5,11 +5,11 @@ import { RdfGraphFactory } from "../rdf/RdfGraphFactory";
 import { Calendar } from "../utils/Calendar";
 
 
-const employeesJoiningByDepartmentCodeFromDateToDateHandler = async (context: Context, request: Request, response: Response) => {
+const employeesJoiningByDepartmentCodeFromDateToDateHandler =  (rdfOrganization: IOrganizationRdfQuery) => async (context: Context, request: Request, response: Response) => {
     if (context.request.params.departmentcode
         && context.request.params.fromdate
         && context.request.params.todate) {
-        const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
+        // const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
         try {
             const result = await rdfOrganization.getDepartmentJoiners(context.request.query.departmentCode as string,
                 Calendar.getStartOfDay(new Date(context.request.params.fromdate as string)),

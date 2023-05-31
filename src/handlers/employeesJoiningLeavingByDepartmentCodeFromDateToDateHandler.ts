@@ -20,7 +20,7 @@ const getDateStep = (dateStep: string): number => {
     }
 }
 
-const employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler = async (context: Context, request: Request, response: Response) => {
+const employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler =  (rdfOrganization: IOrganizationRdfQuery) => async (context: Context, request: Request, response: Response) => {
     if (context.request.params.departmentcode
         && context.request.params.fromdate
         && context.request.params.todate) {
@@ -37,7 +37,7 @@ const employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler = async (cont
         }
 
         console.log(`departmentCode: ${departmentCode}`);
-        const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
+//         const rdfOrganization: IOrganizationRdfQuery = RdfGraphFactory.getInstance().getOrganizationRdfGraph();
 
         try {
             const timeseries: DepartmentEmployeeCountWithJoinersLeaversTimeSeries = await rdfOrganization.getDepartmentEmployeeHistoryWithJoinersAndLeavers(departmentCode, fromDate, toDate, dateStep);

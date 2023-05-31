@@ -9,7 +9,8 @@ import { FrontEndConfiguration } from './models/eom/configuration/FrontEndConfig
 import { consoleLogger } from './logging/consoleLogger';
 import { BackEndConfiguration } from './models/eom/configuration/BackEndConfiguration';
 import { GraphPersistenceFactory } from './persistence/GraphPersistenceFactory';
-import { expressServer } from './expressServer';
+import { FrontEndServer } from './FrontEndServer';
+import { RdfGraphFactory } from './rdf/RdfGraphFactory';
 
 // process the arg list passed to the node application
 const argv = yargs(process.argv.slice(2)).options({
@@ -40,13 +41,15 @@ GraphPersistenceFactory.setBackEndConfiguration(backEndConfiguration);
 */
 const frontEndConfiguration: FrontEndConfiguration = applicationConfiguration.getFrontEndConfiguration();
 
+const frontEndServer = new FrontEndServer(RdfGraphFactory.getInstance().getOrganizationRdfGraph());
+
 if (frontEndConfiguration.isHttpsEnabled()) {
     const frontEndHttpsConfiguration = frontEndConfiguration.getHttpsConfiguration();
     if (frontEndHttpsConfiguration != null) {
         const privateKey  = fs.readFileSync(frontEndHttpsConfiguration.getHttpsKeyPath(), 'utf8');
         const certificate = fs.readFileSync(frontEndHttpsConfiguration.getHttpsCertPath(), 'utf8');
         const credentials = {key: privateKey, cert: certificate};
-        const httpsServer = https.createServer(credentials, expressServer);
+        const httpsServer = https.createServer(credentials, frontEndServer.getExpressServer());
         httpsServer.listen(frontEndHttpsConfiguration.getPort(), () => consoleLogger.info(`api listening at https://${frontEndConfiguration.getHostname()}:${frontEndHttpsConfiguration.getPort()}`));
     }
     else {
@@ -57,7 +60,7 @@ if (frontEndConfiguration.isHttpsEnabled()) {
 if (frontEndConfiguration.isHttpEnabled()) {
     const frontEndHttpConfiguration = frontEndConfiguration.getHttpConfiguration();
     if (frontEndHttpConfiguration != null) {
-        const httpServer = http.createServer(expressServer);
+        const httpServer = http.createServer(frontEndServer.getExpressServer());
         httpServer.listen(frontEndHttpConfiguration.getPort(), () => consoleLogger.info(`api listening at http://${frontEndConfiguration.getHostname()}:${frontEndHttpConfiguration.getPort()}`));
     }
     else {
