@@ -146,13 +146,11 @@ function BankOrgRdfDataGenerator(writer: Writer<Quad>, rdfOntologyConfig: RdfOnt
     
 }
 
-function MapEmployeesToBankRdfOntologyTurtle(employees:Employee[]): Promise<string> {
-    const rdfOntologyConfig: RdfOntologyConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getRdfOntologyConfiguration();
-
-    const writer = new Writer({ prefixes: classToPlain(rdfOntologyConfig.getPrefixes()) });
+function MapEmployeesToBankRdfOntologyTurtle(rdfOntologyDefinitions: RdfOntologyConfiguration, employees:Employee[]): Promise<string> {
+    const writer = new Writer({ prefixes: classToPlain(rdfOntologyDefinitions.getPrefixes()) });
 
     employees.forEach((employee: Employee) => {
-        BankOrgRdfDataGenerator(writer, rdfOntologyConfig, employee);
+        BankOrgRdfDataGenerator(writer, rdfOntologyDefinitions, employee);
     });
 
     return new Promise((resolve, reject) => {

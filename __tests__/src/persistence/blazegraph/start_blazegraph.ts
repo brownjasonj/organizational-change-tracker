@@ -1,39 +1,84 @@
-import { ChildProcess, exec, spawn } from "child_process"
+import { ChildProcess, exec, execSync, spawn } from "child_process"
 import {v4 as uuidv4} from 'uuid';
 import { BackEndConfiguration } from "../../../../src/models/eom/configuration/BackEndConfiguration";
 import 'reflect-metadata';
 import { BlazeGraphRdfQuery } from ".../../../src/rdf/BlazeGraphRdfQuery";
 import { consoleLogger } from "../../../../src/logging/consoleLogger";
 import { GraphPersistenceFactory } from "../../../../src/persistence/GraphPersistenceFactory";
-import { ConfigurationManager } from "../../../../src/ConfigurationManager";
-import { ApplicationConfiguration } from "../../../../src/models/eom/configuration/ApplicationConfiguration";
+import { plainToClass } from "class-transformer";
+import { RdfOntologyConfiguration } from "../../../../src/models/eom/configuration/RdfOntologyConfiguration";
+
+
+function numberBetween(min: number, max: number) {  
+    return Math.floor(
+        Math.random() * (max - min) + min
+    )
+}
 
 const myuuid = uuidv4();
-const testDirectory = `blazegraph-test-database-${myuuid}`;
+const graphDBTestWorkingDirectory = `blazegraph-test-database-${myuuid}`;
+const graphDBPort = numberBetween(10000, 60000);
 
-ConfigurationManager.getInstance().setApplicationConfigurationFromFile("./__tests__/config/application-test-config.json");
+const backendConfiguration = {
+    "http": {
+        "keepAlive": true,
+        "keepAliveMsecs": 1000,
+        "proxy": false,
+        "rejectUnauthorized": false
+    },
+    "https": {
+        "keepAlive": true,
+        "keepAliveMsecs": 1000,
+        "proxy": false,
+        "rejectUnauthorized": false,
+        "keyPath": "/etc/letsencrypt/live/yourdomain.com/privkey.pem",
+        "certPath": "/etc/letsencrypt/live/yourdomain.com/fullchain.pem"
+    },
+    "graphdb": graphDBTestWorkingDirectory,
+    "graphdbconfigs": [
+        {
+            "name": graphDBTestWorkingDirectory,
+            "type": "blazegraph",
+            "protocol": "http",
+            "host": "localhost",
+            "port": graphDBPort,
+            "namespace": "sparql",
+            "blazename": "blazegraph"
+        }
+    ]
+};
 
-// get the application configuration
-const applicationConfiguration: ApplicationConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration();
-
-/*
-    Set up the back end server according to the given configuration
-*/
-const backEndConfiguration: BackEndConfiguration = applicationConfiguration.getBackEndConfiguration();
-
+const backEndConfiguration: BackEndConfiguration = plainToClass(BackEndConfiguration, backendConfiguration);
 GraphPersistenceFactory.setBackEndConfiguration(backEndConfiguration);
 
-
 console.log(`backEndConfiguration: ${JSON.stringify(backEndConfiguration)}`);
-// console.log(`blazegraphDBOptions: ${JSON.stringify(backEndConfiguration.getGraphDBConfiguration(testDBConfigurationName))}`);
-// console.log(`blazegraphDBOptions: ${JSON.stringify(blazegraphDBOptions)}`);
 
 
 // To use the BlazeGraph, uncomment the following line and comment out the OnToTextGraphDB line
-// graphdb = new BlazeGraphDB(backEndConfiguration, blazegraphDBOptions);
 
 const graphdb = GraphPersistenceFactory.getInstance().getGraphDB();
-const blazegaphRdfQuery = new BlazeGraphRdfQuery(applicationConfiguration.getRdfOntologyConfiguration(), graphdb, consoleLogger);
+
+
+const rdfOntologiesDefinitionStructure = {
+    "prefixes": {
+        "bank-org": "http://example.org/bank-org#",
+        "organization-id": "http://example.org/organization-id/",
+        "employee-id": "http://example.org/employee-id/",
+        "membership-id": "http://example.org/membership-id/",
+        "time-id": "http://example.org/time-id/",
+        "time-interval-id": "http://example.org/time-interval-id/",
+        "org": "http://www.w3.org/ns/org#",
+        "time": "http://www.w3.org/2006/time#",
+        "interval": "http://example.org/interval#",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "foaf": "http://xmlns.com/foaf/0.1#"
+    }
+}
+
+const rdfOntologiesDefinition: RdfOntologyConfiguration = plainToClass(RdfOntologyConfiguration, rdfOntologiesDefinitionStructure);
+const blazegraphRdfQuery = new BlazeGraphRdfQuery(rdfOntologiesDefinition, graphdb, consoleLogger);
 
 // start the blazegraph server
 // create a new directory for the blazegraph database
@@ -41,71 +86,43 @@ const blazegaphRdfQuery = new BlazeGraphRdfQuery(applicationConfiguration.getRdf
 //
 // wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar
 //
-let readyToStart: Promise<ChildProcess> | undefined;
+let graphDBProcess: Promise<ChildProcess> | undefined;
 
+const blazegraphSetupProcess = spawn(`mkdir ${graphDBTestWorkingDirectory}; cd ${graphDBTestWorkingDirectory}; java -server -Xmx64g -Djetty.port=${graphDBPort} -jar /Users/jason/Downloads/blazegraph.jar`, [], { shell: true, stdio: ['pipe']});
 
-// const blazegraphSetupProcess = spawn(`mkdir ${testDirectory}; cd ${testDirectory}; java -server -Xmx64g -Djetty.port=19997 -jar /Users/jason/Downloads/blazegraph.jar`, [], { shell: true, stdio: ['pipe']});
-// //const blazegraphSetupProcess = exec(`mkdir ${testDirectory}; cd ${testDirectory}; java -server -Xmx64g -Djetty.port=19997 -jar /Users/jason/Downloads/blazegraph.jar`);
-// readyToStart = new Promise((resolve, reject) => {
-//     if (blazegraphSetupProcess.stdout) {
-//         blazegraphSetupProcess.stdout.on('data', (data) => {
-//             consoleLogger.info(`stdout: ${data}`);
-//             // wait for the blazegraph server to start, this is determined by the string 
-//             //  http://[::]:${port}/blazegraph/ to get started
-//             // has been output!
+graphDBProcess = new Promise((resolve, reject) => {
+    if (blazegraphSetupProcess.stdout) {
+        blazegraphSetupProcess.stdout.on('data', (data) => {
+            consoleLogger.info(`stdout: ${data}`);
+            // wait for the blazegraph server to start, this is determined by the string 
+            //  http://[::]:${port}/blazegraph/ to get started
+            // has been output!
 
-//             // var indexOf = data.search(/http:\/\/([A-Z|a-z|0-9])*:19997\/blazegraph/);
-//             var indexOf = data.indexOf('http://10.223.16.122:19997/blazegraph/');
-//             consoleLogger.info(`indexOf: ${indexOf}`);
-//             if (indexOf >= 0) {
-//                 resolve(blazegraphSetupProcess);
-//             }
-//         });
-//     }
-//     else {
-//         reject(undefined);
-//     }
-// });
+            // var indexOf = data.search(/http:\/\/([A-Z|a-z|0-9])*:19997\/blazegraph/);
+            var indexOf = data.indexOf(`:${graphDBPort}/blazegraph/ to get started`);
+            consoleLogger.info(`indexOf: ${indexOf}`);
+            if (indexOf >= 0) {
+                resolve(blazegraphSetupProcess);
+            }
+        });
+    }
+    else {
+        reject(undefined);
+    }
+});
 
-
-/*
-
-*/
-function startBlazeGraph(testDirectoryName: string, blazegraphPort: string, blazgraphImageLocation?: string): Promise<ChildProcess> {
-    const spawnCommand = `
-                    mkdir ${testDirectory};
-                    cd ${testDirectory};
-                    ${blazgraphImageLocation ? 
-                        `cp ${blazgraphImageLocation} blazegraph.jar;`
-                        : 
-                        'wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar;'
-                        }
-                    java -server -Xmx64g -Djetty.port=${blazegraphPort} -jar blazegraph.jar&`;
-    consoleLogger.info(`spawnCommand: ${spawnCommand}`);
-    const blazegraphSetupProcess = spawn(spawnCommand, [], { shell: true, stdio: ['pipe']});
-    return new Promise((resolve, reject) => {
-        if (blazegraphSetupProcess.stdout) {
-            blazegraphSetupProcess.stdout.on('data', (data) => {
-                consoleLogger.info(`stdout: ${data}`);
-                // wait for the blazegraph server to start, this is determined by the string 
-                //  http://[::]:${port}/blazegraph/ to get started
-                // has been output!
-    
-                // var indexOf = data.search(/http:\/\/([A-Z|a-z|0-9])*:19997\/blazegraph/);
-                var indexOf = data.indexOf(`:${blazegraphPort}/blazegraph/ to get started`);
-                consoleLogger.info(`indexOf: ${indexOf}`);
-                if (indexOf >= 0) {
-                    resolve(blazegraphSetupProcess);
-                }
-            });
-        }
-        else {
-            reject(undefined);
+function stopGraphDBProcess() {
+    execSync(`pgrep -P ${blazegraphSetupProcess.pid}`).toString().split('\n').forEach((pid) => {
+        if (pid.length > 0) {
+            console.log(`KILLING ${pid}`);
+            execSync(`kill -9 ${pid}`);
         }
     });
+    execSync(`kill -9 ${blazegraphSetupProcess.pid}`);
+    execSync(`rm -rf ${graphDBTestWorkingDirectory}`);
 }
 
-export { readyToStart, graphdb, blazegaphRdfQuery, testDirectory, startBlazeGraph };
+export { graphDBProcess, stopGraphDBProcess, graphDBTestWorkingDirectory, graphDBPort, graphdb, blazegraphRdfQuery, rdfOntologiesDefinition };
 
 
 
