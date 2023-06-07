@@ -10,8 +10,7 @@
         },
         "http": {
             "port": 8080
-        },
-        "streamTrottleTimeout": 1000
+        }
     },
     "backend": {
         "http": {
@@ -72,7 +71,8 @@
         "ontologyValidation": false,
         "ontologyValidationSchemaPath": "./rdf/ontology/bank-organization.ttl",
         "ontologyValidationSchemaFormat": "text/turtle",
-        "deleteTemporaryFiles": true
+        "deleteTemporaryFiles": true,
+        "streamTrottleTimeout": 1000
     }
 }
 
