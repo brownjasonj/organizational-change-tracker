@@ -1,6 +1,6 @@
 import { Employee } from "../models/eom/Employee";
-import { IRdfGraphDB, SparqlQueryResultType } from "../persistence/IRdfGraphDB";
-import { IOrganizationRdfQuery } from "./IOrganizationRdfQuery";
+import { IRdfGraphDB } from "../persistence/IRdfGraphDB";
+import { IOrganizationRdfQuery, IRdfGraphUpdateResponse, SparqlQueryResultType } from "./IOrganizationRdfQuery";
 import { sparqlDepartmentHistoryQuery } from "./sparql/sparqlDepartmentHistoryQuery";
 import { sparqlJoinersQueryByDepartment } from "./sparql/sparqlDepartmentJoinersQuery";
 import { EmployeeLeaverJoiner, EmployeeLeaverJoinerType } from "../models/eom/EmployeeLeaverJoiner";
@@ -39,6 +39,23 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         this.logger = logger;
     }
     
+    sparqlQuery(query: string, resultType: SparqlQueryResultType): Promise<any> {
+        return this.graphDB.sparqlQuery(query, resultType);
+    }
+
+    saveTurtle(turtle: string): Promise<IRdfGraphUpdateResponse> {
+        return this.graphDB.turtleUpdate(turtle);
+    }
+    
+    /*
+        function: getEmployeesByDepartmentCodeAsOfDate
+        paramaters:
+            departmentCode: string - the name of the deparment for which a list of employees will be found
+            asOfDate: Date - the date on which the employee list is to be sought
+
+        description: This function calls the backend RDF graph DB and looks for all employees that are members
+        (have a membership realtionship) with the given deparment on the specified date.
+    */
     getEmployeesByDepartmentCodeAsOfDate(departmentCode: string, asOfDate: Date): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             const sparqlQuery = sparqlEmployeesByDepartmentCodeAsOfDateQuery(this.rdfOntologyDefinitions, departmentCode, asOfDate);
@@ -322,6 +339,8 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
         });
     }
 
+    /*
+    */
     getEmployeeByEmployeeSystemId(employeeSystemId: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             const sparqlQuery = sparqlEmployeeByEmployeeSystemIdQuery(this.rdfOntologyDefinitions, employeeSystemId);
@@ -340,7 +359,7 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                     });
                 }
                 else {
-                    reject({error: `Employee with employeeSystemId ${employeeSystemId} not found.`});
+                    resolve({error: `Employee with employeeSystemId ${employeeSystemId} not found.`});
                 }
             })
             .catch((error) => {

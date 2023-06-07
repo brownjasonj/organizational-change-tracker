@@ -6,8 +6,26 @@ import { DepartmentEmployeeCountTimeEpoc } from "../models/eom/DepartmentEmploye
 import { DepartmentEmployeeCountTimeSeries } from "../models/eom/DepartmentEmployeeCountTimeSeries";
 import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
 
+
+enum SparqlQueryResultType {
+    CSV = "text/csv",
+    TSV = "text/tsv",
+    JSON = "application/sparql-results+json",
+    XML = "application/sparql-results+xml",
+    TABLE = "application/x-binary-rdf-results-table"
+}
+
+interface IRdfGraphUpdateResponse {
+    responseTime: number;
+}
+
+
 interface IOrganizationRdfQuery {
     createBankOrgRdfDataGenerator(employee:Employee): Promise<string>;
+
+    sparqlQuery: (query: string, resultType: SparqlQueryResultType) => Promise<any>;
+    saveTurtle: (turtle: string) => Promise<IRdfGraphUpdateResponse>;
+
     deleteAllTriple(): Promise<any>;
     getDepartmentCodesAsOfDate(asOfDate: Date): Promise<string>;
     getDepartmentEmployeeHistoryWithJoinersAndLeavers(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentEmployeeCountWithJoinersLeaversTimeSeries>;
@@ -28,4 +46,4 @@ interface IOrganizationRdfQuery {
     getTimeIntervalByTimeIntervalId(timeIntervalId: string): Promise<any>;
 }
 
-export { IOrganizationRdfQuery }
+export { SparqlQueryResultType, IRdfGraphUpdateResponse, IOrganizationRdfQuery }

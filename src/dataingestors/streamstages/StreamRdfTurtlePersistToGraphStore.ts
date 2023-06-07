@@ -1,32 +1,29 @@
-import * as fs from 'fs';
 import { PassThrough, Writable } from "stream";
-import { IRdfGraphDB } from "../../persistence/IRdfGraphDB";
-import { GraphPersistenceFactory } from "../../persistence/GraphPersistenceFactory";
 import { StreamThrottle } from "./StreamThrottle";
 import { Logger } from "pino";
-import { randomUUID } from 'crypto';
+import { IOrganizationRdfQuery } from "../../rdf/IOrganizationRdfQuery";
 
 
 class StreamRdfTurtlePersistToGraphStore extends PassThrough {
     private MAX_RETRIES = 5;
     private TIME_OUT_MS = 20;
     private msgCount = 0;
-    private graphDB: IRdfGraphDB;
+    private organizationRdfQuery: IOrganizationRdfQuery;
     private msgsQueued = 1;
     private streamThrottle: StreamThrottle;
     private logger: Logger;
     private failedDataIngestionLogger: Logger
     
-    constructor(streamThrottle: StreamThrottle, graphDB: IRdfGraphDB, logger: Logger, failedDataIngestionLogger: Logger) {
+    constructor(streamThrottle: StreamThrottle, organizationRdfQuery: IOrganizationRdfQuery, logger: Logger, failedDataIngestionLogger: Logger) {
         super({ objectMode: true });
-        this.graphDB = graphDB;
+        this.organizationRdfQuery = organizationRdfQuery;
         this.streamThrottle = streamThrottle;
         this.logger = logger;
         this.failedDataIngestionLogger = failedDataIngestionLogger;
     }
 
     trywrite(data: string, msg: number, retries: number, next: Function) {
-        this.graphDB.turtleUpdate(data)
+        this.organizationRdfQuery.saveTurtle(data)
         .then((res) => {
             this.logger.info(`Message ${msg} persisted`);
             this.logger.info(res);

@@ -84,7 +84,7 @@ class FrontEndServer {
         api.register('employeesLeavingByDepartmentCodeFromDateToDate', employeesLeavingByDepartmentCodeFromDateToDateHandler(rdfOrganization));
         api.register('departmentCodesAsOfDate', departmentCodesAsOfDateHandler(rdfOrganization));
         // operations endpoints
-        api.register('uploadEmployeesByFile', uploadEmployeesByFileHandler);
+        api.register('uploadEmployeesByFile', uploadEmployeesByFileHandler(rdfOrganization));
         api.register('operationsFileUploadStatusByRequestId', operationsFileUploadStatusByRequestIdHandler);
         api.register('operationsFilesUploadStatuses', operationsFilesUploadStatusesHandler)
         api.register('operationsDeleteTriples', operationsDeleteTriplesHandler(rdfOrganization));

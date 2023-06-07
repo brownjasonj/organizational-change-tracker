@@ -5,17 +5,16 @@ import stringToStream from "string-to-stream"
 import DatasetExt from 'rdf-ext/lib/Dataset';
 import { Quad } from 'n3';
 import { HttpClient } from '../utils/HttpClient';
-import { BackEndConfiguration } from '../models/eom/configuration/BackEndConfiguration';
 import { Logger } from 'pino';
 
 class RdfInputSourceToN3Parser {
     private logger: Logger;
-    private backEndConfiguration: BackEndConfiguration;
+    private httpClient: HttpClient;
     private n3Parser: ParserN3<Quad> | undefined = undefined;
 
-    constructor(backEndConfiguration: BackEndConfiguration, logger: Logger) {
+    constructor(httpClient: HttpClient, logger: Logger) {
         this.logger = logger;
-        this.backEndConfiguration = backEndConfiguration;
+        this.httpClient = httpClient;
         this.n3Parser = new ParserN3({ factory });
     }
 
@@ -57,8 +56,7 @@ class RdfInputSourceToN3Parser {
         // representing the schema.  If the body returned is not a turtle document
         // then we cannot validate the data, so return undefined
         return new Promise<DatasetExt | undefined>((resolve, reject) => {
-            const httpClient: HttpClient = new HttpClient(this.backEndConfiguration);
-            httpClient.get(url, { Accept: 'text/turtle' }, false).then((response: any) => {
+            this.httpClient.get(url, { Accept: 'text/turtle' }, false).then((response: any) => {
                 if (response.status === 200) {
                     this.logger.error(`Data returned: ${response.data}`);
                     const stream = stringToStream(response.data);

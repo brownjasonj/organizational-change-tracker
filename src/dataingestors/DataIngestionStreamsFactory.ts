@@ -2,6 +2,7 @@ import { StreamDataIngestorType } from './StreamDataIngestorType';
 import { jsonEmployeeDTOFileToEmployeeStream } from './jsonEmployeeDTOFileToEmployeeStream';
 import { csvEmployeeDTOFileToEmployeeStream } from './csvEmployeeDtoFileToEmployeeStream';
 import { DataIngestionStreamStatus } from './DataIngestionStreamStatus';
+import { IOrganizationRdfQuery } from '../rdf/IOrganizationRdfQuery';
 
 
 
@@ -34,12 +35,12 @@ class DataIngestionStreamsFactory {
         return Array.from(this.streams.values());
     }
 
-    public getSreamDataIngestor(filePath: string): StreamDataIngestorType {
+    public getSreamDataIngestor(rdfOrganization: IOrganizationRdfQuery, filePath: string): StreamDataIngestorType {
         switch(this.getFileExtension(filePath)) {
             case 'csv':
-                return csvEmployeeDTOFileToEmployeeStream;
+                return csvEmployeeDTOFileToEmployeeStream(rdfOrganization);
             case 'json':
-                return jsonEmployeeDTOFileToEmployeeStream;
+                return jsonEmployeeDTOFileToEmployeeStream(rdfOrganization);
             case 'xlsx':
             case 'xslb':
             default:

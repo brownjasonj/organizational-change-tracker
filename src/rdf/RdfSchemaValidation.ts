@@ -16,16 +16,14 @@ enum SchemaLocationType {
 
 class RdfSchemaValidation {
     private logger: Logger;
-    private backEndConfiguration: BackEndConfiguration;
     private schemaLocation: string | undefined = undefined;
     private n3Parser: ParserN3<Quad> | undefined = undefined;
     private validator: SHACLValidator | undefined = undefined;
     private schemaDataset: DatasetExt | undefined = undefined;
     private rdfParser: RdfInputSourceToN3Parser;
 
-    constructor(backEndConfiguration: BackEndConfiguration, schemaLocation: string | undefined, logger: Logger, rdfParser: RdfInputSourceToN3Parser) {
+    constructor(schemaLocation: string | undefined, logger: Logger, rdfParser: RdfInputSourceToN3Parser) {
         this.logger = logger;
-        this.backEndConfiguration = backEndConfiguration;
         this.schemaLocation = schemaLocation;
         this.rdfParser = rdfParser;
 

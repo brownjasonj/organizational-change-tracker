@@ -9,7 +9,8 @@ import { createDataIngestionLogger } from "../logging/createDataIngestionLogger"
 import { RdfSchemaValidation } from "../rdf/RdfSchemaValidation";
 import { RdfInputSourceToN3Parser } from "../rdf/RdfInputSourceToN3Parser";
 import { consoleLogger } from "../logging/consoleLogger";
-import { v4 as uuidv4 } from 'uuid';
+import { IOrganizationRdfQuery } from "../rdf/IOrganizationRdfQuery";
+import { HttpClient } from "../utils/HttpClient";
 
 const getResourceLocation = (requestId: string) =>  {
     const frontEndConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration().getFrontEndConfiguration();
@@ -17,7 +18,12 @@ const getResourceLocation = (requestId: string) =>  {
     return resourceLocation;
 };
 
-function processFile(file: UploadedFile): Promise<string> {
+function getFileExtension(filePath: string) : string {
+    return filePath.substring(filePath.lastIndexOf(".") + 1);
+}
+
+
+function processFile(rdfOrganization: IOrganizationRdfQuery, file: UploadedFile): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const applicationConfiguration = ConfigurationManager.getInstance().getApplicationConfiguration();
         const dataIngestionStreamsFactory: DataIngestionStreamsFactory = DataIngestionStreamsFactory.getInstance();
@@ -35,17 +41,20 @@ function processFile(file: UploadedFile): Promise<string> {
             const dataIngestionLogger = createDataIngestionLogger(loggingConfiguration, `${dataIngestionStreamStatus.getRequestId()}.json`);
             const failedDataIngestionLogger = createFailedDataIngestionLogger(loggingConfiguration, `${dataIngestionStreamStatus.getRequestId()}-failed.json`);
             const streamThrottleTimoutMs = applicationConfiguration.getFrontEndConfiguration().getStreamTrottleTimeoutMs();
-            const rdfInputSourceToN3Parser = new RdfInputSourceToN3Parser(backEndConfiguration, dataIngestionLogger);
+            const httpClient = new HttpClient(backEndConfiguration);
+            const rdfInputSourceToN3Parser = new RdfInputSourceToN3Parser(httpClient, dataIngestionLogger);
             var rdfValidateData = undefined;
             
             if (dataIngestionConfiguration.getOntologyValidation()) {
-                rdfValidateData = new RdfSchemaValidation(backEndConfiguration, applicationConfiguration.getDataIngestionConfiguration().getOntologyValidationSchemaPath(), dataIngestionLogger, rdfInputSourceToN3Parser);
+                rdfValidateData = new RdfSchemaValidation(applicationConfiguration.getDataIngestionConfiguration().getOntologyValidationSchemaPath(), dataIngestionLogger, rdfInputSourceToN3Parser);
             }
     
             dataIngestionLogger.info(file.name);
             dataIngestionLogger.info(temporaryFilePath);
             
-            const streamDataIngestor: StreamDataIngestorType = dataIngestionStreamsFactory.getSreamDataIngestor(temporaryFilePath);
+            const streamDataIngestor: StreamDataIngestorType = dataIngestionStreamsFactory.getSreamDataIngestor(rdfOrganization, temporaryFilePath);
+
+
             streamDataIngestor(temporaryFilePath, rdfValidateData, dataIngestionStreamStatus, dataIngestionConfiguration, streamThrottleTimoutMs, dataIngestionLogger, failedDataIngestionLogger);
             resolve(dataIngestionStreamStatus.getRequestId());
         }).catch((err) => {
@@ -54,7 +63,7 @@ function processFile(file: UploadedFile): Promise<string> {
     });
 }
 
-const uploadEmployeesByFileHandler =  async (context: Context, request: Request, response: Response) => {
+const uploadEmployeesByFileHandler = (rdfOrganization: IOrganizationRdfQuery) => async (context: Context, request: Request, response: Response) => {
     if (!request.files) {
         response.status(400).send('No files were uploaded.');
         consoleLogger.error('No files were uploaded.');
@@ -65,7 +74,17 @@ const uploadEmployeesByFileHandler =  async (context: Context, request: Request,
         if (uploadedFiles instanceof Array) {
             var requests: object[] = [];
             await uploadedFiles.forEach((uploadedFile) => {
-                processFile(uploadedFile).then((requestId) => {
+                // switch(getFileExtension(uploadedFile.name)) {
+                //     case 'csv':
+                //         return csvEmployeeDTOFileToEmployeeStream;
+                //     case 'json':
+                //         return jsonEmployeeDTOFileToEmployeeStream;
+                //     case 'xlsx':
+                //     case 'xslb':
+                //     default:
+                //         throw new Error(`Unsupported file type: ${DataIngestionStreamsFactory.getInstance().getFileExtension(filePath)}`);
+                // }
+                processFile(rdfOrganization, uploadedFile).then((requestId) => {
                     requests.push({'Operation-Location': `${getResourceLocation(requestId)}`});
 //                    response.status(202).json({'Operation-Location': `${getResourceLocation(requestId)}`});
 //                    response.status(202).json({'Operation-Location': `${requestId}`});
@@ -79,7 +98,7 @@ const uploadEmployeesByFileHandler =  async (context: Context, request: Request,
         }
         else {
             const file: UploadedFile = uploadedFiles as UploadedFile;
-            processFile(file).then((requestId) => {
+            processFile(rdfOrganization, file).then((requestId) => {
                 response.status(202).json({'Operation-Location': `${getResourceLocation(requestId)}`});
 //                response.status(202).json({'Operation-Location': `${requestId}`});
             }).catch((error) => {

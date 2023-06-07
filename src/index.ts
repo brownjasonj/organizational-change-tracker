@@ -11,6 +11,8 @@ import { BackEndConfiguration } from './models/eom/configuration/BackEndConfigur
 import { GraphPersistenceFactory } from './persistence/GraphPersistenceFactory';
 import { FrontEndServer } from './FrontEndServer';
 import { RdfGraphFactory } from './rdf/RdfGraphFactory';
+import { BlazeGraphRdfQuery } from './rdf/BlazeGraphRdfQuery';
+import { BlazeGraphDB } from './persistence/blazegraph/BlazeGraphDB';
 
 // process the arg list passed to the node application
 const argv = yargs(process.argv.slice(2)).options({
@@ -41,6 +43,10 @@ GraphPersistenceFactory.setBackEndConfiguration(backEndConfiguration);
 */
 const frontEndConfiguration: FrontEndConfiguration = applicationConfiguration.getFrontEndConfiguration();
 
+//
+// create the front end server (openapi with express) and pass the front end server a link to the backend rdf graph interface
+// configured by the given configuration
+//
 const frontEndServer = new FrontEndServer(RdfGraphFactory.getInstance().getOrganizationRdfGraph());
 
 if (frontEndConfiguration.isHttpsEnabled()) {

@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import JSONStream from 'jsonstream';
 import { StreamRdfTurtlePersistToGraphStore } from './streamstages/StreamRdfTurtlePersistToGraphStore';
 import { pipeline } from 'stream';
-import { GraphPersistenceFactory } from '../persistence/GraphPersistenceFactory';
 import { DataIngestionStreamStatus } from './DataIngestionStreamsFactory';
 import { StreamDataIngestionStatusUpdater } from './streamstages/StreamDataIngestionStatusUpdater';
 import { StreamThrottle } from './streamstages/StreamThrottle';
@@ -14,15 +13,16 @@ import { StreamRdfBankOrgValidation } from './streamstages/StreamRdfBankOrgValid
 import { RdfSchemaValidation } from '../rdf/RdfSchemaValidation';
 import { DataIngestionConfiguration } from '../models/eom/configuration/DataIngestionConfiguration';
 import { StreamDataIngestionCleanup } from './streamstages/StreamDataIngestionCleanup';
+import { IOrganizationRdfQuery } from '../rdf/IOrganizationRdfQuery';
 
 
-function jsonEmployeeDTOFileToEmployeeStream(filePath: string, 
+const jsonEmployeeDTOFileToEmployeeStream = (organizationRdfQuery: IOrganizationRdfQuery) => (filePath: string, 
                 rdfSchemaValidator: RdfSchemaValidation | undefined,
                 dataIngestionStatus: DataIngestionStreamStatus,
                 dataIngestionConfiguration: DataIngestionConfiguration,
                 throttleTimeoutMs: number,
                 logger: Logger,
-                failedDataIngestionLogger: Logger): void {
+                failedDataIngestionLogger: Logger): void => {
     const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
     const parser = JSONStream.parse('*');
     const streamThrottle = new StreamThrottle(throttleTimeoutMs, logger);
@@ -34,7 +34,7 @@ function jsonEmployeeDTOFileToEmployeeStream(filePath: string,
          new StreamTransformEmployeeDtoToEmployee(logger),
          new StreamTransformEmployeeToRdf(logger),
          new StreamRdfBankOrgValidation(rdfSchemaValidator, logger),
-         new StreamRdfTurtlePersistToGraphStore(streamThrottle, GraphPersistenceFactory.getInstance().getGraphDB(), logger, failedDataIngestionLogger),
+         new StreamRdfTurtlePersistToGraphStore(streamThrottle, organizationRdfQuery, logger, failedDataIngestionLogger),
          new StreamDataIngestionStatusUpdater(dataIngestionStatus, logger),
          new StreamDataIngestionCleanup(dataIngestionConfiguration, dataIngestionStatus, logger),
 //         (err) => {
