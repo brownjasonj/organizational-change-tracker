@@ -4,8 +4,6 @@ const defaultHostname = 'localhost';
 const defaultEnableHttps = false;
 const defaultEnableHttp = true;
 const defaultHttpPort = 8080;
-const defaultStreamTrottleTimeoutMs = 1000;
-
 
 class FrontEndHttpConfiguration {
     port: number;
@@ -46,7 +44,6 @@ class FrontEndConfiguration {
     https: FrontEndHttpsConfiguration | null;
     @Type(() => FrontEndHttpConfiguration)
     http: FrontEndHttpConfiguration;
-    streamTrottleTimeoutMs: number;
 
     constructor() {
         this.hostname = defaultHostname;
@@ -54,7 +51,6 @@ class FrontEndConfiguration {
         this.enableHttp = defaultEnableHttp;
         this.https = null;
         this.http = new FrontEndHttpConfiguration(defaultHttpPort);
-        this.streamTrottleTimeoutMs = defaultStreamTrottleTimeoutMs;
     }
 
     public isHttpsEnabled(): boolean {
@@ -75,10 +71,6 @@ class FrontEndConfiguration {
 
     public getHttpConfiguration(): FrontEndHttpConfiguration {
         return this.http;
-    }
-
-    public getStreamTrottleTimeoutMs(): number {
-        return this.streamTrottleTimeoutMs;
     }
 }
 

@@ -33,14 +33,17 @@ import { employeeCountByDepartmentCodeFromDateToDateHandler } from './handlers/e
 import { employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler } from './handlers/employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler';
 import { employeesByDepartmentCodeAsOfDateHandler } from './handlers/employeesByDepartmentCodeAsOfDateHandler';
 import { IOrganizationRdfQuery } from "./rdf/IOrganizationRdfQuery";
+import { DataIngestionPipeline } from './dataingestors/DataIngestionPipeline';
 
 
 class FrontEndServer {
     private _rdfOrganization: IOrganizationRdfQuery;
+    private _dataIngestionPipeline: DataIngestionPipeline;
     private expressServer: Express.Express;
 
-    constructor(rdfOrganization: IOrganizationRdfQuery) {
+    constructor(rdfOrganization: IOrganizationRdfQuery, dataIngestionPipeline: DataIngestionPipeline) {
         this._rdfOrganization = rdfOrganization;
+        this._dataIngestionPipeline = dataIngestionPipeline;
         this.expressServer = Express();
         // enable file uploads
         this.expressServer.use(fileUpload({
@@ -84,9 +87,9 @@ class FrontEndServer {
         api.register('employeesLeavingByDepartmentCodeFromDateToDate', employeesLeavingByDepartmentCodeFromDateToDateHandler(rdfOrganization));
         api.register('departmentCodesAsOfDate', departmentCodesAsOfDateHandler(rdfOrganization));
         // operations endpoints
-        api.register('uploadEmployeesByFile', uploadEmployeesByFileHandler(rdfOrganization));
-        api.register('operationsFileUploadStatusByRequestId', operationsFileUploadStatusByRequestIdHandler);
-        api.register('operationsFilesUploadStatuses', operationsFilesUploadStatusesHandler)
+        api.register('uploadEmployeesByFile', uploadEmployeesByFileHandler(this._dataIngestionPipeline));
+        api.register('operationsFileUploadStatusByRequestId', operationsFileUploadStatusByRequestIdHandler(this._dataIngestionPipeline.getDataIngestionStatuses()));
+        api.register('operationsFilesUploadStatuses', operationsFilesUploadStatusesHandler(this._dataIngestionPipeline.getDataIngestionStatuses()))
         api.register('operationsDeleteTriples', operationsDeleteTriplesHandler(rdfOrganization));
         api.register('operationsGetConfiguration', operationsGetConfiguration);
         // id endpoints

@@ -1,4 +1,5 @@
 
+const defaultStreamTrottleTimeoutMs = 1000;
 
 class DataIngestionConfiguration {
     temporaryDirectory: string;
@@ -6,6 +7,8 @@ class DataIngestionConfiguration {
     ontologyValidationSchemaPath: string;
     ontologyValidationSchemaFormat: string;
     deleteTemporaryFiles: boolean;
+    streamTrottleTimeoutMs: number;
+
 
     constructor() {
         this.temporaryDirectory = './tmp/';
@@ -13,6 +16,7 @@ class DataIngestionConfiguration {
         this.ontologyValidationSchemaPath = './rdf/ontology/bank-organization.ttl';
         this.ontologyValidationSchemaFormat = 'test/turtle';
         this.deleteTemporaryFiles = true;
+        this.streamTrottleTimeoutMs = defaultStreamTrottleTimeoutMs;
     }
 
     public getTemporaryDirectory(): string {
@@ -29,6 +33,10 @@ class DataIngestionConfiguration {
 
     public getDeleteTemporaryFiles(): boolean {
         return this.deleteTemporaryFiles;
+    }
+
+    public getStreamTrottleTimeoutMs(): number {
+        return this.streamTrottleTimeoutMs;
     }
 }
 

@@ -11,8 +11,9 @@ import { BackEndConfiguration } from './models/eom/configuration/BackEndConfigur
 import { GraphPersistenceFactory } from './persistence/GraphPersistenceFactory';
 import { FrontEndServer } from './FrontEndServer';
 import { RdfGraphFactory } from './rdf/RdfGraphFactory';
-import { BlazeGraphRdfQuery } from './rdf/BlazeGraphRdfQuery';
-import { BlazeGraphDB } from './persistence/blazegraph/BlazeGraphDB';
+import { DataIngestionPipeline } from './dataingestors/DataIngestionPipeline';
+import { DataIngestionStreamStatuses } from './dataingestors/DataIngestionStreamStatuses';
+import { HttpClient } from './utils/HttpClient';
 
 // process the arg list passed to the node application
 const argv = yargs(process.argv.slice(2)).options({
@@ -47,7 +48,10 @@ const frontEndConfiguration: FrontEndConfiguration = applicationConfiguration.ge
 // create the front end server (openapi with express) and pass the front end server a link to the backend rdf graph interface
 // configured by the given configuration
 //
-const frontEndServer = new FrontEndServer(RdfGraphFactory.getInstance().getOrganizationRdfGraph());
+const dataIngestionStatuses = new DataIngestionStreamStatuses();
+const httpClient = new HttpClient(applicationConfiguration.getBackEndConfiguration());
+const dataIngestionPipeline = new DataIngestionPipeline(RdfGraphFactory.getInstance().getOrganizationRdfGraph(), applicationConfiguration.getDataIngestionConfiguration(), dataIngestionStatuses, applicationConfiguration.getLoggingConfiguration(), httpClient);
+const frontEndServer = new FrontEndServer(RdfGraphFactory.getInstance().getOrganizationRdfGraph(), dataIngestionPipeline);
 
 if (frontEndConfiguration.isHttpsEnabled()) {
     const frontEndHttpsConfiguration = frontEndConfiguration.getHttpsConfiguration();

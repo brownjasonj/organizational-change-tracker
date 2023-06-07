@@ -1,12 +1,13 @@
 import { Context, Request } from "openapi-backend";
 import { Response } from "express";
-import { DataIngestionStreamStatus, DataIngestionStreamsFactory } from "../dataingestors/DataIngestionStreamsFactory";
 import { consoleLogger } from "../logging/consoleLogger";
+import { DataIngestionStreamStatuses } from "../dataingestors/DataIngestionStreamStatuses";
+import { DataIngestionStreamStatus } from "../dataingestors/DataIngestionStreamStatus";
 
-const operationsFilesUploadStatusesHandler = async (context: Context, request: Request, response: Response) => {
+const operationsFilesUploadStatusesHandler = (dataIngestionStatuses: DataIngestionStreamStatuses) => async (context: Context, request: Request, response: Response) => {
     consoleLogger.info("operationsFilesUploadStatusesHandler");
     if (context.request.params) {
-        const streamStatus: DataIngestionStreamStatus[] = DataIngestionStreamsFactory.getInstance().getStreamStatuses()
+        const streamStatus: DataIngestionStreamStatus[] = dataIngestionStatuses.getStreamStatuses()
         consoleLogger.info(streamStatus);
         if (streamStatus) {
             response.status(200).send(streamStatus!);
