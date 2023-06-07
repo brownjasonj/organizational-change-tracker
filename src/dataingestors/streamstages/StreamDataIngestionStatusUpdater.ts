@@ -1,6 +1,6 @@
 import { PassThrough, Writable } from "stream";
-import { DataIngestionStreamStatus } from "../DataIngestionStreamsFactory";
 import { Logger } from "pino";
+import { DataIngestionStreamStatus } from "../DataIngestionStreamStatus";
 
 
 class StreamDataIngestionStatusUpdater extends PassThrough {

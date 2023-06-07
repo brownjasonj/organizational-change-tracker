@@ -1,15 +1,45 @@
 import 'reflect-metadata';
 import supertest from 'supertest';
-// import { expressServer } from '../../src/expressServer';
 import { FrontEndServer } from '../../src/FrontEndServer';
-import { graphDBProcess, stopGraphDBProcess, graphdb, blazegraphRdfQuery, rdfOntologiesDefinition } from "./persistence/blazegraph/start_blazegraph";
+import { graphDBProcess, stopGraphDBProcess, graphdb, blazegraphRdfQuery, rdfOntologiesDefinition, backEndConfiguration } from "./persistence/blazegraph/start_blazegraph";
 import { MapEmployeesToBankRdfOntologyTurtle } from '../../src/rdf/generators/MapEmployeesToBankOrgRdfTurtle';
 import { Employee } from "../../src/models/eom/Employee";
 import { EmployeeDto } from "../../src/models/dto/EmployeeDto";
 import { employeeDtoToEmployee } from "../../src/models/mappers/EmployeeMapper";
+import { HttpClient } from '../../src/utils/HttpClient';
+import { DataIngestionStreamStatuses } from '../../src/dataingestors/DataIngestionStreamStatuses';
+import { DataIngestionPipeline } from '../../src/dataingestors/DataIngestionPipeline';
+import { plainToClass } from 'class-transformer';
+import { DataIngestionConfiguration } from '../../src/models/eom/configuration/DataIngestionConfiguration';
+import { LoggingConfiguration } from '../../src/models/eom/configuration/LoggingConfiguration';
 
 
-const expresServer = new FrontEndServer(blazegraphRdfQuery);
+const dataIngestionConfigurationData = {
+    "temporaryDirectory": "./tmp",
+    "ontologyValidation": false,
+    "ontologyValidationSchemaPath": "./rdf/ontology/bank-organization.ttl",
+    "ontologyValidationSchemaFormat": "text/turtle",
+    "deleteTemporaryFiles": true,
+    "streamTrottleTimeout": 1000
+};
+const dataIngestionConfiguration: DataIngestionConfiguration = plainToClass(DataIngestionConfiguration, dataIngestionConfigurationData);
+
+const loggingConfigurationData = {
+    "dataIngestionLogging": false,
+    "dataIngestionLoggingLevel": "info",
+    "dataIngestionLoggingPath": "",
+    "dataIngestionDeadLetterPath": "",
+    "queryLogging": false,
+    "queryLoggingLevel": "info",
+    "queryLoggingPath": ""
+};
+const loggingConfiguration = plainToClass(LoggingConfiguration, loggingConfigurationData);
+
+const httpClient = new HttpClient(backEndConfiguration);
+const dataIngestionStatuses = new DataIngestionStreamStatuses();
+const dataIngestionPipeline = new DataIngestionPipeline(blazegraphRdfQuery, dataIngestionConfiguration, dataIngestionStatuses, loggingConfiguration, httpClient);
+
+const expresServer = new FrontEndServer(blazegraphRdfQuery, dataIngestionPipeline);
 const requestWithSupertest: supertest.SuperTest<supertest.Test> = supertest(expresServer.getExpressServer());
 
 describe(`Test API`, () => {

@@ -3,7 +3,6 @@ import http from "http";
 import https from "https";
 import { BackEndConfiguration } from "../models/eom/configuration/BackEndConfiguration";
 
-
 class HttpClient {
     private bdc: BackEndConfiguration;
     private axios: any;

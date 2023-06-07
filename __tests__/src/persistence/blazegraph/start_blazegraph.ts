@@ -122,7 +122,7 @@ function stopGraphDBProcess() {
     execSync(`rm -rf ${graphDBTestWorkingDirectory}`);
 }
 
-export { graphDBProcess, stopGraphDBProcess, graphDBTestWorkingDirectory, graphDBPort, graphdb, blazegraphRdfQuery, rdfOntologiesDefinition };
+export { graphDBProcess, stopGraphDBProcess, graphDBTestWorkingDirectory, graphDBPort, graphdb, blazegraphRdfQuery, rdfOntologiesDefinition, backEndConfiguration };
 
 
 
