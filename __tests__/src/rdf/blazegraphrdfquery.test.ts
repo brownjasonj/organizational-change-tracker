@@ -28,9 +28,13 @@ describe("create a new blazegraph DB", () => {
         employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "A", "Staff", "01.01.2000", "01.02.2000", "01.01.2000","31.12.9999")),
         employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "A", "Staff", "02.02.2000", "01.03.2000", "01.01.2000","31.12.9999")),
         employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "B", "AVP", "02.03.2000", "01.05.2000", "01.01.2000","31.12.9999")),
-        employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "C", "VP", "02.05.2000", "01.12.2010", "01.01.2000","31.12.9999"))
+        employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "C", "VP", "02.05.2000", "01.12.2010", "01.01.2000","31.12.9999")),
         // employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "A", "DIR", "02.12.2010", "01.12.2011", "01.01.2000","31.12.9999")),
         // employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "A", "MDR", "02.12.2011", "01.12.2012", "01.01.2000","31.12.9999"))
+        employeeDtoToEmployee(new EmployeeDto("2", "A2", "Fred", "Flintstone", "CA", "VP", "02.05.2000", "01.12.2010", "01.01.2000","31.12.9999")),
+        employeeDtoToEmployee(new EmployeeDto("5", "A5", "Barney", "Rubble", "CAA", "VP", "02.05.2000", "01.12.2010", "01.01.2000","31.12.9999")),
+        employeeDtoToEmployee(new EmployeeDto("3", "A3", "Johnny", "Rotten", "CB", "VP", "02.05.2000", "01.12.2010", "01.01.2000","31.12.9999")),
+        employeeDtoToEmployee(new EmployeeDto("4", "A4", "Sid", "Vicious", "CC", "VP", "02.05.2000", "01.12.2010", "01.01.2000","31.12.9999"))
     ];
 
     beforeAll(() => {
@@ -126,6 +130,19 @@ describe("create a new blazegraph DB", () => {
             blazegraphRdfQuery.getDepartmentLeavers("A", new Date("2000-02-01"), new Date("2000-04-01")).then((employees) => {
                 console.log(employees);
                 resolve(expect(employees.length).toBe(1));
+            }).catch((err) => {
+                console.log(err);
+                reject(err);
+            });
+        });
+    });
+
+    test("departments A, B, C, between 2000-01-01 and 2000-04-01", () => {
+        return new Promise((resolve, reject) => {     
+            blazegraphRdfQuery.getDepartmentHierarchyDepthHistory("C", 3, new Date("2000-02-01")).then((departmentHierarchy) => {
+                console.log(departmentHierarchy);
+                expect(departmentHierarchy.id).toEqual("C");
+                resolve(expect(departmentHierarchy.children.size).toEqual(3));
             }).catch((err) => {
                 console.log(err);
                 reject(err);

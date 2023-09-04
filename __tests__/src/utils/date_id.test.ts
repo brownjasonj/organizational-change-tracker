@@ -1,4 +1,4 @@
-import { dateIdGenerator } from "../src/utils/dateIdGenerator";
+import { dateIdGenerator } from "../../../src/utils/dateIdGenerator";
 import 'reflect-metadata';
 
 describe("Date Id Generator Testing", () => {

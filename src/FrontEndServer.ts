@@ -34,6 +34,7 @@ import { employeesJoiningLeavingByDepartmentCodeFromDateToDateHandler } from './
 import { employeesByDepartmentCodeAsOfDateHandler } from './handlers/employeesByDepartmentCodeAsOfDateHandler';
 import { IOrganizationRdfQuery } from "./rdf/IOrganizationRdfQuery";
 import { DataIngestionPipeline } from './dataingestors/DataIngestionPipeline';
+import { departmentJierarchyByDepartmentCodeWithDepthFromDateToDate } from './handlers/departmentHierarchyByDepartmentCodeWithDepthFromDateToDateHandler';
 
 
 class FrontEndServer {
@@ -86,6 +87,7 @@ class FrontEndServer {
         api.register('employeesJoiningByDepartmentCodeFromDateToDate', employeesJoiningByDepartmentCodeFromDateToDateHandler(rdfOrganization));
         api.register('employeesLeavingByDepartmentCodeFromDateToDate', employeesLeavingByDepartmentCodeFromDateToDateHandler(rdfOrganization));
         api.register('departmentCodesAsOfDate', departmentCodesAsOfDateHandler(rdfOrganization));
+        api.register('departmentJierarchyByDepartmentCodeWithDepthFromDateToDate', departmentJierarchyByDepartmentCodeWithDepthFromDateToDate(rdfOrganization));
         // operations endpoints
         api.register('uploadEmployeesByFile', uploadEmployeesByFileHandler(this._dataIngestionPipeline));
         api.register('operationsFileUploadStatusByRequestId', operationsFileUploadStatusByRequestIdHandler(this._dataIngestionPipeline.getDataIngestionStatuses()));

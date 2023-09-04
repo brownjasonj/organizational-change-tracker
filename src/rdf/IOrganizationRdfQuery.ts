@@ -5,6 +5,7 @@ import { EmployeeCorporateTitleEpocs } from "../models/eom/EmployeeCorporateTitl
 import { DepartmentEmployeeCountTimeEpoc } from "../models/eom/DepartmentEmployeeCountTimeEpoc";
 import { DepartmentEmployeeCountTimeSeries } from "../models/eom/DepartmentEmployeeCountTimeSeries";
 import { DepartmentEmployeeCountWithJoinersLeaversTimeSeries } from "../models/eom/DepartmentEmployeeCountWithJoinersLeaversTimeSeries";
+import { DepartmentHierarchy } from "../models/eom/DepartmentHierarchy";
 
 
 enum SparqlQueryResultType {
@@ -30,6 +31,7 @@ interface IOrganizationRdfQuery {
     getDepartmentCodesAsOfDate(asOfDate: Date): Promise<string>;
     getDepartmentEmployeeHistoryWithJoinersAndLeavers(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentEmployeeCountWithJoinersLeaversTimeSeries>;
     getDepartmentEmployeeCountHistory(departmentCode: string, startDate: Date, endDate: Date, dateStep: number): Promise<DepartmentEmployeeCountTimeSeries>;
+    getDepartmentHierarchyDepthHistory(departmentCode: string, hierarchyDepth: number, startDate: Date): Promise<DepartmentHierarchy>;
     getEmployeeCountByDepartmentAsOf(departmentCode: string, asOfDate: Date): Promise<DepartmentEmployeeCountTimeEpoc>;
     getEmployeeDepartmentHistoryByEmployeeId(employeeId: string): Promise<EmployeeDepartmentEpocs>;
     getEmployeeCorporateTitleHistoryByEmployeeId(employeeId: string): Promise<EmployeeCorporateTitleEpocs>;

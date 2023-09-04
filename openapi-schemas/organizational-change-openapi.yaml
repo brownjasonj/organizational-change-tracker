@@ -259,6 +259,33 @@ paths:
       responses:
         '200':
           description: OK
+  /department/hierachy/{departmentcode}/{depth}/{asofdate}:
+    get:
+      description: get list of employees that left a department in a particular period
+      operationId: "departmentJierarchyByDepartmentCodeWithDepthFromDateToDate"
+      parameters:
+        - in: path
+          name: departmentcode
+          schema:
+            type: string
+          required: true
+          description: String deparment-code (e.g., AABB).  Department codes are strings encoding a hierarchy where the prefix is higher up the hierarchy (e.g., A->AA->AAA->AAAA)
+        - in: path
+          name: depth
+          schema:
+            type: integer
+          required: true
+          description: The depth of the hierarchy to return
+        - in: path
+          name: asofdate
+          schema:
+            type: string
+          required: true
+          description: The starting point for the history
+      responses:
+        '200':
+          description: OK
+  
   /departments/{asofdate}:
     get:
       description: get a list of department codes as of a given date

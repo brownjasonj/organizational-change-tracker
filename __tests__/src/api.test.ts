@@ -47,9 +47,11 @@ describe(`Test API`, () => {
         employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "A", "Staff", "01.01.2000", "01.02.2000", "01.01.2000","31.12.9999")),
         employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "A", "Staff", "02.02.2000", "01.03.2000", "01.01.2000","31.12.9999")),
         employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "B", "AVP", "02.03.2000", "01.05.2000", "01.01.2000","31.12.9999")),
-        employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "C", "VP", "02.05.2000", "01.12.2010", "01.01.2000","31.12.9999"))
+        employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "C", "VP", "02.05.2000", "01.12.2010", "01.01.2000","31.12.9999")),
         // employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "A", "DIR", "02.12.2010", "01.12.2011", "01.01.2000","31.12.9999")),
         // employeeDtoToEmployee(new EmployeeDto("1", "A1", "John", "Hawkins", "A", "MDR", "02.12.2011", "01.12.2012", "01.01.2000","31.12.9999"))
+        employeeDtoToEmployee(new EmployeeDto("2", "A2", "Fred", "Flintstone", "CD", "VP", "02.05.2000", "01.12.2010", "01.01.2000","31.12.9999"))
+
     ];
 
     beforeAll(() => {
@@ -160,6 +162,15 @@ describe(`Test API`, () => {
 
     test("Test get employee by employee id /id/employee-system-id/A0000001", async () => {
         const res = await requestWithSupertest.get('/id/employee-system-id/A0000001');
+        expect(res.status).toEqual(200);
+        expect(res.type).toEqual(expect.stringContaining('json'));
+    });
+
+    /*
+        /department/hierachy/{departmentcode}/{depth}/{asofdate}:
+    */
+    test("Test get department hierarchy /department/C/1/2010-01-01", async () => {
+        const res = await requestWithSupertest.get('/department/hierachy/C/1/2010-01-01');
         expect(res.status).toEqual(200);
         expect(res.type).toEqual(expect.stringContaining('json'));
     });

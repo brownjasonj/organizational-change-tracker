@@ -27,6 +27,9 @@ import { sparqlEmployeeByEmployeeSystemIdQuery } from "./sparql/idqueries/sparql
 import { SparqlJsonParser } from "sparqljson-parse";
 import { sparqlEmployeesByDepartmentCodeAsOfDateQuery } from "./sparql/sparqlEmployeesByDepartmentCodeAsOfDateQuery";
 import { RdfOntologyConfiguration } from "../models/eom/configuration/RdfOntologyConfiguration";
+import { sparqlDepartmentHierarchyDepthHistoryQuery } from "./sparql/sparqlDepartmentHierarchyDepthHistoryQuery";
+import { DepartmentHierarchy } from "../models/eom/DepartmentHierarchy";
+import { DepartmentHierarchyFromSparqlMapper } from "../models/mappers/DepartmentHierarchyFromSparqlMapper";
 
 abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
     private graphDB: IRdfGraphDB;
@@ -204,6 +207,26 @@ abstract class RdfCompliantBackend implements IOrganizationRdfQuery {
                     joinerSet.push(new EmployeeLeaverJoiner(joiner.employee.value, joiner.department.value, new Date(joiner.endingDate.value as string), EmployeeLeaverJoinerType.LEAVER));
                 }
                 resolve(joinerSet);
+            })
+            .catch((error) => {
+                this.logger.error(error);
+                return reject(error);
+            });
+        });
+    }
+
+    getDepartmentHierarchyDepthHistory(departmentCode: string, hierarchyDepth: number, startDate: Date): Promise<DepartmentHierarchy> {
+        const startDay = Calendar.getStartOfDay(startDate);
+        this.logger.info(`getDepartmentHierarchyDepthHistory(${departmentCode}, ${startDay}).`);
+        console.log(`getDepartmentHierarchyDepthHistory(${departmentCode}, ${startDay}).`);
+        return new Promise<DepartmentHierarchy>(async (resolve, reject) => {
+            const sparqlQuery = sparqlDepartmentHierarchyDepthHistoryQuery(this.rdfOntologyDefinitions, departmentCode, hierarchyDepth, startDay);
+            console.log(sparqlQuery);
+            this.graphDB.sparqlQuery(sparqlQuery, SparqlQueryResultType.JSON)
+            .then((result) => {
+                const departmentHierarchy = DepartmentHierarchyFromSparqlMapper(departmentCode, hierarchyDepth, result);
+                this.logger.info(result);
+                resolve(departmentHierarchy);
             })
             .catch((error) => {
                 this.logger.error(error);

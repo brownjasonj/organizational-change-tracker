@@ -1,5 +1,5 @@
 import DatasetExt from "rdf-ext/lib/Dataset";
-import { DataIngestionStreamStatus } from "./DataIngestionStreamsFactory";
+import { DataIngestionStreamStatus } from "./DataIngestionStreamStatus";
 import { Logger } from "pino";
 import { RdfSchemaValidation } from "../rdf/RdfSchemaValidation";
 import { DataIngestionConfiguration } from "../models/eom/configuration/DataIngestionConfiguration";
